@@ -1,0 +1,200 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:pa="http://primefaces.org/barcelona">
+    
+    <div class="layout-sidebar">
+        <pa:tabMenu>
+            <pa:tab icon="pi pi-fw pi-home" title="Features">
+                <h:form id="menu-form">
+                    <pa:menu widgetVar="barcelonaMenuWidget">
+                        <p:menuitem id="m_dashboard" value="Test Page" icon="pi pi-home" outcome="/test"/>
+                    </pa:menu>
+                </h:form>
+            </pa:tab>
+            
+            <pa:tab icon="pi pi-fw pi-inbox" title="Inbox">
+                <div class="inbox-tab">
+                    <ul>
+                        <li class="clearfix">
+                            <p:graphicImage name="images/avatar1.png" library="barcelona-layout" width="45"/>
+                            <span class="name">Joshua Williams</span>
+                            <span class="message">Reports attached</span>
+                        </li>
+                        <li class="clearfix">
+                            <p:graphicImage name="images/avatar1.png" library="barcelona-layout" width="45"/>
+                            <span class="name">Joshua Williams</span>
+                            <span class="message">About the meeting</span>
+                        </li>
+                        <li class="clearfix">
+                            <p:graphicImage name="images/avatar2.png" library="barcelona-layout" width="45"/>
+                            <span class="name">Emily Clark</span>
+                            <span class="message">TODO Update</span>
+                        </li>
+                        <li class="clearfix">
+                            <p:graphicImage name="images/avatar3.png" library="barcelona-layout" width="45"/>
+                            <span class="name">Tim Johnson</span>
+                            <span class="message">Expense Reports</span>
+                        </li>
+                        <li class="clearfix">
+                            <p:graphicImage name="images/avatar4.png" library="barcelona-layout" width="45"/>
+                            <span class="name">David Stark</span>
+                            <span class="message">Rating Reviews</span>
+                        </li>
+                    </ul>
+                    
+                    <div class="inbox-labels">
+                        <span>Labels</span>
+                        <ul>
+                            <li class="clearfix">
+                                <span class="inbox-label">Work</span>
+                                <span class="inbox-label-badge">4</span>
+                            </li>
+                            <li class="clearfix">
+                                <span class="inbox-label">Personel</span>
+                                <span class="inbox-label-badge">2</span>
+                            </li>
+                            <li class="clearfix">
+                                <span class="inbox-label">Shared</span>
+                                <span class="inbox-label-badge">3</span>
+                            </li>
+                            <li class="clearfix">
+                                <span class="inbox-label">General</span>
+                                <span class="inbox-label-badge">5</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </pa:tab>
+            
+            <pa:tab icon="pi pi-fw pi-calendar" title="Calendar">
+                <div class="calendar-tab">
+                    <ul>
+                        <li class="clearfix">
+                            <div class="calendar-event-date">
+                                <span>21</span>
+                                <span>OCT</span>
+                            </div>
+                            <div class="calendar-event-detail">
+                                <span class="calendar-event-title">Project Meeting</span>
+                                    <i class="pi pi-map-marker"></i>
+                                <span class="calendar-event-location">Chicago</span>
+                            </div>
+                        </li>
+                        <li class="clearfix">
+                            <div class="calendar-event-date">
+                                <span>13</span>
+                                <span>NOV</span>
+                            </div>
+                            <div class="calendar-event-detail">
+                                <span class="calendar-event-title">Presentation 1</span>
+                                    <i class="pi pi-map-marker"></i>
+                                <span class="calendar-event-location">New York</span>
+                            </div>
+                        </li>
+                        <li class="clearfix">
+                            <div class="calendar-event-date">
+                                <span>01</span>
+                                <span>DEC</span>
+                            </div>
+                            <div class="calendar-event-detail">
+                                <span class="calendar-event-title">Presentation 2</span>
+                                    <i class="pi pi-map-marker"></i>
+                                <span class="calendar-event-location">New York</span>
+                            </div>
+                        </li>
+                        <li class="clearfix">
+                            <div class="calendar-event-date">
+                                <span>25</span>
+                                <span>DEC</span>
+                            </div>
+                            <div class="calendar-event-detail">
+                                <span class="calendar-event-title">New Year Party</span>
+                                    <i class="pi pi-map-marker"></i>
+                                <span class="calendar-event-location">San Francisco</span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </pa:tab>
+            
+             <pa:tab icon="pi pi-fw pi-chart-bar" title="Projects">
+                 <div class="projects-tab">
+                    <ul>
+                      <li class="clearfix">
+                                <i class="pi pi-sliders-h"></i>
+                                <span class="project-title">Current Tasks</span>
+                          <span>3 open, 4 closed</span>
+                          <div class="project-progressbar">
+                              <div class="project-progressbar-value" style="width: 50%"></div>
+                          </div>
+                      </li>
+                      <li class="clearfix">
+                          <i class="fa fa-youtube"></i>
+                          <span class="project-title">YouTube Videos</span>
+                          <span>12 new, 2 subscribers</span>
+                          <div class="project-progressbar">
+                              <div class="project-progressbar-value" style="width: 20%"></div>
+                          </div>
+                      </li>
+                      <li class="clearfix">
+                                <i class="pi pi-comment"></i>
+                                <span class="project-title">Unread Posts</span>
+                          <span>24 new messages</span>
+                          <div class="project-progressbar">
+                              <div class="project-progressbar-value" style="width: 65%"></div>
+                          </div>
+                      </li>
+                      <li class="clearfix">
+                                <i class="pi pi-heart"></i>
+                                <span class="project-title">Favorite Contacts</span>
+                                <span>8 total, 4 approved</span>
+                          <div class="project-progressbar">
+                              <div class="project-progressbar-value" style="width: 80%"></div>
+                          </div>
+                      </li>
+                      <li class="clearfix">
+                                <i class="pi pi-lock"></i>
+                                <span class="project-title">Verified Users</span>
+                          <span>90 total, 45 pending</span>
+                          <div class="project-progressbar">
+                              <div class="project-progressbar-value" style="width: 90%"></div>
+                          </div>
+                      </li>
+                    </ul>
+                 </div>
+            </pa:tab>
+            
+             <pa:tab icon="pi pi-fw pi-user" title="Team">
+                <div class="team-tab">
+                    <ul>
+                        <li class="clearfix">
+                           <p:graphicImage name="images/avatar1.png" library="barcelona-layout" width="45"/>
+                           <span class="name">Joshua Williams</span>
+                           <span class="location">New York, USA</span>
+                        </li>
+                        <li class="clearfix">
+                           <p:graphicImage name="images/avatar2.png" library="barcelona-layout" width="45"/>
+                           <span class="name">Jennifer Clarkson</span>
+                           <span class="location">Paris, France</span>
+                        </li>
+                        <li class="clearfix">
+                           <p:graphicImage name="images/avatar3.png" library="barcelona-layout" width="45"/>
+                           <span class="name">Tim Johnson</span>
+                           <span class="location">London, United Kingdom</span>
+                        </li>
+                        <li class="clearfix">
+                           <p:graphicImage name="images/avatar4.png" library="barcelona-layout" width="45"/>
+                           <span class="name">David Stark</span>
+                           <span class="location">San Francisco, USA</span>
+                        </li>
+                    </ul>
+                </div>
+            </pa:tab>
+        </pa:tabMenu>        
+    </div>
+    
+</ui:composition>

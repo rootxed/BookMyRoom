@@ -1,0 +1,108 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="content">
+        <div class="grid">
+            <div class="col">
+                <div class="card">
+                    <h:form id="listForm">
+                        <p:dataTable id="dt-buildings" widgetVar="dtBuildings" var="building"
+                                     value="#{buildingBean.buildings}"
+                                     reflow="true" styleClass="table"
+                                     rowKey="#{building.id}" paginator="true" rows="5" rowSelectMode="add"
+                                     paginatorPosition="bottom">
+                            <f:facet name="header">
+                                <div class="table-header">
+                                    <span class="filter-container ui-input-icon-left">
+                                        <i class="pi pi-search"></i>
+                                        <p:inputText id="globalFilter" onkeyup="PF('dtBuildings').filter()"
+                                                     placeholder="Search"/>
+                                    </span>
+                                    <p:toolbar>
+                                        <p:toolbarGroup align="right">
+                                            <p:commandButton value="Add Building"
+                                                             icon="pi pi-plus"
+                                                             update=":manageBuildingForm"
+                                                             oncomplete="PF('manageBuildingDialog').show()"
+                                                             action="#{buildingBean.openNew()}"
+                                                             styleClass="ui-button-success" style="margin-right: .5rem">
+                                            </p:commandButton>
+                                        </p:toolbarGroup>
+                                    </p:toolbar>
+                                </div>
+                            </f:facet>
+
+                            <p:column headerText="Name" sortBy="#{building.name}">
+                                <h:outputText value="#{building.name}"/>
+                            </p:column>
+
+                            <p:column headerText="Address" sortBy="#{building.addresseByAdresseId.addressLine}">
+                                <h:outputText value="#{building.addresseByAdresseId.addressLine}, #{building.addresseByAdresseId.cityByCityId.postalCode} #{building.addresseByAdresseId.cityByCityId.name}"/>
+                            </p:column>
+
+                            <!-- Add other columns as needed -->
+
+                            <p:column headerText="Action" exportable="false">
+                                <p:commandButton icon="pi pi-pencil" update=":manageBuildingForm"
+                                                 oncomplete="PF('manageBuildingDialog').show()"
+                                                 styleClass="edit-button rounded-button ui-button-info"
+                                                 process="@this">
+                                    <f:setPropertyActionListener value="#{building}"
+                                                                 target="#{buildingBean.building}"/>
+                                </p:commandButton>
+
+                            </p:column>
+                        </p:dataTable>
+                    </h:form>
+
+                    <p:growl id="growl" showDetail="true" />
+
+                    <!-- Add Building form in dialog -->
+                    <p:dialog header="Manage Building" showEffect="fade" modal="true"
+                              widgetVar="manageBuildingDialog"
+                              responsive="true">
+                        <h:form id="manageBuildingForm">
+                            <div class="field">
+                                <p:outputLabel for="name">Name : </p:outputLabel>
+                                <p:inputText id="name" value="#{buildingBean.building.name}" required="true"/>
+                            </div>
+
+                            <div class="field">
+                                <p:outputLabel for="addressLine">Address Line : </p:outputLabel>
+                                <p:inputText id="addressLine" value="#{buildingBean.building.addresseByAdresseId.addressLine}" required="true"/>
+                            </div>
+
+                            <div class="field">
+                                <p:outputLabel for="postalCode">Postal Code : </p:outputLabel>
+                                <p:autoComplete id="postalCode" converter="#{cityConverter}" value="#{buildingBean.building.addresseByAdresseId.cityByCityId}"
+                                                completeMethod="#{citiesBean.searchCitiesByPostalCode}"
+                                                var="city"
+                                                itemLabel="#{city.postalCode}"
+                                                itemValue="#{city}"
+                                                forceSelection="true">
+                                    <p:ajax event="itemSelect" update="cityName"/>
+                                </p:autoComplete>
+                            </div>
+
+                            <div class="field">
+                                <p:outputLabel for="cityName">City : </p:outputLabel>
+                                <p:inputText id="cityName" value="#{buildingBean.building.addresseByAdresseId.cityByCityId.name}" disabled="true" />
+                            </div>
+
+                            <p:commandButton value="create" action="#{buildingBean.saveBuilding}"
+                                             update=":listForm:dt-buildings :growl"
+                                             process="@form"
+                                             resetValues="true"
+                                             styleClass="ui-button-success"
+                                             oncomplete="PF('manageBuildingDialog').hide();"/>
+                        </h:form>
+                    </p:dialog>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

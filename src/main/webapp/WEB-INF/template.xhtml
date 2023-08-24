@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+    <f:facet name="first">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+        <meta name="apple-mobile-web-app-capable" content="yes"/>
+    </f:facet>
+    <title><ui:insert name="title">PrimeFaces Barcelona</ui:insert></title>
+    <h:outputScript name="js/layout.js" library="barcelona-layout"/>
+    <h:outputScript name="js/prism.js" library="barcelona-layout"/>
+    <h:outputScript name="js/ripple.js" library="barcelona-layout"/>
+    <ui:insert name="head"/>
+</h:head>
+
+<h:body styleClass="main-body #{guestPreferences.inputStyleClass}">
+    <div class="layout-wrapper #{guestPreferences.overlayMenu ? 'layout-overlay-menu' : null} #{guestPreferences.orientationRTL ? 'layout-rtl' : null}">
+        <ui:include src="./topbar.xhtml"/>
+        <ui:include src="./menu.xhtml"/>
+        <ui:include src="./config.xhtml"/>
+
+        <div class="layout-main">
+            <div class="layout-main-content">
+                <ui:insert name="content"/>
+            </div>
+        </div>
+
+        <ui:include src="./footer.xhtml"/>
+    </div>
+
+    <p:ajaxStatus style="width:32px;height:32px;position:fixed;right:7px;bottom:7px">
+        <f:facet name="start">
+            <i class="pi pi-spin pi-spinner layout-ajax-loader-icon" aria-hidden="true"/>
+        </f:facet>
+
+        <f:facet name="complete">
+            <h:outputText value=""/>
+        </f:facet>
+    </p:ajaxStatus>
+
+    <h:outputStylesheet name="css/primeicons.css" library="barcelona-layout"/>
+    <h:outputStylesheet name="css/primeflex.min.css" library="barcelona-layout"/>
+    <h:outputStylesheet name="css/ripple.css" library="barcelona-layout" rendered="#{guestPreferences.ripple}"/>
+    <h:outputStylesheet name="css/demo.css" library="demo"/>
+    <h:outputStylesheet name="css/layout-blue.css" library="barcelona-layout"/>
+</h:body>
+
+</html>

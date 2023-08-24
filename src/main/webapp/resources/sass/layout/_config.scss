@@ -1,0 +1,123 @@
+.layout-config {
+    width: 16em;
+    height: 100%;
+    position: fixed;
+    right: 0;
+    top: 0;
+    padding: 1rem;
+    overflow: auto;
+    z-index: 1001;
+    transform: translateX(100%);
+    @include transition(transform $transitionDuration);
+    backface-visibility: hidden;
+    box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.24);
+    color: $textColor;
+    background-color: #ffffff;
+
+    &.layout-config-active {
+        transform: translateX(0);
+
+        .layout-config-content {
+            .layout-config-button {
+                i {
+                    @include rotate(360deg);
+                }
+            }
+        }
+    }
+
+    .ui-selectoneradio {
+        td {
+            padding: .5rem;
+        }
+    }
+
+    p {
+        line-height: 1.5rem;
+        color: $textSecondaryColor;
+    }
+
+    .layout-themes {
+        @include flex();
+        @include flex-wrap(wrap);
+
+        > div {
+            padding: .25rem;
+        }
+
+        a {
+            width: 2rem;
+            height: 2rem;
+            border-radius: $borderRadius;
+            display: block;
+            position: relative;
+            @include flex-align-center();
+            @include flex-justify-center();
+            @include transition(transform $transitionDuration);
+
+            img {
+                width: 2rem;
+                height: 2rem;
+            }
+
+            i {
+                font-size: 1rem;
+                font-weight: 600;
+                position: absolute;
+                color: $primaryTextColor;
+                top: 50%;
+                left: 50%;
+                margin-left: -.5rem;
+                margin-top: -.5rem;
+            }
+
+            &:hover {
+                transform: scale(1.1);
+            }
+        }
+    }
+}
+
+.layout-config-button {
+    display: block;
+    position: fixed;
+    width: 4rem;
+    height: 4rem;
+    line-height: 4rem;
+    background-color: #ffffff;
+    color: $textColor;
+    text-align: center;
+    top: 50%;
+    right: 0;
+    margin-top: -1.5rem;
+    border-top-left-radius: $borderRadius;
+    border-bottom-left-radius: $borderRadius;
+    @include transition(background-color $transitionDuration);
+    overflow: hidden;
+    cursor: pointer;
+    z-index: 999;
+    box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.24);
+
+    i {
+        font-size: 2.5rem;
+        line-height: inherit;
+        @include rotate(0deg);
+        @include transition(transform 1s);
+    }
+}
+
+.layout-rtl {
+    .layout-config {
+        right: auto;
+        left: 0;
+        transform: translate3d(-240px, 0px, 0px);
+
+        &.layout-config-active {
+            transform: translate3d(0px, 0px, 0px);
+        }
+    }
+
+    .layout-config-button {
+        left: 0;
+    }
+}

@@ -1,0 +1,139 @@
+-- Création de la base de données
+CREATE DATABASE IF NOT EXISTS bookmyroom;
+USE bookmyroom;
+
+-- Table Country
+CREATE TABLE IF NOT EXISTS Country (
+    ID INT AUTO_INCREMENT PRIMARY KEY,
+    Name VARCHAR(100) UNIQUE NOT NULL
+);
+
+-- Table City
+CREATE TABLE IF NOT EXISTS City (
+    ID INT AUTO_INCREMENT PRIMARY KEY,
+    CountryID INT NOT NULL,
+    Name VARCHAR(100) NOT NULL,
+    PostalCode VARCHAR(10) NOT NULL,
+    FOREIGN KEY (CountryID) REFERENCES Country(ID)
+);
+
+-- Table Adresse
+CREATE TABLE IF NOT EXISTS Adresse (
+    ID INT AUTO_INCREMENT PRIMARY KEY,
+    CityID INT NOT NULL,
+    AddressLine VARCHAR(255) NOT NULL,
+    FOREIGN KEY (CityID) REFERENCES City(ID)
+);
+
+-- Table Building
+CREATE TABLE IF NOT EXISTS Building (
+    ID INT AUTO_INCREMENT PRIMARY KEY,
+    Name VARCHAR(100) NOT NULL,
+    AdresseID INT NOT NULL,
+    FOREIGN KEY (AdresseID) REFERENCES Adresse(ID)
+);
+
+-- Table Hall
+CREATE TABLE IF NOT EXISTS Hall (
+    ID INT AUTO_INCREMENT PRIMARY KEY,
+    BuildingID INT NOT NULL,
+    Name VARCHAR(100) NOT NULL,
+    HourlyRate DECIMAL(10, 2) NOT NULL,
+    FOREIGN KEY (BuildingID) REFERENCES Building(ID)
+);
+
+-- Table Category
+CREATE TABLE IF NOT EXISTS Category (
+    ID INT AUTO_INCREMENT PRIMARY KEY,
+    Name VARCHAR(100) NOT NULL
+);
+
+-- Table HallCategory
+CREATE TABLE IF NOT EXISTS HallCategory (
+    ID INT AUTO_INCREMENT PRIMARY KEY,
+    HallID INT NOT NULL,
+    CategoryID INT NOT NULL,
+    FOREIGN KEY (HallID) REFERENCES Hall(ID),
+    FOREIGN KEY (CategoryID) REFERENCES Category(ID)
+);
+
+-- Table Permission
+CREATE TABLE IF NOT EXISTS Permission (
+    ID INT AUTO_INCREMENT PRIMARY KEY,
+    Label VARCHAR(100) NOT NULL
+);
+
+-- Table Role
+CREATE TABLE IF NOT EXISTS Role (
+    ID INT AUTO_INCREMENT PRIMARY KEY,
+    Name VARCHAR(100) NOT NULL
+);
+
+-- Table RolePermissions
+CREATE TABLE IF NOT EXISTS RolePermissions (
+    ID INT AUTO_INCREMENT PRIMARY KEY,
+    RoleID INT NOT NULL,
+    PermissionID INT NOT NULL,
+    FOREIGN KEY (RoleID) REFERENCES Role(ID),
+    FOREIGN KEY (PermissionID) REFERENCES Permission(ID)
+);
+
+-- Table User
+CREATE TABLE IF NOT EXISTS User (
+    ID INT AUTO_INCREMENT PRIMARY KEY,
+    RoleID INT NOT NULL,
+    AdresseID INT NOT NULL,
+    UserName VARCHAR(100) NOT NULL,
+    Password VARCHAR(255) NOT NULL,
+    FirstName VARCHAR(100) NOT NULL,
+    LastName VARCHAR(100) NOT NULL,
+    PhoneNumber VARCHAR(20) NOT NULL,
+    Email VARCHAR(100) NOT NULL,
+    IsBlocked BOOLEAN DEFAULT 0 NOT NULL,
+    FOREIGN KEY (RoleID) REFERENCES Role(ID),
+    FOREIGN KEY (AdresseID) REFERENCES Adresse(ID)
+);
+
+-- Table Booking
+CREATE TABLE IF NOT EXISTS Booking (
+    ID INT AUTO_INCREMENT PRIMARY KEY,
+    HallID INT NOT NULL,
+    UserID INT  NOT NULL,
+    DateTimeIn DATETIME NOT NULL,
+    DateTimeOut DATETIME NOT NULL,
+    TotalPrice DECIMAL(10, 2)  NOT NULL,
+    IsCanceled BOOLEAN DEFAULT 0  NOT NULL,
+    FOREIGN KEY (HallID) REFERENCES Hall(ID),
+    FOREIGN KEY (UserID) REFERENCES User(ID)
+);
+
+-- Table PaymentHistory
+CREATE TABLE IF NOT EXISTS PaymentHistory (
+    ID INT AUTO_INCREMENT PRIMARY KEY,
+    ReceiverUserID INT NOT NULL,
+    BookingID INT NOT NULL,
+    PaymentType ENUM('Cash', 'Bancontact', 'Bank Transfer')  NOT NULL,
+    TimeStamp DATETIME NOT NULL,
+    FOREIGN KEY (ReceiverUserID) REFERENCES User(ID),
+    FOREIGN KEY (BookingID) REFERENCES Booking(ID)
+);
+
+-- Table OpeningHours
+CREATE TABLE IF NOT EXISTS OpeningHours (
+    ID INT AUTO_INCREMENT PRIMARY KEY,
+    OpeningTime TIME NOT NULL,
+    ClosingTime TIME NOT NULL
+);
+
+-- Table HallSchedule
+CREATE TABLE IF NOT EXISTS HallSchedule (
+    ID INT AUTO_INCREMENT PRIMARY KEY,
+    HallID INT NOT NULL,
+    OpeningHoursID INT NOT NULL,
+    WeekDay TINYINT NOT NULL,
+    BeginningDate DATE NOT NULL,
+    EndingDate DATE,
+    FOREIGN KEY (HallID) REFERENCES Hall(ID),
+    FOREIGN KEY (OpeningHoursID) REFERENCES OpeningHours(ID)
+);
+

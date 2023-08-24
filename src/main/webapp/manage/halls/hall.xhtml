@@ -1,0 +1,127 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="content">
+        <div class="grid">
+            <div class="col">
+                <div class="card">
+                    <h:form id="listForm">
+                        <p:dataTable id="dt-halls" widgetVar="dtHalls" var="hall"
+                                     value="#{hallBean.halls}"
+                                     reflow="true" styleClass="table"
+                                     rowKey="#{hall.id}" paginator="true" rows="5" rowSelectMode="add"
+                                     paginatorPosition="bottom">
+                            <f:facet name="header">
+                                <div class="table-header">
+                                    <span class="filter-container ui-input-icon-left">
+                                        <i class="pi pi-search"></i>
+                                        <p:inputText id="globalFilter" onkeyup="PF('dtHalls').filter()"
+                                                     placeholder="Search"/>
+                                    </span>
+                                    <p:toolbar>
+                                        <p:toolbarGroup align="right">
+                                            <p:commandButton value="Add Hall"
+                                                             icon="pi pi-plus"
+                                                             update=":manageHallForm"
+                                                             oncomplete="PF('manageHallDialog').show()"
+                                                             action="#{hallBean.openNew()}"
+                                                             styleClass="ui-button-success" style="margin-right: .5rem">
+                                            </p:commandButton>
+                                        </p:toolbarGroup>
+                                    </p:toolbar>
+                                </div>
+                            </f:facet>
+
+                            <p:column headerText="Name" sortBy="#{hall.name}">
+                                <h:outputText value="#{hall.name}"/>
+                            </p:column>
+
+                            <p:column headerText="HourlyRate" sortBy="#{hall.hourlyRate}">
+                                <h:outputText value="#{hall.name}"/>
+                            </p:column>
+
+                            <p:column headerText="Building" sortBy="#{hall.buildingByBuildingId.name}">
+                                <h:outputText value="#{hall.buildingByBuildingId.name}"/>
+                            </p:column>
+
+                            <p:column headerText="City" sortBy="#{hall.buildingByBuildingId.addresseByAdresseId.cityByCityId}">
+                                <h:outputText value="#{hall.buildingByBuildingId.addresseByAdresseId.cityByCityId}"/>
+                            </p:column>
+
+                            <p:column headerText="Categories" sortBy="#{hall.hallcategoriesById}">
+                                <ui:repeat value="#{hall.hallcategoriesById}" var="hallCategory">
+                                    <h:outputText value="#{hallCategory.categoryByCategoryId.name}"/>
+                                    <br/>
+                                </ui:repeat>
+                            </p:column>
+
+                            <!-- Add other columns as needed -->
+
+                            <p:column headerText="Action" exportable="false">
+                                <p:commandButton icon="pi pi-pencil" update=":manageHallForm"
+                                                 oncomplete="PF('manageHallDialog').show()"
+                                                 styleClass="edit-button rounded-button ui-button-info"
+                                                 process="@this">
+                                    <f:setPropertyActionListener value="#{hall}"
+                                                                 target="#{hallBean.hall}"/>
+                                </p:commandButton>
+
+                            </p:column>
+                        </p:dataTable>
+                    </h:form>
+
+                    <p:growl id="growl" showDetail="true" />
+
+                    <!-- Add Building form in dialog -->
+                    <p:dialog header="Manage Hall" showEffect="fade" modal="true"
+                              widgetVar="manageHallDialog" responsive="true">
+                        <h:form id="manageHallForm">
+                            <div class="field">
+                                <p:outputLabel for="hallName">Name :</p:outputLabel>
+                                <p:inputText id="hallName" value="#{hallBean.hall.name}" required="true"/>
+                            </div>
+
+                            <div class="field">
+                                <p:outputLabel for="buildingName">Building Name :</p:outputLabel>
+                                <p:inputText id="buildingName" value="#{hallBean.hall.buildingByBuildingId.name}" required="true"/>
+                            </div>
+
+                            <div class="field">
+                                <p:outputLabel for="city">City :</p:outputLabel>
+                                <p:inputText id="city" value="#{hallBean.hall.buildingByBuildingId.addresseByAdresseId.cityByCityId.name}" required="true"/>
+                            </div>
+
+                            <div class="field">
+                                <p:outputLabel for="selectedCategories">Categories :</p:outputLabel>
+                                <p:selectCheckboxMenu id="selectedCategories" value="#{hallBean.categories}"
+                                                      label="Select Categories" multiple="true"
+                                                      filter="true" filterMatchMode="contains">
+                                    <f:selectItems value="#{categoryBean.categories}" var="category"
+                                                   itemLabel="#{category.name}" itemValue="#{category}"/>
+                                </p:selectCheckboxMenu>
+
+                            </div>
+
+                            <p:commandButton value="Create Hall" action="#{hallBean.createHall}"
+                                             update=":listForm:dt-halls :growl"
+                                             process="@form" resetValues="true"
+                                             styleClass="ui-button-success"
+                                             oncomplete="PF('manageHallDialog').hide();"/>
+
+                            <p:commandButton value="Update Hall" action="#{hallBean.updateHall}"
+                                             update=":listForm:dt-halls :growl"
+                                             process="@form" resetValues="true"
+                                             styleClass="ui-button-primary"
+                                             oncomplete="PF('manageHallDialog').hide();"/>
+                        </h:form>
+                    </p:dialog>
+
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+    <title>Test Cities Bean</title>
+</h:head>
+
+<h:body>
+    <h:form>
+        <p:autoComplete id="postalCode" converter="#{cityConverter}" value="#{citiesBean.selectedCity}"
+                        completeMethod="#{citiesBean.searchCitiesByPostalCode}"
+                        var="city"
+                        itemLabel="#{city.postalCode}"
+                        itemValue="#{city}"
+                        dropdown="true"
+                        forceSelection="true">
+            <p:ajax event="itemSelect" listener="#{citiesBean.selectCity}" update="cityName"/>
+        </p:autoComplete>
+
+        <p:outputLabel for="cityName" value="Ville:"/>
+        <p:inputText id="cityName" value="#{citiesBean.selectedCity.name}" readonly="true">
+            <p:ajax update="cityName"/> <!-- Ajout de cet ajax pour mettre à jour le champ -->
+        </p:inputText>
+
+    </h:form>
+</h:body>
+
+</html>

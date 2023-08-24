@@ -1,0 +1,78 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="content">
+        <div class="grid">
+            <div class="col">
+                <div class="card">
+                    <h:form id="listForm">
+                        <p:dataTable id="dt-categories" widgetVar="dtCategories" var="category"
+                                     value="#{categoryBean.categories}"
+                                     reflow="true" styleClass="table"
+                                     rowKey="#{category.id}" paginator="true" rows="5"
+                                     paginatorPosition="bottom">
+                            <f:facet name="header">
+                                <div class="table-header">
+                                    <span class="filter-container ui-input-icon-left">
+                                        <i class="pi pi-search"></i>
+                                        <p:inputText id="globalFilter" onkeyup="PF('dtCategories').filter()"
+                                                     placeholder="Search"/>
+                                    </span>
+                                    <p:toolbar>
+                                        <p:toolbarGroup align="right">
+                                            <p:commandButton value="Add Category"
+                                                             icon="pi pi-plus"
+                                                             update=":manageCategoryForm"
+                                                             oncomplete="PF('manageCategoryDialog').show()"
+                                                             action="#{categoryBean.openNew()}"
+                                                             styleClass="ui-button-success" style="margin-right: .5rem">
+                                            </p:commandButton>
+                                        </p:toolbarGroup>
+                                    </p:toolbar>
+                                </div>
+                            </f:facet>
+
+                            <p:column headerText="Name" sortBy="#{category.name}">
+                                <h:outputText value="#{category.name}"/>
+                            </p:column>
+
+                            <p:column headerText="Action" exportable="false">
+                                <p:commandButton icon="pi pi-pencil" update=":manageCategoryForm"
+                                                 oncomplete="PF('manageCategoryDialog').show()"
+                                                 styleClass="edit-button rounded-button ui-button-info"
+                                                 process="@this">
+                                    <f:setPropertyActionListener value="#{category}"
+                                                                 target="#{categoryBean.category}"/>
+                                </p:commandButton>
+                            </p:column>
+                        </p:dataTable>
+                    </h:form>
+
+                    <p:growl id="growl" showDetail="true" />
+
+                    <p:dialog header="Manage Category" showEffect="fade" modal="true"
+                              widgetVar="manageCategoryDialog"
+                              responsive="true">
+                        <h:form id="manageCategoryForm">
+                            <div class="field">
+                                <p:outputLabel for="categoryName">Name : </p:outputLabel>
+                                <p:inputText id="categoryName" value="#{categoryBean.category.name}" required="true"/>
+                            </div>
+
+                            <p:commandButton value="Create Category" action="#{categoryBean.createCategory}"
+                                             update=":listForm:dt-categories :growl"
+                                             process="@form"
+                                             resetValues="true"
+                                             styleClass="ui-button-success"
+                                             oncomplete="PF('manageCategoryDialog').hide();"/>
+                        </h:form>
+                    </p:dialog>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,86 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+
+    <a tabindex="0" id="layout-config-button" class="layout-config-button">
+        <i class="pi pi-cog"/>
+    </a>
+
+    <div id="layout-config" class="layout-config">
+        <h:form id="config-form">
+            <h5>Menu Type</h5>
+
+            <p:selectOneRadio value="#{guestPreferences.overlayMenu}" layout="pageDirection" onchange="PrimeFaces.BarcelonaConfigurator.changeMenuMode(event.target.value)">
+                <f:selectItem itemLabel="Static" itemValue="false"/>
+                <f:selectItem itemLabel="Overlay" itemValue="true"/>
+                <p:ajax onstart="PrimeFaces.BarcelonaConfigurator.beforeResourceChange()" update="config-form" />
+            </p:selectOneRadio>
+
+            <hr/>
+
+            <h5>Menu Colors</h5>
+
+            <p:selectOneRadio value="#{guestPreferences.darkMenu}" layout="pageDirection" onchange="PrimeFaces.BarcelonaConfigurator.changeMenuColor(event.target.value)">
+                <f:selectItem itemLabel="Dark" itemValue="true"/>
+                <f:selectItem itemLabel="Light" itemValue="false"/>
+                <p:ajax onstart="PrimeFaces.BarcelonaConfigurator.beforeResourceChange()" update="config-form" />
+            </p:selectOneRadio>
+
+            <hr/>
+
+            <h5>Theme Modes</h5>
+
+            <p:selectOneRadio value="#{guestPreferences.compactMode}" layout="pageDirection" onchange="PrimeFaces.BarcelonaConfigurator.changeComponentsTheme('#{guestPreferences.theme}',event.target.value)">
+                <f:selectItem itemLabel="Compact" itemValue="true"/>
+                <f:selectItem itemLabel="Standart" itemValue="false"/>
+                <p:ajax update="config-form" />
+            </p:selectOneRadio>
+
+            <hr/>
+
+            <h5>Input Style</h5>
+            <p:selectOneRadio value="#{guestPreferences.inputStyle}" layout="pageDirection"
+                              onchange="PrimeFaces.BarcelonaConfigurator.updateInputStyle(event.target.value)">
+                <f:selectItem itemLabel="Outlined" itemValue="outlined"/>
+                <f:selectItem itemLabel="Filled" itemValue="filled"/>
+                <p:ajax/>
+            </p:selectOneRadio>
+
+            <hr/>
+
+            <h5>RTL</h5>
+            <p:toggleSwitch id="rtl-switch" value="#{guestPreferences.orientationRTL}" onchange="PrimeFaces.BarcelonaConfigurator.changeMenuToRTL()">
+                <p:ajax onstart="PrimeFaces.BarcelonaConfigurator.beforeResourceChange()" update="config-form" />
+            </p:toggleSwitch>
+
+            <hr/>
+
+            <h5>Ripple Effect</h5>
+            <p:toggleSwitch id="ripple-switch" value="#{guestPreferences.ripple}" onchange="window.location.reload();">
+                <p:ajax onstart="PrimeFaces.BarcelonaConfigurator.beforeResourceChange()" update="config-form" />
+            </p:toggleSwitch>
+
+            <hr/>
+
+            <h5>Themes</h5>
+            <div class="layout-themes">
+                <ui:repeat value="#{guestPreferences.componentThemes}" var="theme">
+                    <div>
+                        <p:commandLink actionListener="#{guestPreferences.setTheme(theme.file)}"
+                                       process="@this" update="config-form"
+                                       style="background-color: #{theme.color}"
+                                       onstart="PrimeFaces.BarcelonaConfigurator.beforeResourceChange()"
+                                       oncomplete="PrimeFaces.BarcelonaConfigurator.changeComponentsTheme('#{theme.file}','#{guestPreferences.compactMode}')">
+                            <ui:fragment rendered="#{theme.file eq guestPreferences.theme}">
+                                <i class="pi pi-check"/>
+                            </ui:fragment>
+                        </p:commandLink>
+                    </div>
+                </ui:repeat>
+            </div>
+        </h:form>
+    </div>
+
+</ui:composition>

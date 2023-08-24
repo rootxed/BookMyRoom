@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+    <f:facet name="first">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+        <meta name="apple-mobile-web-app-capable" content="yes"/>
+    </f:facet>
+    <title>PrimeFaces Barcelona - Register</title>
+    <h:outputScript name="js/ripple.js" library="barcelona-layout" rendered="#{guestPreferences.ripple}"/>
+    <h:outputScript name="js/layout.js" library="barcelona-layout"/>
+</h:head>
+
+<h:body styleClass="register-body">
+
+    <div class="register-panel ui-fluid">
+        <div class="grid grid-nogutter">
+            <div class="col-12 register-header">
+                <h1>BookMyRoom</h1>
+                <h2>Inscription</h2>
+            </div>
+            <h:form>
+                <div class="formgrid grid">
+                    <div class="field col-6">
+                        <span class="ui-float-label">
+                            <p:inputText id="userName" required="true" value="#{registerBean.user.userName}"/>
+                            <p:outputLabel for="userName" value="Nom d'utilisateur"/>
+                        </span>
+                    </div>
+                    <div class="field col-6">
+                        <span class="ui-float-label">
+                            <p:inputText id="email" required="true" value="#{registerBean.user.email}"/>
+                            <p:outputLabel for="email" value="Adresse e-mail"/>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="formgrid grid">
+                    <div class="field col">
+                        <span class="ui-float-label">
+                            <p:password id="password1" required="true" value="#{registerBean.user.password}"
+                                        feedback="true" match="password2"/>
+                            <p:outputLabel for="password1" value="Mot de passe"/>
+                        </span>
+                    </div>
+                    <div class="field col">
+                        <span class="ui-float-label">
+                            <p:password id="password2" required="true" value="#{registerBean.user.password}"/>
+                            <p:outputLabel for="password2" value="Confirmer le mot de passe"/>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="formgrid grid">
+                    <div class="field col">
+                        <span class="ui-float-label">
+                            <p:inputText id="firstName" required="true" value="#{registerBean.user.firstName}"/>
+                            <p:outputLabel for="firstName" value="Prénom"/>
+                        </span>
+                    </div>
+                    <div class="field col">
+                        <span class="ui-float-label">
+                            <p:inputText id="lastName" required="true" value="#{registerBean.user.lastName}"/>
+                            <p:outputLabel for="lastName" value="Nom de famille"/>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="formgrid grid">
+                    <div class="field col">
+                        <span class="ui-float-label">
+                            <p:inputText id="phoneNumber" value="#{registerBean.user.phoneNumber}"/>
+                            <p:outputLabel for="phoneNumber" value="Numéro de téléphone"/>
+                        </span>
+                    </div>
+                    <div class="field col">
+                        <span class="ui-float-label">
+                            <p:inputText id="addressLine" required="true" value="#{registerBean.addresse.addressLine}"/>
+                            <p:outputLabel for="addressLine" value="Adresse"/>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="formgrid grid">
+                    <div class="field col">
+                        <span class="ui-float-label">
+                            <p:autoComplete id="postalCode" converter="#{cityConverter}" value="#{citiesBean.selectedCity}"
+                                            completeMethod="#{citiesBean.searchCitiesByPostalCode}"
+                                            var="city"
+                                            itemLabel="#{city.postalCode}"
+                                            itemValue="#{city}"
+                                            forceSelection="true">
+                                <p:ajax event="itemSelect" listener="#{citiesBean.selectCity}" update="cityName"/>
+                            </p:autoComplete>
+                        </span>
+                    </div>
+                    <div class="field col">
+                        <span class="ui-float-label">
+                            <p:outputLabel for="cityName" value="Ville"/>
+                            <p:inputText id="cityName" value="#{citiesBean.selectedCity.name}" readonly="true">
+                                <p:ajax update="cityName"/>
+                            </p:inputText>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="col-12 button-container">
+                    <p:commandButton value="S'inscrire" icon="pi pi-check" type="submit" action="#{registerBean.doRegister}"/>
+                </div>
+                <p:messages id="messages" showDetail="true">
+                    <p:autoUpdate/>
+                </p:messages>
+            </h:form>
+        </div>
+    </div>
+
+    <h:outputStylesheet name="css/primeicons.css" library="barcelona-layout"/>
+    <h:outputStylesheet name="css/primeflex.min.css" library="barcelona-layout"/>
+    <h:outputStylesheet name="css/ripple.css" library="barcelona-layout" rendered="#{guestPreferences.ripple}"/>
+    <h:outputStylesheet name="css/layout-indigo.css" library="barcelona-layout"/>
+    <h:outputStylesheet name="css/ripple.css" library="barcelona-layout"/>
+</h:body>
+
+</html>

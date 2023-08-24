@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd"
+             version="2.2">
+    <persistence-unit name="BookMyRoom" transaction-type="JTA">
+        <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+        <jta-data-source>java:comp/env/jdbc/BookMyRoom</jta-data-source>
+        <class>be.atc.entities.AddresseEntity</class>
+        <class>be.atc.entities.BookingEntity</class>
+        <class>be.atc.entities.BuildingEntity</class>
+        <class>be.atc.entities.CategoryEntity</class>
+        <class>be.atc.entities.CityEntity</class>
+        <class>be.atc.entities.CountryEntity</class>
+        <class>be.atc.entities.HallEntity</class>
+        <class>be.atc.entities.HallCategoryEntity</class>
+        <class>be.atc.entities.HallScheduleEntity</class>
+        <class>be.atc.entities.OpeningHoursEntity</class>
+        <class>be.atc.entities.PaymentHistoryEntity</class>
+        <class>be.atc.entities.PermissionEntity</class>
+        <class>be.atc.entities.RoleEntity</class>
+        <class>be.atc.entities.RolePermissionsEntity</class>
+        <class>be.atc.entities.UserEntity</class>
+<!--        <properties>-->
+<!--            <property name="eclipselink.jdbc.url" value="jdbc:mysql://localhost:3306/bookmyroom"/>-->
+<!--            <property name="eclipselink.jdbc.driver" value="com.mysql.jdbc.Driver"/>-->
+<!--        </properties>-->
+    </persistence-unit>
+</persistence>

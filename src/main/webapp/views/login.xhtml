@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <f:facet name="first">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+            <meta name="apple-mobile-web-app-capable" content="yes" />
+        </f:facet>
+        <title>PrimeFaces Barcelona</title>
+        <h:outputScript name="js/ripple.js" library="barcelona-layout" rendered="#{guestPreferences.ripple}"/>
+        <h:outputScript name="js/layout.js" library="barcelona-layout" />
+    </h:head>
+
+    <h:body styleClass="login-body">
+        
+        <div class="login-panel ui-fluid">
+            <div class="grid grid-nogutter">
+                <div class="col-12 login-header">
+                    <h1>BookMyRoom</h1>
+                    <h2>Connectez vous pour louer votre salle.</h2>
+<!--                    <p:graphicImage name="images/logo.png" library="barcelona-layout" />-->
+                </div>
+                <div class="col-12">
+                    <span class="ui-float-label">
+                        <p:inputText id="login" required="true" value="#{shiroLoginBean.login}"/>
+                        <p:outputLabel for="@previous" value="Identifiant"/>
+                    </span>
+                </div>
+                <div class="col-12">
+                    <span class="ui-float-label">
+                        <p:password id="password" required="true" value="#{shiroLoginBean.password}" feedback="false"/>
+                        <p:outputLabel for="@previous" value="Mot de passe"/>
+                    </span>
+                </div>
+                <div class="col-12 button-container">
+                    <p:button  value="Sign In" icon="pi pi-user" action="#{shiroLoginBean.doLogin}" />
+<!--                    outcome="/dashboard"-->
+                </div>
+            </div>
+        </div>
+
+        <h:outputStylesheet name="css/primeicons.css" library="barcelona-layout"/>
+        <h:outputStylesheet name="css/primeflex.min.css" library="barcelona-layout"/>
+        <h:outputStylesheet name="css/ripple.css" library="barcelona-layout" rendered="#{guestPreferences.ripple}"/>
+        <h:outputStylesheet name="css/layout-indigo.css" library="barcelona-layout" />
+        <h:outputStylesheet name="css/ripple.css" library="barcelona-layout" />
+    </h:body>
+
+</html>
