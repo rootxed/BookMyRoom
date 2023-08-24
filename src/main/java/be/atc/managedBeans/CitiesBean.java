@@ -1,4 +1,4 @@
-package be.atc.managedBeans.test;
+package be.atc.managedBeans;
 
 import be.atc.entities.CityEntity;
 import be.atc.services.CityService;

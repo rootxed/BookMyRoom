@@ -1,9 +1,8 @@
-package be.atc.managedBeans.halls;
+package be.atc.managedBeans;
 
 import be.atc.entities.CategoryEntity;
 import be.atc.entities.HallCategoryEntity;
 import be.atc.entities.HallEntity;
-import be.atc.managedBeans.categories.CategoryBean;
 import be.atc.services.HallCategoryService;
 import be.atc.services.HallService;
 import be.atc.tools.EMF;

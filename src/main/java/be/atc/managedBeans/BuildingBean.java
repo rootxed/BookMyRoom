@@ -1,14 +1,10 @@
-package be.atc.managedBeans.buildings;
+package be.atc.managedBeans;
 
 import be.atc.entities.AddresseEntity;
 import be.atc.entities.BuildingEntity;
-import be.atc.entities.CategoryEntity;
-import be.atc.entities.CityEntity;
-import be.atc.managedBeans.test.CitiesBean;
 import be.atc.services.AddresseService;
 import be.atc.services.BuildingService;
 import be.atc.tools.EMF;
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import javax.annotation.PostConstruct;

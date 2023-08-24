@@ -1,7 +1,6 @@
-package be.atc.managedBeans.categories;
+package be.atc.managedBeans;
 
 import be.atc.entities.CategoryEntity;
-import be.atc.entities.CityEntity;
 import be.atc.services.CategoryService;
 import be.atc.tools.EMF;
 import org.apache.log4j.Logger;
