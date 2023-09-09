@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+    <title>Test HallSchedule Bean</title>
+
+</h:head>
+
+<h:body>
+    <h:form>
+        <p:selectOneMenu value="#{hallBean.hall}" converter="#{hallConverter}">
+            <f:selectItems value="#{hallBean.halls}" var="hall"
+                           itemValue="#{hall}" itemLabel="#{hall.name}" />
+            <p:ajax event="change" update="fullCalendar" listener="#{hallScheduleBean.initScheduleModel}" />
+        </p:selectOneMenu>
+
+<!--        <p:schedule id="fullCalendar" value="#{hallScheduleBean.scheduleModel}" var="schedule"-->
+<!--                    timeZone="UTC" widgetVar="fullCalendarWidget">-->
+<!--            <p:column headerText="Event" style="width: 70%">-->
+<!--                <h:outputText value="#{schedule.openinghoursByOpeningHoursId.openingTime} - #{schedule.openinghoursByOpeningHoursId.closingTime}" />-->
+<!--            </p:column>-->
+<!--        </p:schedule>-->
+    </h:form>
+
+
+</h:body>
+
+</html>

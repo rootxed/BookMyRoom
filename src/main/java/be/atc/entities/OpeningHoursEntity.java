@@ -5,6 +5,15 @@ import java.sql.Time;
 import java.util.Collection;
 import java.util.Objects;
 
+@NamedQueries({
+        @NamedQuery(name = "OpeningHours.findByOpeningTimeAndClosingTime",
+                query = "SELECT oh FROM OpeningHoursEntity oh " +
+                        "WHERE oh.openingTime = :openingTime " +
+                        "AND oh.closingTime = :closingTime")
+
+
+})
+
 @Entity
 @Table(name = "openinghours", schema = "bookmyroom", catalog = "")
 public class OpeningHoursEntity {
@@ -14,6 +23,7 @@ public class OpeningHoursEntity {
     private Collection<HallScheduleEntity> hallschedulesById;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID", nullable = false)
     public int getId() {
         return id;

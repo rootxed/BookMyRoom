@@ -98,11 +98,11 @@
         </dependency>
         <!--Theme need to be installer in maven-->
         <!-- //mvn install:install-file -Dfile=C:\Users\user\Downloads\barcelona-5.1.0\barcelona-theme-5.1.0.jar -DgroupId=org.primefaces.themes -DartifactId=barcelona -Dversion=5.1.0 -Dpackaging=jar-->
-      <dependency>
-          <groupId>org.primefaces.themes</groupId>
-          <artifactId>barcelona</artifactId>
-          <version>5.1.0</version>
-      </dependency>
+<!--      <dependency>-->
+<!--          <groupId>org.primefaces.themes</groupId>-->
+<!--          <artifactId>barcelona</artifactId>-->
+<!--          <version>5.1.0</version>-->
+<!--      </dependency>-->
       <dependency>
           <groupId>com.sun.mail</groupId>
           <artifactId>javax.mail</artifactId>

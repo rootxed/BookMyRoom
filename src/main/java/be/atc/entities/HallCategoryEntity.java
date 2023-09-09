@@ -18,6 +18,7 @@ public class HallCategoryEntity {
     private CategoryEntity categoryByCategoryId;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID", nullable = false)
     public int getId() {
         return id;

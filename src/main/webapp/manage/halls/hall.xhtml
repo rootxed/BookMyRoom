@@ -41,15 +41,15 @@
                             </p:column>
 
                             <p:column headerText="HourlyRate" sortBy="#{hall.hourlyRate}">
-                                <h:outputText value="#{hall.name}"/>
+                                <h:outputText value="#{hall.hourlyRate} €"/>
                             </p:column>
 
                             <p:column headerText="Building" sortBy="#{hall.buildingByBuildingId.name}">
                                 <h:outputText value="#{hall.buildingByBuildingId.name}"/>
                             </p:column>
 
-                            <p:column headerText="City" sortBy="#{hall.buildingByBuildingId.addresseByAdresseId.cityByCityId}">
-                                <h:outputText value="#{hall.buildingByBuildingId.addresseByAdresseId.cityByCityId}"/>
+                            <p:column headerText="City" sortBy="#{hall.buildingByBuildingId.addresseByAdresseId.cityByCityId.name}">
+                                <h:outputText value="#{hall.buildingByBuildingId.addresseByAdresseId.cityByCityId.name}"/>
                             </p:column>
 
                             <p:column headerText="Categories" sortBy="#{hall.hallcategoriesById}">
@@ -62,12 +62,18 @@
                             <!-- Add other columns as needed -->
 
                             <p:column headerText="Action" exportable="false">
+                                <p:commandButton icon="pi pi-calendar" update=":manageScheduleForm"
+                                                oncomplete="PF('manageScheduleDialog').show()"
+                                                styleClass="edit-button rounded-button ui-button-info"
+                                                process="@this"
+                                                 actionListener="#{hallScheduleBean.getSortedSchedules(hall)}">
+
+                                </p:commandButton>
                                 <p:commandButton icon="pi pi-pencil" update=":manageHallForm"
                                                  oncomplete="PF('manageHallDialog').show()"
                                                  styleClass="edit-button rounded-button ui-button-info"
-                                                 process="@this">
-                                    <f:setPropertyActionListener value="#{hall}"
-                                                                 target="#{hallBean.hall}"/>
+                                                 process="@this"
+                                                 actionListener="#{hallBean.openEdit(hall)}">
                                 </p:commandButton>
 
                             </p:column>
@@ -87,12 +93,22 @@
 
                             <div class="field">
                                 <p:outputLabel for="buildingName">Building Name :</p:outputLabel>
-                                <p:inputText id="buildingName" value="#{hallBean.hall.buildingByBuildingId.name}" required="true"/>
-                            </div>
+                                <p:autoComplete id="buildingName"
+                                                converter="#{buildingConverter}"
+                                                value="#{hallBean.hall.buildingByBuildingId}"
+                                                completeMethod="#{buildingBean.searchBuildingByName}"
+                                                var="building"
+                                                itemValue="#{building}"
+                                                itemLabel="#{building.name}"
+                                                dropdown="true"
+                                                forceSelection="true" >
+                                    <p:ajax event="itemSelect" update="buildingName"/>
+<!--                                    <p:column>-->
+<!--                                        #{building.name} (#{building.addresseByAdresseId.cityByCityId.name})-->
+<!--                                    </p:column>-->
+                                </p:autoComplete>
 
-                            <div class="field">
-                                <p:outputLabel for="city">City :</p:outputLabel>
-                                <p:inputText id="city" value="#{hallBean.hall.buildingByBuildingId.addresseByAdresseId.cityByCityId.name}" required="true"/>
+
                             </div>
 
                             <div class="field">
@@ -106,19 +122,61 @@
 
                             </div>
 
-                            <p:commandButton value="Create Hall" action="#{hallBean.createHall}"
-                                             update=":listForm:dt-halls :growl"
-                                             process="@form" resetValues="true"
-                                             styleClass="ui-button-success"
-                                             oncomplete="PF('manageHallDialog').hide();"/>
+                            <div class="field">
+                                <p:outputLabel for="hourlyRate">Hourly Rate:</p:outputLabel>
+                                <p:inputNumber id="hourlyRate" min="0" max="1000" value="#{hallBean.hall.hourlyRate}" required="true"/>
+                            </div>
 
-                            <p:commandButton value="Update Hall" action="#{hallBean.updateHall}"
+                            <p:commandButton value="Save" action="#{hallBean.save}"
                                              update=":listForm:dt-halls :growl"
-                                             process="@form" resetValues="true"
-                                             styleClass="ui-button-primary"
+                                             process="@form"
+                                             resetValues="true"
+                                             styleClass="ui-button-success"
                                              oncomplete="PF('manageHallDialog').hide();"/>
                         </h:form>
                     </p:dialog>
+
+
+                    <p:dialog header="Manage Schedule" showEffect="fade" modal="true"
+                              widgetVar="manageScheduleDialog" responsive="true" dynamic="true" >
+                        <div class="card">
+                        <h:form id="manageScheduleForm">
+                            <!-- DataTable for Schedule -->
+                            <p:dataTable var="schedule" value="#{hallScheduleBean.sortedDefinitiveSchedules}">
+                                <!-- Colonne pour le jour -->
+                                <p:column headerText="Jour">
+                                    <h:outputText value="#{hallScheduleBean.getWeekdayName(schedule.weekDay)}" />
+                                </p:column>
+
+                                <!-- Colonne pour l'heure d'ouverture -->
+                                <p:column headerText="Heure d'ouverture">
+                                    <p:datePicker triggerButtonIcon="pi pi-clock" value="#{schedule.openinghoursByOpeningHoursId.openingTime}" timeOnly="true" pattern="HH:mm" showIcon="true" showOnFocus="false" />
+                                </p:column>
+
+                                <!-- Colonne pour l'heure de fermeture -->
+                                <p:column headerText="Heure de fermeture">
+                                    <p:datePicker triggerButtonIcon="pi pi-clock" value="#{schedule.openinghoursByOpeningHoursId.closingTime}" timeOnly="true" pattern="HH:mm" showIcon="true" showOnFocus="false" />
+                                </p:column>
+
+                                <!-- Colonne pour indiquer si le jour est fermé ou ouvert -->
+                                <p:column headerText="Fermé">
+                                    <p:selectBooleanCheckbox value="#{hallScheduleBean.isClosed(schedule)}">
+                                        <p:ajax listener="#{hallScheduleBean.closeSchedule(schedule)}" update="@this" />
+                                    </p:selectBooleanCheckbox>
+                                </p:column>
+                            </p:dataTable>
+
+                            <p:commandButton value="Enregistrer" action="#{hallScheduleBean.saveSchedule}" update=":listForm:dt-halls :growl" process="@form" />
+
+
+                            <p:commandButton value="Enregistrer" action="#{hallScheduleBean.saveSchedule}"
+                                             update=":listForm:dt-halls :growl"
+                                             process="@form" />
+                        </h:form>
+                    </div>
+                    </p:dialog>
+
+
 
                 </div>
             </div>

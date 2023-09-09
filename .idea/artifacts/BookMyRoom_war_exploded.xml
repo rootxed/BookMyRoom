@@ -27,7 +27,6 @@
           <element id="library" level="project" name="Maven: mysql:mysql-connector-java:5.1.47" />
           <element id="library" level="project" name="Maven: log4j:log4j:1.2.17" />
           <element id="library" level="project" name="Maven: org.primefaces:primefaces:12.0.0" />
-          <element id="library" level="project" name="Maven: org.primefaces.themes:barcelona:5.1.0" />
           <element id="library" level="project" name="Maven: com.sun.mail:javax.mail:1.6.2" />
           <element id="library" level="project" name="Maven: javax.activation:activation:1.1" />
           <element id="library" level="project" name="Maven: org.apache.shiro:shiro-core:1.12.0" />
