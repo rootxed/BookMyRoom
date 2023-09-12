@@ -73,12 +73,12 @@ public class HallService extends ServiceImpl<HallEntity> {
         Collection<HallScheduleEntity> schedules = new ArrayList<>();
 
         //Getting the date of the day
-        Date todayDate = Date.valueOf(LocalDate.now());
+        LocalDate todayDate = LocalDate.now();
 
         //Setting Default OpeningTime And Closing time 00:00 for closed by default
         OpeningHoursEntity newOpeningHour = new OpeningHoursEntity();
-        newOpeningHour.setOpeningTime(Time.valueOf(LocalTime.MIDNIGHT));
-        newOpeningHour.setClosingTime(Time.valueOf(LocalTime.MIDNIGHT));
+        newOpeningHour.setOpeningTime(LocalTime.MIDNIGHT);
+        newOpeningHour.setClosingTime(LocalTime.MIDNIGHT);
 
         OpeningHoursEntity defaultOpeningHour = openingHoursService.findOrCreateOpeningHour(newOpeningHour, em);
 

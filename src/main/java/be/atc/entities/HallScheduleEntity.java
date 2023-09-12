@@ -1,7 +1,8 @@
 package be.atc.entities;
 
 import javax.persistence.*;
-import java.sql.Date;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.Objects;
 
 @NamedQueries({
@@ -18,7 +19,26 @@ import java.util.Objects;
         @NamedQuery(name = "HallSchedule.findDefinitiveScheduleForHall",
                 query = "SELECT hs FROM HallScheduleEntity hs " +
                         "WHERE hs.hallByHallId = :hall " +
-                        "AND (hs.endingDate IS NULL)")
+                        "AND (hs.endingDate IS NULL)"),
+        @NamedQuery(name = "HallSchedule.findNotPassedTempScheduleForHall",
+                query = "SELECT hs FROM HallScheduleEntity hs " +
+                        "WHERE hs.hallByHallId = :hall " +
+                        "AND (hs.endingDate >= :currentDate)"),
+        @NamedQuery(name = "HallSchedule.findByHallSchedule",
+                query = "SELECT hs FROM HallScheduleEntity hs " +
+                        "WHERE hs.weekDay = :weekDay "+
+                        "AND hs.weekDay = :weekDay "+
+                        "AND hs.beginningDate = :beginningDate "+
+                        "AND hs.endingDate = :endingDate "+
+                        "AND hs.hallByHallId = :hall "+
+                        "AND hs.openinghoursByOpeningHoursId = :openingHours"),
+        @NamedQuery(name = "HallSchedule.findByOldHallSchedule",
+                query = "SELECT hs FROM HallScheduleEntity hs " +
+                        "WHERE hs.weekDay = :weekDay "+
+                        "AND hs.weekDay = :weekDay "+
+                        "AND hs.hallByHallId = :hall "+
+                        "AND hs.endingDate = null")
+
 
 
 })
@@ -28,8 +48,8 @@ import java.util.Objects;
 public class HallScheduleEntity {
     private int id;
     private short weekDay;
-    private Date beginningDate;
-    private Date endingDate;
+    private LocalDate beginningDate;
+    private LocalDate endingDate;
     private HallEntity hallByHallId;
     private OpeningHoursEntity openinghoursByOpeningHoursId;
 
@@ -56,21 +76,21 @@ public class HallScheduleEntity {
 
     @Basic
     @Column(name = "BeginningDate", nullable = false)
-    public Date getBeginningDate() {
+    public LocalDate getBeginningDate() {
         return beginningDate;
     }
 
-    public void setBeginningDate(Date beginningDate) {
+    public void setBeginningDate(LocalDate beginningDate) {
         this.beginningDate = beginningDate;
     }
 
     @Basic
     @Column(name = "EndingDate", nullable = true)
-    public Date getEndingDate() {
+    public LocalDate getEndingDate() {
         return endingDate;
     }
 
-    public void setEndingDate(Date endingDate) {
+    public void setEndingDate(LocalDate endingDate) {
         this.endingDate = endingDate;
     }
 
@@ -97,7 +117,7 @@ public class HallScheduleEntity {
         this.hallByHallId = hallByHallId;
     }
 
-    @ManyToOne
+    @ManyToOne (cascade = CascadeType.PERSIST)
     @JoinColumn(name = "OpeningHoursID", referencedColumnName = "ID", nullable = false)
     public OpeningHoursEntity getOpeninghoursByOpeningHoursId() {
         return openinghoursByOpeningHoursId;

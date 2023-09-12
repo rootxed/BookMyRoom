@@ -11,6 +11,7 @@ import org.primefaces.model.DefaultScheduleEvent;
 import org.primefaces.model.DefaultScheduleModel;
 import org.primefaces.model.ScheduleModel;
 
+import javax.annotation.PostConstruct;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -19,11 +20,9 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.NamedQuery;
 import java.io.Serializable;
 import java.sql.Time;
+import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -40,12 +39,21 @@ public class HallScheduleBean implements Serializable {
     private OpeningHoursService openingHoursService;
 
     private List<HallScheduleEntity> schedules;
+
+    private List<HallScheduleEntity> tempSchedules;
+
     private ScheduleModel scheduleModel;
 
     private HallEntity selectedHall;
 
     private List<HallScheduleEntity> sortedDefinitiveSchedules;
 
+    private HallScheduleEntity hallSchedule;
+
+    @PostConstruct
+    public void init() {
+        hallSchedule = new HallScheduleEntity();
+    }
 
     public void initScheduleModel() {
         scheduleModel = new DefaultScheduleModel();
@@ -59,11 +67,23 @@ public class HallScheduleBean implements Serializable {
 
 
     public List<HallScheduleEntity> getScheduleForHall(HallEntity hall) {
+        selectedHall = hall;
         log.info("Getting Schedules for hall : " +hall.getName());
         EntityManager em = EMF.getEM();
         try {
             schedules = hallScheduleService.findAllDefinitiveHallScheduleForHallOrNull(hall, em);
             return schedules;
+        } finally {
+            em.close();
+        }
+    }
+
+    public List<HallScheduleEntity> getTemporarySchedulesForHall(HallEntity hall) {
+        log.info("Getting temporary Schedules for hall : " +hall.getName());
+        EntityManager em = EMF.getEM();
+        try {
+            tempSchedules = hallScheduleService.findAllNotPassedTemporaryHallScheduleForHallOrNull(hall, em);
+            return tempSchedules;
         } finally {
             em.close();
         }
@@ -105,6 +125,7 @@ public class HallScheduleBean implements Serializable {
         }
     }
 
+
     public HallScheduleEntity getScheduleForDay(int day) {
         if (schedules == null) {
             return new HallScheduleEntity();
@@ -119,46 +140,88 @@ public class HallScheduleBean implements Serializable {
         return new HallScheduleEntity();
     }
 
-    public void saveHallSchedules() {
+    public void saveDefinitiveHallSchedules() {
+        EntityManager em = EMF.getEM();
+        EntityTransaction tx = em.getTransaction();
+
+            try {
+                tx.begin();
+
+                for (HallScheduleEntity currentSchedule : schedules) {
+                    OpeningHoursEntity existingOpeningHours = openingHoursService.findOpeningHoursByOpeningTimeAndClosingTimeOrNull(currentSchedule.getOpeninghoursByOpeningHoursId(), em);
+
+                    if (existingOpeningHours != null) {
+                        // Si l'opening time existe, l'utiliser
+                        currentSchedule.setOpeninghoursByOpeningHoursId(existingOpeningHours);
+                    }
+
+                    // Vérifier si cet HallSchedule existe déjà
+                    boolean scheduleAlreadyExist = hallScheduleService.exist(currentSchedule, em);
+
+                    if (!scheduleAlreadyExist) {
+                        // Rajouter la date d'aujourd'hui en date de fin de l'ancien horaire,
+                        hallScheduleService.endOldHallSchedule(currentSchedule,em);
+                        // Créer un nouveau horaire
+                        hallScheduleService.insert(currentSchedule,em);
+                    }
+                }
+
+                tx.commit();
+            } catch (Exception e) {
+                if (tx != null && tx.isActive()) {
+                    tx.rollback();
+                }
+            } finally {
+                em.close();
+            }
+    }
+
+
+    public void saveTemporaryHallSchedule(){
         EntityManager em = EMF.getEM();
         EntityTransaction tx = null;
 
         try{
-            tx= em.getTransaction();
+            tx = em.getTransaction();
+            tx.begin();
 
-            for (HallScheduleEntity currentSchedule: schedules){
+            //Setting the selectedHall
+            hallSchedule.setHallByHallId(this.selectedHall);
+            log.info("hallid:"+this.selectedHall.getId() + " hallName: " + this.selectedHall.getName());
+            log.info("hallid:"+hallSchedule.getHallByHallId().getId() + " hallName: " + hallSchedule.getHallByHallId().getName());
 
-                OpeningHoursEntity existingOpeningHours = openingHoursService.findOpeningHoursByOpeningTimeAndClosingTimeOrNull(currentSchedule.getOpeninghoursByOpeningHoursId(),em);
+            OpeningHoursEntity existingOpeningHours = openingHoursService.findOpeningHoursByOpeningTimeAndClosingTimeOrNull(hallSchedule.getOpeninghoursByOpeningHoursId(),em);
 
-                if(existingOpeningHours != null) {
-                    //Si l'opening time existe, il faut l'utiliser
-                    currentSchedule.setOpeninghoursByOpeningHoursId(existingOpeningHours);
-                }
-
+            if(existingOpeningHours != null) {
+                //Si l'opening time existe, il faut l'utiliser
+                hallSchedule.setOpeninghoursByOpeningHoursId(existingOpeningHours);
                 //Checking if this HallSchedule alreadyExist
-                boolean scheduleAlreadyExist = hallScheduleService.exist(currentSchedule, em);
-
-                if (scheduleAlreadyExist){
-                    //Do nothing it's ok
+                boolean scheduleAlreadyExist = hallScheduleService.exist(hallSchedule, em);
+                if (scheduleAlreadyExist) {
+                    log.info("This Schedule already exists !");
+                    // Lancer une exception personnalisée ici pour quitter immédiatement le try
+                    throw new Exception("This Schedule already exists !");
                 }
-                else {
-                    //Rajouter la date d'aujourd'hui en date de fin de l'ancien horaire,
-                    //Créer un nouveau horaire
-
-                }
-
-//                hallScheduleService.insert(currentSchedule,em);
-//                //Checking if this schedule already exist
-//                hallScheduleService.exist(currentSchedule, em);
 
             }
 
-        }finally {
+            hallScheduleService.insert(hallSchedule, em);
+            tx.commit();
+
+        }catch (Exception e){
+            log.warn("Error while saving temporary HallSchedule",e);
+            if (tx != null && tx.isActive()) {
+                tx.rollback();
+            }
+        }
+        finally {
             em.close();
+            getTemporarySchedulesForHall(selectedHall);
         }
 
-
     }
+
+
 
     public boolean isClosed(HallScheduleEntity schedule) {
 
@@ -166,8 +229,8 @@ public class HallScheduleBean implements Serializable {
             return true; // Si schedule ou OpeninghoursByOpeningHoursId est null, considérez que l'horaire est fermé
         }
 
-        Time openingTime = schedule.getOpeninghoursByOpeningHoursId().getOpeningTime();
-        Time closingTime = schedule.getOpeninghoursByOpeningHoursId().getClosingTime();
+        LocalTime openingTime = schedule.getOpeninghoursByOpeningHoursId().getOpeningTime();
+        LocalTime closingTime = schedule.getOpeninghoursByOpeningHoursId().getClosingTime();
 
         // Si l'openingTime est null, considérez que l'horaire est fermé
         if (openingTime == null || closingTime == null) {
@@ -178,11 +241,11 @@ public class HallScheduleBean implements Serializable {
                 closingTime.equals(Time.valueOf(LocalTime.MIDNIGHT));
     }
 
-    public void closeSchedule(HallScheduleEntity hallSchedule) {
-        int index = getIndexForWeekDay(hallSchedule.getWeekDay());
-        sortedDefinitiveSchedules.get(index).getOpeninghoursByOpeningHoursId().setOpeningTime(Time.valueOf(LocalTime.MIDNIGHT));
-        sortedDefinitiveSchedules.get(index).getOpeninghoursByOpeningHoursId().setClosingTime(Time.valueOf(LocalTime.MIDNIGHT));
-    }
+//    public void closeSchedule(HallScheduleEntity hallSchedule) {
+//        int index = getIndexForWeekDay(hallSchedule.getWeekDay());
+//        sortedDefinitiveSchedules.get(index).getOpeninghoursByOpeningHoursId().setOpeningTime(Time.valueOf(LocalTime.MIDNIGHT));
+//        sortedDefinitiveSchedules.get(index).getOpeninghoursByOpeningHoursId().setClosingTime(Time.valueOf(LocalTime.MIDNIGHT));
+//    }
 
     private int getIndexForWeekDay(short weekDay) {
         int index = weekDay - 1;
@@ -192,6 +255,24 @@ public class HallScheduleBean implements Serializable {
         }
         return index;
     }
+
+    public void openNewHallSchedule(){
+        this.hallSchedule = new HallScheduleEntity();
+        this.hallSchedule.setOpeninghoursByOpeningHoursId(new OpeningHoursEntity());
+        log.info("HallSchedule initialized");
+        log.info("hallname="+selectedHall);
+    }
+
+    public void openHallSchedule(HallEntity hall){
+        selectedHall = hall;
+        getSortedSchedules(selectedHall);
+        getTemporarySchedulesForHall(selectedHall);
+    }
+
+    public LocalDate getCurrentDate(){
+        return (LocalDate.now());
+    }
+
 
 
 
@@ -265,5 +346,21 @@ public class HallScheduleBean implements Serializable {
 
     public void setSortedDefinitiveSchedules(List<HallScheduleEntity> sortedDefinitiveSchedules) {
         this.sortedDefinitiveSchedules = sortedDefinitiveSchedules;
+    }
+
+    public List<HallScheduleEntity> getTempSchedules() {
+        return tempSchedules;
+    }
+
+    public void setTempSchedules(List<HallScheduleEntity> tempSchedules) {
+        this.tempSchedules = tempSchedules;
+    }
+
+    public HallScheduleEntity getHallSchedule() {
+        return hallSchedule;
+    }
+
+    public void setHallSchedule(HallScheduleEntity hallSchedule) {
+        this.hallSchedule = hallSchedule;
     }
 }

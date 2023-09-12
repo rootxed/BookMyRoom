@@ -66,7 +66,7 @@
                                                 oncomplete="PF('manageScheduleDialog').show()"
                                                 styleClass="edit-button rounded-button ui-button-info"
                                                 process="@this"
-                                                 actionListener="#{hallScheduleBean.getSortedSchedules(hall)}">
+                                                 actionListener="#{hallScheduleBean.openHallSchedule(hall)}">
 
                                 </p:commandButton>
                                 <p:commandButton icon="pi pi-pencil" update=":manageHallForm"
@@ -138,11 +138,17 @@
 
 
                     <p:dialog header="Manage Schedule" showEffect="fade" modal="true"
-                              widgetVar="manageScheduleDialog" responsive="true" dynamic="true" >
-                        <div class="card">
+                              widgetVar="manageScheduleDialog" responsive="true" dynamic="true" height="600" width="1000" >
+
+
                         <h:form id="manageScheduleForm">
+                                <p:card>
+
                             <!-- DataTable for Schedule -->
-                            <p:dataTable var="schedule" value="#{hallScheduleBean.sortedDefinitiveSchedules}">
+                            <p:dataTable var="schedule" value="#{hallScheduleBean.sortedDefinitiveSchedules}" styleClass="scheduleTable">
+                                <f:facet name="header">
+                                    Horaire définitif
+                                </f:facet>
                                 <!-- Colonne pour le jour -->
                                 <p:column headerText="Jour">
                                     <h:outputText value="#{hallScheduleBean.getWeekdayName(schedule.weekDay)}" />
@@ -150,12 +156,12 @@
 
                                 <!-- Colonne pour l'heure d'ouverture -->
                                 <p:column headerText="Heure d'ouverture">
-                                    <p:datePicker triggerButtonIcon="pi pi-clock" value="#{schedule.openinghoursByOpeningHoursId.openingTime}" timeOnly="true" pattern="HH:mm" showIcon="true" showOnFocus="false" />
+                                    <p:datePicker value="#{schedule.openinghoursByOpeningHoursId.openingTime}" timeOnly="true" pattern="HH:mm" showIcon="true" showOnFocus="false" styleClass="timeInput"/>
                                 </p:column>
 
                                 <!-- Colonne pour l'heure de fermeture -->
                                 <p:column headerText="Heure de fermeture">
-                                    <p:datePicker triggerButtonIcon="pi pi-clock" value="#{schedule.openinghoursByOpeningHoursId.closingTime}" timeOnly="true" pattern="HH:mm" showIcon="true" showOnFocus="false" />
+                                    <p:datePicker value="#{schedule.openinghoursByOpeningHoursId.closingTime}" type="" timeOnly="true" pattern="HH:mm" showIcon="true" showOnFocus="false" styleClass="timeInput" />
                                 </p:column>
 
                                 <!-- Colonne pour indiquer si le jour est fermé ou ouvert -->
@@ -164,19 +170,130 @@
                                         <p:ajax listener="#{hallScheduleBean.closeSchedule(schedule)}" update="@this" />
                                     </p:selectBooleanCheckbox>
                                 </p:column>
+
+                                <p:column headerText="Date de début">
+                                    <p:outputLabel for="DefinitivestartDate" styleClass="input-label">Date de début :</p:outputLabel>
+                                    <p:datePicker id="DefinitivestartDate" value="#{schedule.beginningDate}" pattern="dd/MM/yyyy" mindate="#{hallScheduleBean.getCurrentDate()}">
+                                    </p:datePicker>
+                                </p:column>
                             </p:dataTable>
 
-                            <p:commandButton value="Enregistrer" action="#{hallScheduleBean.saveSchedule}" update=":listForm:dt-halls :growl" process="@form" />
 
 
                             <p:commandButton value="Enregistrer" action="#{hallScheduleBean.saveSchedule}"
                                              update=":listForm:dt-halls :growl"
                                              process="@form" />
+
+                            </p:card>
+
+                            <p:card>
+                            <!-- DataTable for Schedule -->
+                            <p:dataTable id="dt-tempSchedule" var="tempSchedule" value="#{hallScheduleBean.tempSchedules}">
+
+                                <f:facet name="header">
+                                    Horaire Temporaire
+                                        <!-- Bouton pour soumettre le formulaire -->
+                                    <p:commandButton value="Add"
+                                                     icon="pi pi-plus"
+                                                     update=":addTemporaryScheduleForm"
+                                                     oncomplete="PF('addTemporaryScheduleDialog').show()"
+                                                     action="#{hallScheduleBean.openNewHallSchedule()}"
+                                                     styleClass="ui-button-success" style="margin-right: .5rem"/>
+                                </f:facet>
+                                <!-- Colonne pour le jour -->
+                                <p:column headerText="Jour">
+                                    <h:outputText value="#{hallScheduleBean.getWeekdayName(tempSchedule.weekDay)}" />
+                                </p:column>
+
+                                <!-- Colonne pour date de début -->
+                                <p:column headerText="Date de début">
+                                    <h:outputText value="#{tempSchedule.beginningDate}" type="date" dateStyle="short" >
+                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                    </h:outputText>
+                                </p:column>
+
+                                <!-- Colonne pour date de fin -->
+                                <p:column headerText="Date de fin">
+                                    <h:outputText value="#{tempSchedule.endingDate}" type="date" dateStyle="short" >
+                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                    </h:outputText>
+                                </p:column>
+
+                                <!-- Colonne pour l'heure d'ouverture -->
+                                <p:column headerText="Heure d'ouverture">
+                                    <h:outputText value="#{tempSchedule.openinghoursByOpeningHoursId.openingTime}" type="time" />
+                                </p:column>
+
+                                <!-- Colonne pour l'heure de fermeture -->
+                                <p:column headerText="Heure de fermeture">
+                                    <h:outputText value="#{tempSchedule.openinghoursByOpeningHoursId.closingTime}" type="time" />
+                                </p:column>
+
+                            </p:dataTable>
+                            </p:card>
                         </h:form>
-                    </div>
                     </p:dialog>
 
+                    <p:dialog header="Add Temporary Schedule" showEffect="fade" modal="true"
+                              widgetVar="addTemporaryScheduleDialog" responsive="true" dynamic="true" >
 
+                        <h:form id="addTemporaryScheduleForm" styleClass="insert-form">
+                            <div class="field">
+                                <!-- Sélection du jour -->
+                                <p:outputLabel for="daySelection" styleClass="input-label">Jour :</p:outputLabel>
+                                <p:selectOneMenu id="daySelection" value="#{hallScheduleBean.hallSchedule.weekDay}" styleClass="input-control">
+                                    <f:selectItem itemLabel="Lundi" itemValue="1" />
+                                    <f:selectItem itemLabel="Mardi" itemValue="2" />
+                                    <f:selectItem itemLabel="Mercredi" itemValue="3" />
+                                    <f:selectItem itemLabel="Jeudi" itemValue="4" />
+                                    <f:selectItem itemLabel="Venredi" itemValue="5" />
+                                    <f:selectItem itemLabel="Samedi" itemValue="6" />
+                                    <f:selectItem itemLabel="Dimanche" itemValue="7" />
+                                </p:selectOneMenu>
+                            </div>
+
+                            <div class="field">
+                                <!-- Sélection de la date de début -->
+                                <p:outputLabel for="startDate" styleClass="input-label">Date de début :</p:outputLabel>
+                                <p:datePicker id="startDate" value="#{hallScheduleBean.hallSchedule.beginningDate}" pattern="dd/MM/yyyy" mindate="#{hallScheduleBean.getCurrentDate()}" styleClass="input-control" >
+                                    <p:ajax update="endDate" />
+                                </p:datePicker>
+                            </div>
+
+                            <div class="field">
+                                <!-- Sélection de la date de fin -->
+                                <p:outputLabel for="endDate" styleClass="input-label">Date de fin :</p:outputLabel>
+                                <p:datePicker id="endDate" value="#{hallScheduleBean.hallSchedule.endingDate}" pattern="dd/MM/yyyy" mindate="#{hallScheduleBean.hallSchedule.beginningDate}" styleClass="input-control"/>
+                            </div>
+
+                            <div class="field">
+                                <!-- Sélection de l'heure de début -->
+                                <p:outputLabel for="tempStartTime" styleClass="input-label">Heure de début :</p:outputLabel>
+                                <p:datePicker  id="tempStartTime" value="#{hallScheduleBean.hallSchedule.openinghoursByOpeningHoursId.openingTime}" timeOnly="true" pattern="HH:mm" styleClass="input-control">
+                                    <p:ajax update="tempEndTime" />
+                                </p:datePicker>
+                            </div>
+
+                            <div class="field">
+                                <!-- Sélection de l'heure de fin -->
+                                <p:outputLabel for="tempEndTime" styleClass="input-label">Heure de fin :</p:outputLabel>
+                                <p:datePicker id="tempEndTime" value="#{hallScheduleBean.hallSchedule.openinghoursByOpeningHoursId.closingTime}" timeOnly="true" pattern="HH:mm" mindate="#{hallScheduleBean.hallSchedule.openinghoursByOpeningHoursId.openingTime}" styleClass="input-control"/>
+                            </div>
+
+                            <div class="center-button">
+                            <!-- Bouton pour soumettre le formulaire -->
+                            <p:commandButton value="Ajouter" action="#{hallScheduleBean.saveTemporaryHallSchedule()}"
+                                             process="@form"
+                                             resetValues="true"
+                                             styleClass="ui-button-success"
+                                             style="width: 200px"
+                                             oncomplete="PF('addTemporaryScheduleDialog').hide();"
+                                             update="manageScheduleForm:dt-tempSchedule" />
+                            </div>
+
+                        </h:form>
+
+                    </p:dialog>
 
                 </div>
             </div>
