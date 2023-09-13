@@ -146,7 +146,7 @@
 
                             <!-- DataTable for Schedule -->
                             <p:dataTable var="schedule" value="#{hallScheduleBean.sortedDefinitiveSchedules}" styleClass="scheduleTable" editable="true">
-                                <p:ajax event="rowEdit" listener="#{hallScheduleBean.onRowEdit}" update=":manageHallForm"/>
+                                <p:ajax event="rowEdit" listener="#{hallScheduleBean.onRowEdit}" update="manageHallForm"/>
                                 <p:ajax event="rowEditCancel" listener="#{hallScheduleBean.onRowCancel}" update=":manageHallForm" />
 
                                 <f:facet name="header">
@@ -223,7 +223,9 @@
 
                             <p:card>
                             <!-- DataTable for Schedule -->
-                            <p:dataTable id="dt-tempSchedule" var="tempSchedule" value="#{hallScheduleBean.tempSchedules}">
+                            <p:dataTable id="dt-tempSchedule" var="tempSchedule" value="#{hallScheduleBean.tempSchedules}"
+                                         rowKey="#{tempSchedule.id}" paginator="true" rows="5" rowSelectMode="add"
+                                         paginatorPosition="bottom">
 
                                 <f:facet name="header">
                                     Horaire Temporaire

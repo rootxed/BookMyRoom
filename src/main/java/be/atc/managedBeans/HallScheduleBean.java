@@ -324,6 +324,7 @@ public class HallScheduleBean implements Serializable {
         HallScheduleEntity schedule = (HallScheduleEntity) event.getObject();
         log.info("Hall: " + schedule.getHallByHallId().getName() +" "+ schedule.getOpeninghoursByOpeningHoursId().getOpeningTime()+" "+ schedule.getOpeninghoursByOpeningHoursId().getClosingTime());
         saveDefinitiveHallSchedules(schedule);
+        getTemporarySchedulesForHall(schedule.getHallByHallId());
     }
 
     public void initializeClosedStatus(HallScheduleEntity hallSchedule){
