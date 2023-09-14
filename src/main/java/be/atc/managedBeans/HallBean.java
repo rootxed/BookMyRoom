@@ -1,12 +1,12 @@
 package be.atc.managedBeans;
 
-import be.atc.entities.CategoryEntity;
-import be.atc.entities.HallCategoryEntity;
-import be.atc.entities.HallEntity;
+import be.atc.entities.*;
 import be.atc.services.HallCategoryService;
+import be.atc.services.HallScheduleService;
 import be.atc.services.HallService;
 import be.atc.tools.EMF;
 import org.apache.log4j.Logger;
+import org.primefaces.event.SelectEvent;
 
 import javax.annotation.PostConstruct;
 import javax.faces.view.ViewScoped;
@@ -15,8 +15,9 @@ import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Named
 @ViewScoped
@@ -29,6 +30,9 @@ public class HallBean implements Serializable {
 
     @Inject
     private HallCategoryService hallCategoryService;
+
+    @Inject
+    private HallScheduleService hallScheduleService;
 
     private List<HallEntity> halls;
 
@@ -57,8 +61,13 @@ public class HallBean implements Serializable {
         List<HallEntity> fetchedHalls = new ArrayList<>();
         try {
             fetchedHalls = hallService.findAllOrNull(em);
+
+            // Rafraîchir manuellement les associations hallcategoriesbyID pour chaque hall
+//            for (HallEntity hall : fetchedHalls) {
+//                em.refresh(hall); // Rafraîchir l'entité pour actualiser les associations
+//            }
         } catch (Exception e) {
-            log.error("An error occurred while fetching services.");
+            log.error("An error occurred while fetching Halls.");
         } finally {
             em.clear();
             em.close();
@@ -66,15 +75,20 @@ public class HallBean implements Serializable {
         return fetchedHalls;
     }
 
-    public void loadHallCategories(HallEntity selectedHall) {
-        EntityManager em = EMF.getEM();
-        try {
-            hallCategories = hallCategoryService.findAllCategoriesByHallOrNull(selectedHall, em);
-        } catch (Exception e) {
-            log.error("An error occurred while fetching categories for hall.", e);
-        } finally {
-            em.clear();
-            em.close();
+    public List<CategoryEntity> getSelectedCategories() {
+        List<CategoryEntity> selectedCategories = new ArrayList<>();
+        for (HallCategoryEntity hallCategory : hall.getHallcategoriesById()) {
+            selectedCategories.add(hallCategory.getCategoryByCategoryId());
+        }
+        return selectedCategories;
+    }
+
+    public void save() {
+        //Checking if the save is for an existing Hall or a new one
+        if(hall.getId() == 0){
+            createHall();
+        }else {
+            updateHall();
         }
     }
 
@@ -86,26 +100,20 @@ public class HallBean implements Serializable {
         try {
             boolean alreadyExist = hallService.exist(hall, em);
             if (alreadyExist) {
-                throw new RuntimeException("Can't create hall,this hall already exist.");
+                throw new RuntimeException("Can't create hall, this hall already exists.");
             }
 
             tx = em.getTransaction();
             log.info("Begin transaction to persist a new hall");
             tx.begin();
 
-            hallService.insert(hall, em);
-
-            //Insert the associated categories
-            for(CategoryEntity category : categories) {
-                HallCategoryEntity hallCategory = new HallCategoryEntity();
-                hallCategory.setHallByHallId(hall);
-                hallCategory.setCategoryByCategoryId(category);
-                hallCategoryService.insert(hallCategory, em);
-            }
+            hall.setHallcategoriesById(insertHallCategories());
+            //Create a hall with the default schedule
+            hallService.createHallWithDefaultSchedules(hall, em);
 
             tx.commit();
             log.info("Transaction committed, new hall persisted");
-            return "succes";
+            return "success";
 
         } catch (Exception e) {
             if (tx != null && tx.isActive()) {
@@ -118,7 +126,6 @@ public class HallBean implements Serializable {
             em.close();
             halls = getHalls();
         }
-
     }
 
     public String updateHall() {
@@ -126,37 +133,17 @@ public class HallBean implements Serializable {
         EntityManager em = EMF.getEM();
         EntityTransaction tx = null;
         try {
-
             tx = em.getTransaction();
             log.info("Begin transaction to update a hall");
             tx.begin();
 
+
+            hall.setHallcategoriesById(updateHallCategories(em));
             hallService.update(hall, em);
-
-            // Get existing hall-category associations for this hall
-            List<HallCategoryEntity> existingAssociations = hallCategoryService.findAllCategoriesByHallOrNull(hall, em);
-
-            // Update or delete existing associations based on the selected categories
-            for (HallCategoryEntity existingAssociation : existingAssociations) {
-                CategoryEntity associatedCategory = existingAssociation.getCategoryByCategoryId();
-                if (categories.contains(associatedCategory)) {
-                    categories.remove(associatedCategory); // Remove from categories list to prevent duplicates
-                } else {
-                    hallCategoryService.delete(existingAssociation, em);
-                }
-            }
-
-            // Insert new associations for the remaining selected categories
-            for (CategoryEntity category : categories) {
-                HallCategoryEntity hallCategory = new HallCategoryEntity();
-                hallCategory.setHallByHallId(hall);
-                hallCategory.setCategoryByCategoryId(category);
-                hallCategoryService.insert(hallCategory, em);
-            }
 
             tx.commit();
             log.info("Transaction committed, hall updated");
-            return "succes";
+            return "success";
 
         } catch (Exception e) {
             if (tx != null && tx.isActive()) {
@@ -165,9 +152,86 @@ public class HallBean implements Serializable {
             log.error("Failed to update hall", e);
             return "failure";
         } finally {
-            em.clear();
             em.close();
             halls = getHalls();
+        }
+    }
+
+    private List<HallCategoryEntity> insertHallCategories() {
+        // Prepare and insert hall-categories association
+        List<HallCategoryEntity> listHC = new ArrayList<>();
+        for (CategoryEntity category : categories) {
+            HallCategoryEntity hallCategory = new HallCategoryEntity();
+            hallCategory.setHallByHallId(hall);
+            hallCategory.setCategoryByCategoryId(category);
+            //hallCategoryService.insert(hallCategory, em);
+            listHC.add(hallCategory);
+        }
+        return listHC;
+    }
+
+
+    private List<HallCategoryEntity> updateHallCategories(EntityManager em) {
+        // Get existing hall-category associations for this hall
+        List<HallCategoryEntity> existingAssociations = hallCategoryService.findAllCategoriesByHallOrNull(hall, em);
+
+        // Create a map of existing associations for faster lookups
+        Map<CategoryEntity, HallCategoryEntity> existingAssociationsMap = new HashMap<>();
+        for (HallCategoryEntity existingAssociation : existingAssociations) {
+            existingAssociationsMap.put(existingAssociation.getCategoryByCategoryId(), existingAssociation);
+        }
+
+        // Prepare and insert hall-categories association
+        List<HallCategoryEntity> updatedAssociations = new ArrayList<>();
+        for (CategoryEntity category : categories) {
+            HallCategoryEntity hallCategory = existingAssociationsMap.get(category);
+
+            if (hallCategory == null) {
+                // Create a new association if it doesn't exist
+                hallCategory = new HallCategoryEntity();
+                hallCategory.setHallByHallId(hall);
+                hallCategory.setCategoryByCategoryId(category);
+            }
+
+            updatedAssociations.add(hallCategory);
+            existingAssociationsMap.remove(category); // Remove from the map
+        }
+
+        // Delete any remaining associations that are no longer selected
+        for (HallCategoryEntity associationToRemove : existingAssociationsMap.values()) {
+            hallCategoryService.delete(associationToRemove, em);
+        }
+
+        return updatedAssociations;
+    }
+
+
+//    private void updateHallCategories(EntityManager em) {
+//        // Get existing hall-category associations for this hall
+//        List<HallCategoryEntity> existingAssociations = hallCategoryService.findAllCategoriesByHallOrNull(hall, em);
+//
+//        // Compare existing associations with selected categories
+//        for (HallCategoryEntity existingAssociation : existingAssociations) {
+//            CategoryEntity associatedCategory = existingAssociation.getCategoryByCategoryId();
+//            if (categories.contains(associatedCategory)) {
+//                categories.remove(associatedCategory); // Remove from categories list to prevent duplicates
+//            } else {
+//                hallCategoryService.delete(existingAssociation, em);
+//            }
+//        }
+//
+//        // Insert new associations for the remaining selected categories
+//        for (CategoryEntity category : categories) {
+//            HallCategoryEntity hallCategory = new HallCategoryEntity();
+//            hallCategory.setHallByHallId(hall);
+//            hallCategory.setCategoryByCategoryId(category);
+//            hallCategoryService.insert(hallCategory, em);
+//        }
+//    }
+
+    private void deleteExistingHallCategories(EntityManager em) {
+        for (HallCategoryEntity hallCategory : hall.getHallcategoriesById()) {
+            hallCategoryService.delete(hallCategory, em);
         }
     }
 
@@ -175,6 +239,14 @@ public class HallBean implements Serializable {
         this.hall = new HallEntity();
         this.categories = new ArrayList<CategoryEntity>();
     }
+
+    public void openEdit(HallEntity selectedHall) {
+        hall = selectedHall;
+        categories = new ArrayList<>(hall.getHallcategoriesById().stream()
+                .map(HallCategoryEntity::getCategoryByCategoryId)
+                .collect(Collectors.toList()));
+    }
+
 
     public HallEntity getHall() {
         return hall;

@@ -1,20 +1,30 @@
 package be.atc.services;
 
-import be.atc.entities.BuildingEntity;
-import be.atc.entities.CategoryEntity;
-import be.atc.entities.HallEntity;
+import be.atc.entities.*;
 import be.atc.tools.EMF;
 import org.apache.log4j.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
+import java.sql.Time;
+import java.time.LocalDate;
+import java.sql.Date;
+import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 @ApplicationScoped
 public class HallService extends ServiceImpl<HallEntity> {
+
+    @Inject
+    private HallScheduleService hallScheduleService;
+
+    @Inject
+    private OpeningHoursService openingHoursService;
 
     private Logger log = org.apache.log4j.Logger.getLogger(HallService.class);
 
@@ -28,7 +38,8 @@ public class HallService extends ServiceImpl<HallEntity> {
         EntityManager em = EMF.getEM();
         try{
             return em.createNamedQuery("Hall.existsWithNameAndBuilding",HallEntity.class)
-                    .setParameter(name, building)
+                    .setParameter("name", name)
+                    .setParameter("building", building)
                     .getSingleResult();
         }catch (NoResultException e) {
             log.info("Query found no hall to return.");
@@ -51,9 +62,44 @@ public class HallService extends ServiceImpl<HallEntity> {
             List<HallEntity> hallList = query.getResultList();
             log.info("Selected all halls.");
             return hallList;
-        } catch (Exception e) {
+        } catch (NoResultException e) {
             log.info("Query found no halls to return");
             return null;
         }
+    }
+
+    public void createHallWithDefaultSchedules(HallEntity hall, EntityManager em) {
+
+        Collection<HallScheduleEntity> schedules = new ArrayList<>();
+
+        //Getting the date of the day
+        LocalDate todayDate = LocalDate.now();
+
+        //Setting Default OpeningTime And Closing time 00:00 for closed by default
+        OpeningHoursEntity newOpeningHour = new OpeningHoursEntity();
+        newOpeningHour.setOpeningTime(LocalTime.MIDNIGHT);
+        newOpeningHour.setClosingTime(LocalTime.MIDNIGHT);
+
+        OpeningHoursEntity defaultOpeningHour = openingHoursService.findOrCreateOpeningHour(newOpeningHour, em);
+
+        // Starting to persist the Hall
+        //insert(hall, em);
+
+        // Create a default schedule for all days of the week with the default opening time and today starting date
+        for (short day = 1; day <= 7; day++) {
+
+            HallScheduleEntity schedule = new HallScheduleEntity();
+            schedule.setWeekDay(day);
+            schedule.setHallByHallId(hall);
+            schedule.setOpeninghoursByOpeningHoursId(defaultOpeningHour);
+            schedule.setBeginningDate(todayDate);
+            schedule.setTemporary(false);
+            schedules.add(schedule);
+            //hallScheduleService.insert(schedule, em);
+            //hall.getHallschedulesById().add(schedule);
+
+        }
+        hall.setHallschedulesById(schedules);
+        insert(hall, em);
     }
 }

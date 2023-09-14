@@ -1,19 +1,29 @@
 package be.atc.entities;
 
 import javax.persistence.*;
-import java.sql.Time;
 import java.util.Collection;
 import java.util.Objects;
+import java.time.LocalTime;
+
+@NamedQueries({
+        @NamedQuery(name = "OpeningHours.findByOpeningTimeAndClosingTime",
+                query = "SELECT oh FROM OpeningHoursEntity oh " +
+                        "WHERE oh.openingTime = :openingTime " +
+                        "AND oh.closingTime = :closingTime")
+
+
+})
 
 @Entity
 @Table(name = "openinghours", schema = "bookmyroom", catalog = "")
 public class OpeningHoursEntity {
     private int id;
-    private Time openingTime;
-    private Time closingTime;
+    private LocalTime openingTime;
+    private LocalTime closingTime;
     private Collection<HallScheduleEntity> hallschedulesById;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID", nullable = false)
     public int getId() {
         return id;
@@ -25,21 +35,21 @@ public class OpeningHoursEntity {
 
     @Basic
     @Column(name = "OpeningTime", nullable = false)
-    public Time getOpeningTime() {
+    public LocalTime getOpeningTime() {
         return openingTime;
     }
 
-    public void setOpeningTime(Time openingTime) {
+    public void setOpeningTime(LocalTime openingTime) {
         this.openingTime = openingTime;
     }
 
     @Basic
     @Column(name = "ClosingTime", nullable = false)
-    public Time getClosingTime() {
+    public LocalTime getClosingTime() {
         return closingTime;
     }
 
-    public void setClosingTime(Time closingTime) {
+    public void setClosingTime(LocalTime closingTime) {
         this.closingTime = closingTime;
     }
 

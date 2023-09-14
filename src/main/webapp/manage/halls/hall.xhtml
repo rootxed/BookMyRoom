@@ -41,15 +41,15 @@
                             </p:column>
 
                             <p:column headerText="HourlyRate" sortBy="#{hall.hourlyRate}">
-                                <h:outputText value="#{hall.name}"/>
+                                <h:outputText value="#{hall.hourlyRate} €"/>
                             </p:column>
 
                             <p:column headerText="Building" sortBy="#{hall.buildingByBuildingId.name}">
                                 <h:outputText value="#{hall.buildingByBuildingId.name}"/>
                             </p:column>
 
-                            <p:column headerText="City" sortBy="#{hall.buildingByBuildingId.addresseByAdresseId.cityByCityId}">
-                                <h:outputText value="#{hall.buildingByBuildingId.addresseByAdresseId.cityByCityId}"/>
+                            <p:column headerText="City" sortBy="#{hall.buildingByBuildingId.addresseByAdresseId.cityByCityId.name}">
+                                <h:outputText value="#{hall.buildingByBuildingId.addresseByAdresseId.cityByCityId.name}"/>
                             </p:column>
 
                             <p:column headerText="Categories" sortBy="#{hall.hallcategoriesById}">
@@ -62,12 +62,18 @@
                             <!-- Add other columns as needed -->
 
                             <p:column headerText="Action" exportable="false">
+                                <p:commandButton icon="pi pi-calendar" update=":manageScheduleForm"
+                                                oncomplete="PF('manageScheduleDialog').show()"
+                                                styleClass="edit-button rounded-button ui-button-info"
+                                                process="@this"
+                                                 actionListener="#{hallScheduleBean.openHallSchedule(hall)}">
+
+                                </p:commandButton>
                                 <p:commandButton icon="pi pi-pencil" update=":manageHallForm"
                                                  oncomplete="PF('manageHallDialog').show()"
                                                  styleClass="edit-button rounded-button ui-button-info"
-                                                 process="@this">
-                                    <f:setPropertyActionListener value="#{hall}"
-                                                                 target="#{hallBean.hall}"/>
+                                                 process="@this"
+                                                 actionListener="#{hallBean.openEdit(hall)}">
                                 </p:commandButton>
 
                             </p:column>
@@ -87,12 +93,22 @@
 
                             <div class="field">
                                 <p:outputLabel for="buildingName">Building Name :</p:outputLabel>
-                                <p:inputText id="buildingName" value="#{hallBean.hall.buildingByBuildingId.name}" required="true"/>
-                            </div>
+                                <p:autoComplete id="buildingName"
+                                                converter="#{buildingConverter}"
+                                                value="#{hallBean.hall.buildingByBuildingId}"
+                                                completeMethod="#{buildingBean.searchBuildingByName}"
+                                                var="building"
+                                                itemValue="#{building}"
+                                                itemLabel="#{building.name}"
+                                                dropdown="true"
+                                                forceSelection="true" >
+                                    <p:ajax event="itemSelect" update="buildingName"/>
+<!--                                    <p:column>-->
+<!--                                        #{building.name} (#{building.addresseByAdresseId.cityByCityId.name})-->
+<!--                                    </p:column>-->
+                                </p:autoComplete>
 
-                            <div class="field">
-                                <p:outputLabel for="city">City :</p:outputLabel>
-                                <p:inputText id="city" value="#{hallBean.hall.buildingByBuildingId.addresseByAdresseId.cityByCityId.name}" required="true"/>
+
                             </div>
 
                             <div class="field">
@@ -106,22 +122,253 @@
 
                             </div>
 
-                            <p:commandButton value="Create Hall" action="#{hallBean.createHall}"
+                            <div class="field">
+                                <p:outputLabel for="hourlyRate">Hourly Rate:</p:outputLabel>
+                                <p:inputNumber id="hourlyRate" min="0" max="1000" value="#{hallBean.hall.hourlyRate}" required="true"/>
+                            </div>
+
+                            <p:commandButton value="Save" action="#{hallBean.save}"
                                              update=":listForm:dt-halls :growl"
-                                             process="@form" resetValues="true"
+                                             process="@form"
+                                             resetValues="true"
                                              styleClass="ui-button-success"
                                              oncomplete="PF('manageHallDialog').hide();"/>
-
-                            <p:commandButton value="Update Hall" action="#{hallBean.updateHall}"
-                                             update=":listForm:dt-halls :growl"
-                                             process="@form" resetValues="true"
-                                             styleClass="ui-button-primary"
-                                             oncomplete="PF('manageHallDialog').hide();"/>
                         </h:form>
+                    </p:dialog>
+
+
+                    <p:dialog header="Manage Schedule" showEffect="fade" modal="true"
+                              widgetVar="manageScheduleDialog" responsive="true" dynamic="true" height="600" width="1000" >
+
+
+                        <h:form id="manageScheduleForm">
+                                <p:card>
+
+                            <!-- DataTable for Schedule -->
+                            <p:dataTable id="dt-definitiveSchedule" var="schedule" value="#{hallScheduleBean.sortedDefinitiveSchedules}" styleClass="scheduleTable" editable="true">
+                                <p:ajax event="rowEdit" listener="#{hallScheduleBean.onRowEdit}" update=":manageScheduleForm:dt-definitiveSchedule :manageScheduleForm:dt-tempSchedule"/>
+                                <p:ajax event="rowEditCancel" listener="#{hallScheduleBean.onRowCancel}" update=":manageScheduleForm" />
+
+                                <f:facet name="header">
+                                    Horaire définitif
+                                </f:facet>
+                                <!-- Colonne pour le jour -->
+                                <p:column headerText="Jour">
+                                    <h:outputText value="#{hallScheduleBean.getWeekdayName(schedule.weekDay)}" />
+                                </p:column>
+
+                                <!-- Colonne pour l'heure d'ouverture -->
+                                <p:column headerText="Heure d'ouverture">
+                                    <p:cellEditor>
+                                        <f:facet name="output">
+                                            <h:outputText value="#{schedule.openinghoursByOpeningHoursId.openingTime}"/>
+                                        </f:facet>
+                                        <f:facet name="input">
+                                        <p:datePicker id="editedOpeningTime" value="#{schedule.openinghoursByOpeningHoursId.openingTime}" timeOnly="true" pattern="HH:mm" showIcon="true" showOnFocus="false" styleClass="timeInput">
+                                            <f:ajax event="valueChange"  onevent="checkTimeValues" />
+                                        </p:datePicker>
+                                        </f:facet>
+                                    </p:cellEditor>
+                                </p:column>
+
+                                <!-- Colonne pour l'heure de fermeture -->
+                                <p:column headerText="Heure de fermeture">
+                                    <p:cellEditor>
+                                        <f:facet name="output">
+                                            <h:outputText value="#{schedule.openinghoursByOpeningHoursId.closingTime}"/>
+                                        </f:facet>
+                                        <f:facet name="input">
+                                        <p:datePicker id="editedClosingTime" value="#{schedule.openinghoursByOpeningHoursId.closingTime}" timeOnly="true" pattern="HH:mm" showIcon="true" showOnFocus="false" styleClass="timeInput">
+                                            <p:ajax event="change" onevent="checkTimeValues" />
+                                        </p:datePicker>
+                                        </f:facet>
+                                    </p:cellEditor>
+                                </p:column>
+
+
+                                <p:column headerText="Fermé">
+<!--                                    <p:cellEditor>-->
+<!--                                        <f:facet name="output">-->
+                                            <p:selectBooleanCheckbox value="#{hallScheduleBean.isClosed(schedule)}" disabled="true" />
+<!--                                        </f:facet>-->
+<!--                                        <f:facet name="input">-->
+<!--                                            <p:selectBooleanCheckbox id="closedCheckbox" value="#{hallScheduleBean.initialClosedValue}" widgetVar="checkBox">-->
+<!--                                                <f:ajax event="change" onevent="handleClosedToggle" />-->
+<!--                                            </p:selectBooleanCheckbox>-->
+<!--                                        </f:facet>-->
+<!--                                    </p:cellEditor>-->
+                                </p:column>
+
+                                <p:column headerText="Date de début">
+                                    <p:cellEditor>
+                                        <f:facet name="output">
+                                            <h:outputText value="#{hallScheduleBean.formatLocalDate(schedule.beginningDate)}"/>
+                                        </f:facet>
+                                        <f:facet name="input">
+                                            <p:outputLabel for="DefinitivestartDate" styleClass="input-label">Date de début :</p:outputLabel>
+                                            <p:datePicker id="DefinitivestartDate" value="#{schedule.beginningDate}" pattern="dd/MM/yyyy" mindate="#{hallScheduleBean.getCurrentDate()}">
+                                            </p:datePicker>
+                                        </f:facet>
+                                    </p:cellEditor>
+                                </p:column>
+
+                                <p:column style="width:6rem">
+                                    <p:rowEditor editTitle="Edit Row" cancelTitle="Cancel Edit" saveTitle="Save Row">
+                                        <p:ajaxStatus   onstart="#{hallScheduleBean.initializeClosedStatus(schedule)}" />
+                                    </p:rowEditor>
+                                </p:column>
+                            </p:dataTable>
+
+                            </p:card>
+
+                            <p:card>
+                            <!-- DataTable for Schedule -->
+                            <p:dataTable id="dt-tempSchedule" var="tempSchedule" value="#{hallScheduleBean.tempSchedules}"
+                                         rowKey="#{tempSchedule.id}" paginator="true" rows="5" rowSelectMode="add"
+                                         paginatorPosition="bottom">
+
+                                <f:facet name="header">
+                                    Horaire Temporaire
+                                        <!-- Bouton pour soumettre le formulaire -->
+                                    <p:commandButton value="Add"
+                                                     icon="pi pi-plus"
+                                                     update=":addTemporaryScheduleForm"
+                                                     oncomplete="PF('addTemporaryScheduleDialog').show()"
+                                                     action="#{hallScheduleBean.openNewHallSchedule()}"
+                                                     styleClass="ui-button-success" style="margin-right: .5rem"/>
+                                </f:facet>
+                                <!-- Colonne pour le jour -->
+                                <p:column headerText="Jour">
+                                    <h:outputText value="#{hallScheduleBean.getWeekdayName(tempSchedule.weekDay)}" />
+                                </p:column>
+
+                                <!-- Colonne pour date de début -->
+                                <p:column headerText="Date de début">
+                                    <h:outputText value="#{hallScheduleBean.formatLocalDate(tempSchedule.beginningDate)}"/>
+                                </p:column>
+
+                                <!-- Colonne pour date de fin -->
+                                <p:column headerText="Date de fin">
+                                    <h:outputText value="#{hallScheduleBean.formatLocalDate(tempSchedule.endingDate)}"/>
+                                </p:column>
+
+                                <!-- Colonne pour l'heure d'ouverture -->
+                                <p:column headerText="Heure d'ouverture">
+                                    <h:outputText value="#{tempSchedule.openinghoursByOpeningHoursId.openingTime}" type="time" />
+                                </p:column>
+
+                                <!-- Colonne pour l'heure de fermeture -->
+                                <p:column headerText="Heure de fermeture">
+                                    <h:outputText value="#{tempSchedule.openinghoursByOpeningHoursId.closingTime}" type="time" />
+                                </p:column>
+
+                            </p:dataTable>
+                            </p:card>
+                        </h:form>
+                    </p:dialog>
+
+                    <p:dialog header="Add Temporary Schedule" showEffect="fade" modal="true"
+                              widgetVar="addTemporaryScheduleDialog" responsive="true" dynamic="true" >
+
+                        <h:form id="addTemporaryScheduleForm" styleClass="insert-form">
+                            <div class="field">
+                                <!-- Sélection du jour -->
+                                <p:outputLabel for="daySelection" styleClass="input-label">Jour :</p:outputLabel>
+                                <p:selectOneMenu id="daySelection" value="#{hallScheduleBean.hallSchedule.weekDay}" styleClass="input-control">
+                                    <f:selectItem itemLabel="Lundi" itemValue="1" />
+                                    <f:selectItem itemLabel="Mardi" itemValue="2" />
+                                    <f:selectItem itemLabel="Mercredi" itemValue="3" />
+                                    <f:selectItem itemLabel="Jeudi" itemValue="4" />
+                                    <f:selectItem itemLabel="Venredi" itemValue="5" />
+                                    <f:selectItem itemLabel="Samedi" itemValue="6" />
+                                    <f:selectItem itemLabel="Dimanche" itemValue="7" />
+                                </p:selectOneMenu>
+                            </div>
+
+                            <div class="field">
+                                <!-- Sélection de la date de début -->
+                                <p:outputLabel for="startDate" styleClass="input-label">Date de début :</p:outputLabel>
+                                <p:datePicker id="startDate" value="#{hallScheduleBean.hallSchedule.beginningDate}" pattern="dd/MM/yyyy"  styleClass="input-control" >
+                                    <p:ajax update="endDate" />
+                                </p:datePicker>
+                            </div>
+
+                            <div class="field">
+                                <!-- Sélection de la date de fin -->
+                                <p:outputLabel for="endDate" styleClass="input-label">Date de fin :</p:outputLabel>
+                                <p:datePicker id="endDate" value="#{hallScheduleBean.hallSchedule.endingDate}" pattern="dd/MM/yyyy"  styleClass="input-control"/>
+                            </div>
+
+                            <div class="field">
+                                <!-- Sélection de l'heure de début -->
+                                <p:outputLabel for="tempStartTime" styleClass="input-label">Heure de début :</p:outputLabel>
+                                <p:datePicker  id="tempStartTime" value="#{hallScheduleBean.hallSchedule.openinghoursByOpeningHoursId.openingTime}" timeOnly="true" pattern="HH:mm" styleClass="input-control">
+                                    <p:ajax update="tempEndTime" />
+                                </p:datePicker>
+                            </div>
+
+                            <div class="field">
+                                <!-- Sélection de l'heure de fin -->
+                                <p:outputLabel for="tempEndTime" styleClass="input-label">Heure de fin :</p:outputLabel>
+                                <p:datePicker id="tempEndTime" value="#{hallScheduleBean.hallSchedule.openinghoursByOpeningHoursId.closingTime}" timeOnly="true" pattern="HH:mm" mindate="#{hallScheduleBean.hallSchedule.openinghoursByOpeningHoursId.openingTime}" styleClass="input-control"/>
+                            </div>
+
+                            <div class="center-button">
+                            <!-- Bouton pour soumettre le formulaire -->
+                            <p:commandButton value="Ajouter" action="#{hallScheduleBean.saveTemporaryHallSchedule()}"
+                                             process="@form"
+                                             resetValues="true"
+                                             styleClass="ui-button-success"
+                                             style="width: 200px"
+                                             oncomplete="PF('addTemporaryScheduleDialog').hide();"
+                                             update="manageScheduleForm:dt-tempSchedule" />
+                            </div>
+
+                        </h:form>
+
                     </p:dialog>
 
                 </div>
             </div>
         </div>
+        <script type="text/javascript">
+            function handleClosedToggle(data) {
+                var closedCheckbox = document.querySelector('[id$="closedCheckbox_input"]');
+                var editedOpeningTime = document.querySelector('[id$="editedOpeningTime_input"]');
+                var editedClosingTime = document.querySelector('[id$="editedClosingTime_input"]');
+                console.log("Valeur de la case à cocher :", closedCheckbox.checked);
+                if (PF('checkBox').isChecked()) {
+                    // Si "Fermé" est coché, mettez à jour le texte de l'input à "Fermé"
+                    editedOpeningTime.value = "00:00";
+                    editedClosingTime.value = "00:00";
+                    PF('checkBox').check();
+                } else {
+                    editedOpeningTime.value = "00:00";
+                    editedClosingTime.value = "23:00";
+                    PF('checkBox').uncheck();
+                }
+            }
+
+            function checkTimeValues(data) {
+                var editedOpeningTime = document.querySelector('[id$="editedOpeningTime_input"]');
+                var editedClosingTime = document.querySelector('[id$="editedClosingTime_input"]');
+                var closedCheckbox = document.querySelector('[id$="closedCheckbox_input"]');
+
+                console.log("Valeur des heures :", editedOpeningTime.value, " et ", editedClosingTime.value);
+
+                if (editedOpeningTime.value === "00:00" &amp;&amp; editedClosingTime.value === "00:00" ) {
+                    // Si les deux heures sont à 00:00, cochez la case correspondante
+                    console.log("Changing checking");
+                    PF('checkBox').check();
+
+                } else {
+                    PF('checkBox').uncheck();
+
+                }
+            }
+
+
+        </script>
     </ui:define>
+
 </ui:composition>

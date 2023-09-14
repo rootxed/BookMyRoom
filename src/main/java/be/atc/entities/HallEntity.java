@@ -9,7 +9,7 @@ import java.util.Objects;
 @NamedQueries({
         @NamedQuery(name = "Hall.existsWithNameAndBuilding",
                 query = "SELECT h FROM HallEntity h WHERE h.name = :name AND h.buildingByBuildingId = :building"),
-        @NamedQuery(name = "Hall.findAll", query = "SELECT h FROM HallEntity h")
+        @NamedQuery(name = "Hall.findAll", query = "SELECT h FROM HallEntity h ORDER BY h.id DESC")
 })
 
 @Entity
@@ -24,6 +24,7 @@ public class HallEntity implements Serializable {
     private Collection<HallScheduleEntity> hallschedulesById;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID", nullable = false)
     public int getId() {
         return id;
@@ -85,7 +86,7 @@ public class HallEntity implements Serializable {
         this.buildingByBuildingId = buildingByBuildingId;
     }
 
-    @OneToMany(mappedBy = "hallByHallId")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "hallByHallId", cascade = CascadeType.ALL)
     public Collection<HallCategoryEntity> getHallcategoriesById() {
         return hallcategoriesById;
     }
@@ -94,7 +95,7 @@ public class HallEntity implements Serializable {
         this.hallcategoriesById = hallcategoriesById;
     }
 
-    @OneToMany(mappedBy = "hallByHallId")
+    @OneToMany(mappedBy = "hallByHallId", cascade = CascadeType.PERSIST)
     public Collection<HallScheduleEntity> getHallschedulesById() {
         return hallschedulesById;
     }

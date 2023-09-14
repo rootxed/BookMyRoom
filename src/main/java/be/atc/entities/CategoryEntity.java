@@ -18,6 +18,7 @@ public class CategoryEntity implements Serializable {
     private Collection<HallCategoryEntity> hallcategoriesById;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID", nullable = false)
     public int getId() {
         return id;

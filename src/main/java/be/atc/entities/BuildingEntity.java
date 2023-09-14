@@ -6,7 +6,9 @@ import java.util.Collection;
 import java.util.Objects;
 @NamedQueries( value = {
         @NamedQuery(name = "Building.findOneByName", query = "SELECT b FROM BuildingEntity b WHERE LOWER(b.name) = LOWER(:name)"),
-        @NamedQuery(name = "Building.findAll", query = "SELECT b FROM BuildingEntity b")
+        @NamedQuery(name = "Building.findAll", query = "SELECT b FROM BuildingEntity b"),
+        @NamedQuery(name = "Building.searchByName",
+                query = "SELECT b FROM BuildingEntity b WHERE b.name LIKE :name ORDER BY b.name ASC")
 })
 
 @Entity
@@ -18,6 +20,7 @@ public class BuildingEntity implements Serializable {
     private Collection<HallEntity> hallsById;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID", nullable = false)
     public int getId() {
         return id;

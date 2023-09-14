@@ -59,11 +59,16 @@ public class BuildingService extends  ServiceImpl<BuildingEntity>{
 
     }
 
-    public BuildingEntity searchBuildingsByName(String name, EntityManager em) throws IllegalArgumentException {
+    public List<BuildingEntity> searchBuildingsByName(String name, EntityManager em) throws IllegalArgumentException {
         log.info("Searching buildings starting with : " + name);
-
-        try{
-
+        try {
+            return em.createNamedQuery("Building.searchByName", BuildingEntity.class)
+                    .setParameter("name", name + "%")
+                    .setMaxResults(10)
+                    .getResultList();
+        } catch (NoResultException e) {
+            log.info("No buildings found for building for the name: " + name, e);
+            return null;
         }
     }
 }
