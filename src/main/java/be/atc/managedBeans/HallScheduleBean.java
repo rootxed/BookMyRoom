@@ -202,12 +202,14 @@ public class HallScheduleBean implements Serializable {
                     hallSchedule.setOpeninghoursByOpeningHoursId(existingOpeningHours);
                 }
 
+                hallSchedule.setTemporary(false);
                 // Vérifier si cet HallSchedule existe déjà
                 boolean scheduleAlreadyExist = hallScheduleService.exist(hallSchedule, em);
 
                 if (!scheduleAlreadyExist) {
                     // Rajouter la date d'aujourd'hui en date de fin de l'ancien horaire,
                     hallScheduleService.endOldHallSchedule(hallSchedule,em);
+                    em.flush();
                     // Créer un nouveau horaire
                     hallScheduleService.insert(hallSchedule,em);
                 }
@@ -219,7 +221,9 @@ public class HallScheduleBean implements Serializable {
                 tx.rollback();
             }
         } finally {
+            em.clear();
             em.close();
+            getTemporarySchedulesForHall(selectedHall);
         }
     }
 

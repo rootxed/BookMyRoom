@@ -145,9 +145,9 @@
                                 <p:card>
 
                             <!-- DataTable for Schedule -->
-                            <p:dataTable var="schedule" value="#{hallScheduleBean.sortedDefinitiveSchedules}" styleClass="scheduleTable" editable="true">
-                                <p:ajax event="rowEdit" listener="#{hallScheduleBean.onRowEdit}" update="manageHallForm"/>
-                                <p:ajax event="rowEditCancel" listener="#{hallScheduleBean.onRowCancel}" update=":manageHallForm" />
+                            <p:dataTable id="dt-definitiveSchedule" var="schedule" value="#{hallScheduleBean.sortedDefinitiveSchedules}" styleClass="scheduleTable" editable="true">
+                                <p:ajax event="rowEdit" listener="#{hallScheduleBean.onRowEdit}" update=":manageScheduleForm:dt-definitiveSchedule :manageScheduleForm:dt-tempSchedule"/>
+                                <p:ajax event="rowEditCancel" listener="#{hallScheduleBean.onRowCancel}" update=":manageScheduleForm" />
 
                                 <f:facet name="header">
                                     Horaire définitif

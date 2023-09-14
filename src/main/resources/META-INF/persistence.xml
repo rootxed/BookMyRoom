@@ -22,6 +22,11 @@
         <class>be.atc.entities.RolePermissionsEntity</class>
         <class>be.atc.entities.UserEntity</class>
 
+
+<!--        <properties>-->
+<!--            <property name="eclipselink.logging.level" value="FINE"/>-->
+<!--            <property name="eclipselink.logging.parameters" value="true"/>-->
+<!--        </properties>-->
 <!--        <properties>-->
 <!--            <property name="eclipselink.jdbc.url" value="jdbc:mysql://localhost:3306/bookmyroom"/>-->
 <!--            <property name="eclipselink.jdbc.driver" value="com.mysql.jdbc.Driver"/>-->

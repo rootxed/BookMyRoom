@@ -133,6 +133,7 @@ CREATE TABLE IF NOT EXISTS HallSchedule (
     WeekDay TINYINT NOT NULL,
     BeginningDate DATE NOT NULL,
     EndingDate DATE,
+    IsTemporary BOOLEAN NOT NULL,
     FOREIGN KEY (HallID) REFERENCES Hall(ID),
     FOREIGN KEY (OpeningHoursID) REFERENCES OpeningHours(ID)
 );

@@ -93,6 +93,7 @@ public class HallService extends ServiceImpl<HallEntity> {
             schedule.setHallByHallId(hall);
             schedule.setOpeninghoursByOpeningHoursId(defaultOpeningHour);
             schedule.setBeginningDate(todayDate);
+            schedule.setTemporary(false);
             schedules.add(schedule);
             //hallScheduleService.insert(schedule, em);
             //hall.getHallschedulesById().add(schedule);

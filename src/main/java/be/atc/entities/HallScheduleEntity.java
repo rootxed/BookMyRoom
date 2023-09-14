@@ -19,7 +19,8 @@ import java.util.Objects;
         @NamedQuery(name = "HallSchedule.findDefinitiveScheduleForHall",
                 query = "SELECT hs FROM HallScheduleEntity hs " +
                         "WHERE hs.hallByHallId = :hall " +
-                        "AND (hs.endingDate IS NULL)"),
+                        "AND hs.temporary = :isTemporary "+
+                        "AND (hs.endingDate IS NULL) "),
         @NamedQuery(name = "HallSchedule.findNotPassedTempScheduleForHall",
                 query = "SELECT hs FROM HallScheduleEntity hs " +
                         "WHERE hs.hallByHallId = :hall " +
@@ -31,13 +32,35 @@ import java.util.Objects;
                         "AND hs.beginningDate = :beginningDate "+
                         "AND hs.endingDate = :endingDate "+
                         "AND hs.hallByHallId = :hall "+
-                        "AND hs.openinghoursByOpeningHoursId = :openingHours"),
-        @NamedQuery(name = "HallSchedule.findByOldHallSchedule",
+                        "AND hs.openinghoursByOpeningHoursId = :openingHours "+
+                        "AND hs.temporary = :isTemporary"),
+        @NamedQuery(name = "HallSchedule.findActualDefinitiveHallSchedule",
                 query = "SELECT hs FROM HallScheduleEntity hs " +
                         "WHERE hs.weekDay = :weekDay "+
-                        "AND hs.weekDay = :weekDay "+
                         "AND hs.hallByHallId = :hall "+
-                        "AND hs.endingDate = null")
+                        "AND hs.temporary = :isTemporary " +
+                        "AND hs.endingDate = null"),
+        @NamedQuery(name = "HallSchedule.findAllDefinitiveHallSchedulesAfterDate",
+                query = "SELECT hs FROM HallScheduleEntity hs " +
+                        "WHERE hs.weekDay = :weekDay "+
+                        "AND hs.hallByHallId = :hall "+
+                        "AND hs.temporary = :isTemporary " +
+                        "AND hs.beginningDate >= :newBeginningDate"),
+        @NamedQuery(name = "HallSchedule.findAllDefinitiveHallSchedulesToEdit",
+                query = "SELECT hs FROM HallScheduleEntity hs " +
+                        "WHERE hs.weekDay = :weekDay "+
+                        "AND hs.hallByHallId = :hall "+
+                        "AND hs.temporary = :isTemporary " +
+                        "AND (hs.beginningDate >= :newBeginningDate OR hs.endingDate IS NULL)"),
+        @NamedQuery(name = "HallSchedule.findAllCurrentAndFutureDefinitiveSchedules",
+                query = "SELECT hs FROM HallScheduleEntity hs " +
+                        "WHERE hs.weekDay = :weekDay "+
+                        "AND hs.hallByHallId = :hall "+
+                        "AND hs.temporary = :isTemporary " +
+                        "AND (hs.endingDate >= :todayDate OR hs.endingDate IS NULL)")
+
+
+
 
 
 
@@ -52,6 +75,7 @@ public class HallScheduleEntity {
     private LocalDate endingDate;
     private HallEntity hallByHallId;
     private OpeningHoursEntity openinghoursByOpeningHoursId;
+    private boolean isTemporary;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -94,17 +118,27 @@ public class HallScheduleEntity {
         this.endingDate = endingDate;
     }
 
+    @Basic
+    @Column(name = "IsTemporary", nullable = false)
+    public boolean isTemporary() {
+        return isTemporary;
+    }
+
+    public void setTemporary(boolean temporary) {
+        isTemporary = temporary;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         HallScheduleEntity that = (HallScheduleEntity) o;
-        return id == that.id && weekDay == that.weekDay && Objects.equals(beginningDate, that.beginningDate) && Objects.equals(endingDate, that.endingDate);
+        return id == that.id && isTemporary == that.isTemporary && weekDay == that.weekDay && Objects.equals(beginningDate, that.beginningDate) && Objects.equals(endingDate, that.endingDate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, weekDay, beginningDate, endingDate);
+        return Objects.hash(id, weekDay, beginningDate, endingDate, isTemporary);
     }
 
     @ManyToOne
