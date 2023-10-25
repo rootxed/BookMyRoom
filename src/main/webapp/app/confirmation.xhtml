@@ -1,0 +1,59 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="content">
+        <div class="grid">
+            <div class="col">
+                <div class="card">
+
+                    <h2>Confirmation ##{confirmationBean.booking.id}</h2>
+                    <p>Thank you <b>#{confirmationBean.booking.userByUserId.firstName}</b> for your booking.</p>
+
+                    <h3>Details:</h3>
+
+                    <p><b>Date:</b><br/>
+                    <h:outputText value="#{confirmationBean.booking.dateTimeIn}" converter="#{localDateTimeConverter}">
+                        <f:attribute name="type" value="date" />
+                    </h:outputText>
+                    </p>
+
+                    <p><b>Schedule:</b><br/>
+                    <h:outputText value="#{confirmationBean.booking.dateTimeIn}" converter="#{localDateTimeConverter}">
+                        <f:attribute name="type" value="time" />
+                    </h:outputText>
+                    -
+                    <h:outputText value="#{confirmationBean.booking.dateTimeOut}" converter="#{localDateTimeConverter}">
+                        <f:attribute name="type" value="time" />
+                    </h:outputText>
+                    </p>
+
+                    <p><b>Location :</b><br/>
+                    #{confirmationBean.booking.hallByHallId.name}<br/>
+                    #{confirmationBean.booking.hallByHallId.buildingByBuildingId.name}<br/>
+                    #{confirmationBean.booking.hallByHallId.buildingByBuildingId.addresseByAdresseId.addressLine}<br/>
+                    #{confirmationBean.booking.hallByHallId.buildingByBuildingId.addresseByAdresseId.cityByCityId.postalCode} #{confirmationBean.booking.hallByHallId.buildingByBuildingId.addresseByAdresseId.cityByCityId.name}<br/>
+                    </p>
+
+                    <h3>Payement due:</h3>
+                    <p><b>#{confirmationBean.booking.totalPrice}€</b></p>
+                    <p>You can pay at reception via credit card or cash.<br/>
+                        It is also possible to pay via bank transfer with the following information:
+                    </p>
+                    <p>
+                        <b>Name: BOOKMYROOM</b><br/>
+                        <b>IBAN: BE0012 3456 7891 2345</b><br/>
+                        <b>BIC: 1234567</b><br/>
+                        <b>COMMUNICATION:
+                            <h:outputText value="#{confirmationBean.booking.dateTimeOut}" converter="#{localDateTimeConverter}">
+                                <f:attribute name="type" value="numeric" />
+                            </h:outputText>-#{confirmationBean.booking.id}</b>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

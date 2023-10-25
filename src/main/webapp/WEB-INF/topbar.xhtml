@@ -26,8 +26,7 @@
                         <p:graphicImage name="images/profile-image.png" library="barcelona-layout" />
                     </div>
                     <div class="profile-info">
-<!--                        <span class="topbar-item-name profile-name">#{authBean.firstName}</span>-->
-                        <span class="topbar-item-name profile-role">System Admin</span>
+                        <span class="topbar-item-name profile-name">#{authBean.firstName}</span>
                     </div>
                 </a>
                 
@@ -36,141 +35,39 @@
                         <a href="#">
                             <i class="pi pi-user"></i>
                             <span>Profile</span>
-                            <span class="topbar-submenuitem-badge">5</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#">
-                            <i class="pi pi-lock"></i>
-                            <span>Privacy</span>
-                            <span class="topbar-submenuitem-badge">2</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            <i class="pi pi-cog"></i>
-                            <span>Settings</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            <i class="pi pi-sign-out"></i>
-                            <span>Logout</span>
-                        </a>
+                            <h:form>
+                                <h:commandLink styleClass="topbar-link" action="#{authBean.logout}">
+                                    <i class="pi pi-sign-out"></i>
+                                    <span>#{bundle['menu.logout']}</span>
+                                </h:commandLink>
+                            </h:form>
                     </li>
                 </ul>
             </li>
             <li>
                 <a href="#">
-                    <i class="topbar-icon pi pi-cog"></i>
-                    <span class="topbar-item-name">Settings</span>
+                    <i class="topbar-icon pi pi-globe"></i >
+                    <span class="topbar-item-name">#{bundle['menu.language']}</span>
                 </a>
                 <ul class="fadeInDown">
                     <li role="menuitem">
-                        <a href="#">
-                            <i class="pi pi-palette"></i>
-                            <span>Change Theme</span>
-                        </a>
+                        <h:form>
+                            <h:commandLink styleClass="topbar-link" action="#{languageChanger.changeToFR}">
+                                <span>Français</span>
+                            </h:commandLink>
+                        </h:form>
                     </li>
                     <li role="menuitem">
-                        <a href="#">
-                            <i class="pi pi-heart"></i>
-                            <span>Favorites</span>
-                        </a>
-                    </li>
-                    <li role="menuitem">
-                        <a href="#">
-                            <i class="pi pi-lock"></i>
-                            <span>Lock Screen</span>
-                        </a>
-                    </li>
-                    <li role="menuitem">
-                        <a href="#">
-                            <i class="pi pi-image"></i>
-                            <span>Wallpaper</span>
-                        </a>
+                        <h:form>
+                            <h:commandLink styleClass="topbar-link" action="#{languageChanger.changeToEN}">
+                                <span>English</span>
+                            </h:commandLink>
+                        </h:form>
                     </li>
                 </ul>
-            </li>
-            <li>
-                <a href="#">
-                    <i class="topbar-icon pi pi-envelope"></i>
-                    <span class="topbar-badge">5</span>
-                    <span class="topbar-item-name">Messages</span>
-                </a>
-                <ul class="fadeInDown">
-                    <li role="menuitem">
-                        <a href="#" class="topbar-message">
-                            <p:graphicImage name="images/avatar1.png" library="barcelona-layout" width="35"/>
-                            <span>Give me a call</span>
-                        </a>
-                    </li>
-                    <li role="menuitem">
-                        <a href="#" class="topbar-message">
-                            <p:graphicImage name="images/avatar2.png" library="barcelona-layout" width="35"/>
-                            <span>Sales reports attached</span>
-                        </a>
-                    </li>
-                    <li role="menuitem">
-                        <a href="#" class="topbar-message">
-                            <p:graphicImage name="images/avatar3.png" library="barcelona-layout" width="35"/>
-                            <span>About your invoice</span>
-                        </a>
-                    </li>
-                    <li role="menuitem">
-                        <a href="#" class="topbar-message">
-                            <p:graphicImage name="images/avatar2.png" library="barcelona-layout" width="35"/>
-                            <span>Meeting today</span>
-                        </a>
-                    </li>
-                    <li role="menuitem">
-                        <a href="#" class="topbar-message">
-                            <p:graphicImage name="images/avatar4.png" library="barcelona-layout" width="35"/>
-                            <span>Out of office</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-            <li>
-                <a href="#">
-                    <i class="topbar-icon pi pi-clock"></i>
-                    <span class="topbar-badge">4</span>
-                    <span class="topbar-item-name">Notifications</span>
-                </a>
-                <ul class="fadeInDown">
-                    <li role="menuitem">
-                        <a href="#">
-                            <i class="pi pi-sliders-h"></i>
-                            <span>Pending tasks</span>
-                        </a>
-                    </li>
-                    <li role="menuitem">
-                        <a href="#">
-                            <i class="pi pi-calendar"></i>
-                            <span>Meeting today at 3pm</span>
-                        </a>
-                    </li>
-                    <li role="menuitem">
-                        <a href="#">
-                            <i class="pi pi-download"></i>
-                            <span>Download documents</span>
-                        </a>
-                    </li>
-                    <li role="menuitem">
-                        <a href="#">
-                            <i class="pi pi-ticket"></i>
-                            <span>Book flight</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-            <li class="search-item">
-                <h:form>
-                    <span class="ui-input-icon-right">
-                        <p:inputText placeholder="Search"/>
-                        <i class="topbar-icon pi pi-search"></i>
-                    </span>
-                </h:form>
             </li>
         </ul>
     </div>

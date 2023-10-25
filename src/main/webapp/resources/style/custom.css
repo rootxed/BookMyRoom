@@ -28,3 +28,113 @@
     align-items: center;
     justify-content: center;
 }
+
+.custom-select{
+    width: 80%; !important;
+    margin: auto;
+}
+
+.bookingCard, #bookForm {
+    display: flex;
+    flex-direction: column;
+    height: 80vh;
+    overflow: hidden;
+}
+
+.bookingCard .col-9 ,.bookingCard .col-3{
+    display: flex;
+    flex-direction: column;
+    height: 80vh;
+}
+
+    /*.row-flex {*/
+/*    display: flex;*/
+/*    flex-direction: row;*/
+/*    flex: 1;*/
+/*}*/
+
+.summaryContainer, .selectionContainer, .availabilityContainer {
+    flex: 1;
+    overflow: auto;
+    padding: 10px;
+}
+
+.summaryContainer{
+    margin: 0.5em;
+}
+.bookButton{
+    width: 80%;
+    align: center;
+}
+
+.status-badge {
+    border-radius: 2px;
+    padding: .25em .5rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: .3px;
+}
+
+.upper-text {
+    text-transform: uppercase;
+}
+
+.status-badge.status-canceled{
+    background-color: #ffcdd2;
+    color: #c63737;
+}
+
+.status-badge.status-missing{
+    background-color: #ffcdd2;
+    color: #c63737;
+}
+.status-badge.status-payed{
+    background-color: #c8e6c9;
+    color: #256029;
+}
+
+.status-badge.status-upcoming{
+    background-color: #feedaf;
+    color: #8a5340;
+}
+
+.status-badge.status-passed{
+     background-color: #c7c7c7;
+     color: #656565;
+}
+
+
+
+/*.summaryContainer{*/
+/*    flex: 1 1 35%;*/
+/*    text-align: right;*/
+/*}*/
+/*.selectionContainer{*/
+/*    flex: 1 1 50%;*/
+/*}*/
+/*.availabilityContainer{*/
+/*    flex: 1 1 35%;*/
+/*}*/
+
+.custom-divider {
+    margin: 5px 0;
+    padding: 0;
+}
+
+
+/*.container {*/
+/*    display: flex;*/
+/*    justify-content: space-between;*/
+/*}*/
+
+
+/*.bookingCard.selectionContainer  {*/
+/*    flex: 1;*/
+/*}*/
+
+/*.time-slots .ui-selectmanybutton .ui-button {*/
+/*    display: block; !* pour rendre chaque bouton block-level, ce qui les empile verticalement *!*/
+/*    margin-bottom: 5px; !* espace entre les boutons *!*/
+/*}*/
+

@@ -1,0 +1,170 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="content">
+        <div class="grid">
+            <div class="col">
+                <div class="card bookingCard">
+                    <h:form id="bookForm">
+                        <!--                        <div >-->
+                        <!--                            <h:outputText value="Select a Category to start" rendered="#{not empty bookingBean.message}" />-->
+                        <!--                        </div>-->
+                        <div class="grid">
+<div class="col-9">
+                        <p:divider styleClass="custom-divider" layout="horizontal">
+                            <h2>Select Your Hall</h2>
+                        </p:divider>
+                        <div class="selectionContainer">
+                        <div class="grid">
+
+
+
+                                <div class="col-6">
+                                    <p:outputLabel>1:</p:outputLabel>
+                                <p:selectOneMenu styleClass="custom-select" value="#{bookingBean.selectedCategory}"  converter="#{categoryConverter}">
+                                    <f:selectItem itemLabel="Select Category" itemValue="#{null}" noSelectionOption="true"/>
+                                    <f:selectItems value="#{categoryBean.categories}" var="category" itemValue="#{category}" itemLabel="#{category.name}"/>
+                                    <p:ajax event="change" listener="#{bookingBean.onCategoryChange}" update=":bookForm:cityDropdown"/>
+                                    <!--                            <p:ajax event="itemSelect" listener="#{bookingBean.testListener}" update=":bookForm:cityDropdown"/>-->
+                                </p:selectOneMenu>
+                                </div>
+
+                                <div class="col-6">
+                                    <p:outputLabel>2:</p:outputLabel>
+                                <p:selectOneMenu styleClass="custom-select" value="#{bookingBean.selectedCity}" converter="#{cityConverter}" id="cityDropdown" disabled="#{bookingBean.selectedCategory == null}">
+                                    <f:selectItem itemLabel="Select City" itemValue="#{null}" noSelectionOption="true"/>
+                                    <f:selectItems value="#{bookingBean.cities}" var="city" itemValue="#{city}" itemLabel="#{city.name}"/>
+                                    <p:ajax event="change" listener="#{bookingBean.onCitySelect}" update=":bookForm:"/>
+                                </p:selectOneMenu>
+                                </div>
+
+
+                        </div>
+
+                            <div class="grid">
+                                    <div class="col-6">
+                                        <p:outputLabel>3:</p:outputLabel>
+                                    <p:selectOneMenu styleClass="custom-select" value="#{bookingBean.selectedHall}" converter="#{hallConverter}" id="hallDropdown" noSelectionOption="true" disabled="#{bookingBean.selectedCity == null}">
+                                        <f:selectItem itemLabel="Select Hall" itemValue="#{null}" noSelectionOption="true"/>
+                                        <f:selectItems value="#{bookingBean.halls}" var="hall" itemValue="#{hall}" itemLabel="#{hall.name} - #{hall.buildingByBuildingId.name}"/>
+                                        <p:ajax event="change" update=":bookForm:datePicker :bookForm:summaryHallInfo"/>
+                                        <!--                            <p:ajax event="change" listener="#{bookingBean.onHallSelect}" update=":bookForm"/>-->
+                                    </p:selectOneMenu>
+                                    </div>
+
+                                    <div class="col-6">
+                                        <p:outputLabel>4:</p:outputLabel>
+                                    <p:datePicker styleClass="custom-select" id="datePicker" value="#{bookingBean.selectedDate}" disabled="#{bookingBean.selectedHall == null}"
+                                                  pattern="dd/MM/yyyy"
+                                                  showIcon="true">
+                                        <p:ajax event="dateSelect" listener="#{bookingBean.onDateSelect}" update=":bookForm:timeSlotPanel" />
+                                    </p:datePicker>
+                                    </div>
+                            </div>
+                        </div>
+
+                        <p:divider styleClass="custom-divider" layout="horizontal">
+                            <h2>Availability</h2>
+                        </p:divider>
+
+                        <div class="availabilityContainer">
+                        <div class="grid">
+                            <h:panelGroup id="timeSlotPanel">
+                            <p:outputPanel rendered="#{not empty bookingBean.selectedDate and not empty bookingBean.selectedHall}">
+                                <p:selectManyButton id="timeSlots" value="#{bookingBean.selectedSlots}">
+                                    <f:selectItems value="#{bookingBean.timeSlots}" var="slot" itemValue="#{slot}"
+                                                   itemLabel="#{slot.isAvailable ? (slot.toString()) : 'BOOKED'}"
+                                                   itemDisabled="#{!slot.isAvailable}"/>
+                                    <p:ajax event="change" listener="#{bookingBean.validateConsecutiveSlots}" update=":globalGrowl :bookForm:timeSlots :bookForm:summaryPriceInfo" />
+                                </p:selectManyButton>
+                                <p:outputLabel id="closedMessage" rendered="#{empty bookingBean.timeSlots}"><b>CLOSED</b></p:outputLabel>
+                            </p:outputPanel>
+                            </h:panelGroup>
+
+                        </div>
+                        </div>
+
+</div>
+
+<!--                        <p:divider styleClass="custom-divider" layout="horizontal">-->
+<!--                            <h2>Your booking summary</h2>-->
+<!--                        </p:divider>-->
+<!--                            <p:divider layout="vertical" />-->
+<div class="col-3">
+
+                        <div class="card summaryContainer">
+
+<!--                            <div class="grid">-->
+<h2>Booking: </h2>
+
+                                <h:panelGroup id="summaryHallInfo">
+                                    <p:outputLabel rendered="#{bookingBean.selectedHall!=null}">
+                                        <b>Hall : </b>
+                                        <br />
+                                        #{bookingBean.selectedHall.name}
+                                        <br />
+                                        #{bookingBean.selectedHall.buildingByBuildingId.name}
+                                        <br />
+                                        #{bookingBean.selectedHall.buildingByBuildingId.addresseByAdresseId.addressLine},
+                                        <br />
+                                        #{bookingBean.selectedHall.buildingByBuildingId.addresseByAdresseId.cityByCityId.postalCode} #{bookingBean.selectedHall.buildingByBuildingId.addresseByAdresseId.cityByCityId.name}
+                                        <br />
+                                        <br />
+                                        <b>Hourly rate : </b>
+                                        #{bookingBean.selectedHall.hourlyRate} € / hour
+                                    </p:outputLabel>
+                                    <br />
+                                    <br />
+
+                                </h:panelGroup>
+                                <h:panelGroup id="summaryPriceInfo">
+                                    <p:outputLabel rendered="#{not empty bookingBean.selectedSlots}">
+                                        <b>Selected Time Slot : </b>
+                                        <br />
+                                        #{bookingBean.getSelectedTimeRange()}
+                                        <br />
+                                        <b>Total: </b>
+                                        <br />
+                                        #{bookingBean.selectedSlots.size()} x #{bookingBean.selectedHall.hourlyRate}€
+                                        <br />
+                                        = #{bookingBean.calculateTotalPrice()} €
+                                    </p:outputLabel>
+                                    <br/>
+                                    <p:commandButton styleClass="bookButton" value="Réserver" action="#{bookingBean.createBooking}" update=":bookForm" rendered="#{not empty bookingBean.selectedSlots}"/>
+                                </h:panelGroup>
+
+
+<!--                            </div>-->
+
+
+<!--                        </div>-->
+
+
+
+<!--                            <div class="card">-->
+<!--                                test1-->
+<!--                            </div>-->
+<!--                            <div class="card">-->
+<!--                                test2-->
+<!--                            </div>-->
+<!--                            <div class="card">-->
+<!--                                test3-->
+<!--                            </div>-->
+
+
+</div>
+</div>
+
+                        </div>
+                    </h:form>
+
+
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

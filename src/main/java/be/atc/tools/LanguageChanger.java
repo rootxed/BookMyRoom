@@ -58,11 +58,6 @@ public class LanguageChanger implements Serializable {
                 .getViewRoot().setLocale(Locale.FRENCH);
 
     }
-    public void changeToES(){
-        Locale localeEs = new Locale("es","ES");
-        FacesContext.getCurrentInstance()
-                .getViewRoot().setLocale(localeEs);
-    }
     //value change event listener
     public void localeChange(ValueChangeEvent e) {
         locale = e.getNewValue().toString();

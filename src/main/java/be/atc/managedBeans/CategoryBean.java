@@ -54,6 +54,14 @@ public class CategoryBean implements Serializable {
         return fetchedCategories;
     }
 
+    public void saveCategory() {
+        if(category.getId() == 0){
+            createCategory();
+        }else {
+            updateCategory();
+        }
+    }
+
     public String createCategory() {
         log.info("Attempting to create a new category...");
         EntityManager em = EMF.getEM();
@@ -95,6 +103,11 @@ public class CategoryBean implements Serializable {
         EntityManager em = EMF.getEM();
         EntityTransaction tx = null;
         try {
+            boolean alreadyExist = categoryService.exist(category, em);
+            if(alreadyExist) {
+                throw new RuntimeException("Can't create category,this category already exist.");
+            }
+
             tx = em.getTransaction();
             log.info("Begin transaction to update the category");
             tx.begin();

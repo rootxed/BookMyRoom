@@ -52,9 +52,6 @@ public class BuildingService extends  ServiceImpl<BuildingEntity>{
         } catch (NoResultException e) {
             log.info("Query found no building to return");
             return null;
-        } finally {
-            em.clear();
-            em.close();
         }
 
     }
@@ -70,5 +67,16 @@ public class BuildingService extends  ServiceImpl<BuildingEntity>{
             log.info("No buildings found for building for the name: " + name, e);
             return null;
         }
+    }
+
+    public boolean isBuildingUsed(BuildingEntity building, EntityManager em) {
+        log.info("Searching if building is used");
+
+        TypedQuery<Long> query = em.createNamedQuery("HallEntity.countByBuilding", Long.class)
+                .setParameter("building", building);
+
+        long count = query.getSingleResult();
+
+        return count > 0;
     }
 }

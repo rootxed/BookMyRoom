@@ -6,6 +6,11 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.Objects;
 
+@NamedQueries({
+        @NamedQuery(name = "PaymentHistory.findOneByBooking",
+                query = "SELECT p FROM PaymentHistoryEntity p WHERE p.bookingByBookingId = :booking")
+})
+
 @Entity
 @Table(name = "paymenthistory", schema = "bookmyroom", catalog = "")
 public class PaymentHistoryEntity {

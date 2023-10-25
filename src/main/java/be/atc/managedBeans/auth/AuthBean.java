@@ -63,8 +63,14 @@ private Logger log = org.apache.log4j.Logger.getLogger(AuthBean.class);
     /**
      * Log out the Shiro's Subject and set the current authenticated user to null
      */
-    public void logout() {
+    public String logout() {
         SecurityUtils.getSubject().logout();
         this.setCurrentUser(null);
+        return "logout";
+    }
+
+    public boolean hasRole(String roleName) {
+        Subject subject = getSubject();
+        return subject != null && subject.hasRole(roleName);
     }
 }

@@ -1,0 +1,68 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="content">
+        <div class="grid">
+            <div class="col">
+                <div class="card">
+                    <h:form id="listForm">
+                        <p:dataTable id="dt-bookings" var="booking" value="#{bookingHistoryBean.userBookings}"
+                                     reflow="true" styleClass="table"
+                                     rowKey="#{booking.id}" paginator="true" rows="5" rowSelectMode="add"
+                                     paginatorPosition="bottom">
+                            <f:facet name="header">
+                                <div class="table-header">
+                                    <span class="filter-container ui-input-icon-left">
+                                        <i class="pi pi-search"></i>
+                                        <p:inputText id="globalFilter" onkeyup="PF('dtBookings').filter()"
+                                                     placeholder="Search"/>
+                                    </span>
+                                </div>
+                            </f:facet>
+                            <p:column headerText="ID" sortBy="#{booking.id}" sortOrder="DESCENDING">
+                                ##{booking.id}
+                            </p:column>
+                            <p:column headerText="Hall">
+                                #{booking.hallByHallId.name}
+                            </p:column>
+                            <p:column headerText="Address">
+                                #{booking.hallByHallId.buildingByBuildingId.name}
+                                <br/>
+                                #{booking.hallByHallId.buildingByBuildingId.addresseByAdresseId.addressLine},
+                                <br/>
+                                #{booking.hallByHallId.buildingByBuildingId.addresseByAdresseId.cityByCityId.name}
+                                #{booking.hallByHallId.buildingByBuildingId.addresseByAdresseId.cityByCityId.postalCode}
+                            </p:column>
+                            <p:column headerText="Date">
+                                <h:outputText value="#{booking.dateTimeIn}" converter="#{localDateTimeConverter}">
+                                    <f:attribute name="type" value="date" />
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="Slots">
+                                <h:outputText value="#{booking.dateTimeIn}" converter="#{localDateTimeConverter}">
+                                    <f:attribute name="type" value="time" />
+                                </h:outputText>
+                                -
+                                <h:outputText value="#{booking.dateTimeOut}" converter="#{localDateTimeConverter}">
+                                    <f:attribute name="type" value="time" />
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="Status">
+                                <h:outputText styleClass="status-badge status-#{bookingHistoryBean.getBookingStatus(booking).toLowerCase()}"
+                                              value="#{bookingHistoryBean.getBookingStatus(booking)}"/>
+                            </p:column>
+                            <p:column headerText="Payment">
+                                <h:outputText styleClass="status-badge status-#{PaymentHistoryBean.getPaymentHistory(booking) ne null ? 'payed' : 'missing'} upper-text"
+                                              value="#{PaymentHistoryBean.getPaymentHistory(booking) ne null ? 'payed' : 'missing'}"/>
+                            </p:column>
+                        </p:dataTable>
+                    </h:form>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

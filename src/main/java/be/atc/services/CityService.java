@@ -1,5 +1,6 @@
 package be.atc.services;
 
+import be.atc.entities.CategoryEntity;
 import be.atc.entities.CityEntity;
 import be.atc.entities.RoleEntity;
 import be.atc.tools.EMF;

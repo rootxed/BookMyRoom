@@ -63,7 +63,7 @@
                                 <p:inputText id="categoryName" value="#{categoryBean.category.name}" required="true"/>
                             </div>
 
-                            <p:commandButton value="Create Category" action="#{categoryBean.createCategory}"
+                            <p:commandButton value="Save Category" action="#{categoryBean.saveCategory}"
                                              update=":listForm:dt-categories :growl"
                                              process="@form"
                                              resetValues="true"

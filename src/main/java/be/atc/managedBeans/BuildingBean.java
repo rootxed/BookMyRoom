@@ -5,7 +5,9 @@ import be.atc.entities.BuildingEntity;
 import be.atc.services.AddresseService;
 import be.atc.services.BuildingService;
 import be.atc.tools.EMF;
+import be.atc.tools.NotificationManager;
 import org.apache.log4j.Logger;
+import org.eclipse.persistence.exceptions.EclipseLinkException;
 
 import javax.annotation.PostConstruct;
 import javax.faces.view.ViewScoped;
@@ -87,6 +89,7 @@ public class BuildingBean implements Serializable {
         }
     }
 
+
     public String createBuilding() {
         log.info("Attempting to create a new building...");
         EntityManager em = EMF.getEM();
@@ -129,6 +132,11 @@ public class BuildingBean implements Serializable {
         EntityManager em = EMF.getEM();
         EntityTransaction transaction = null;
         try {
+            boolean alreadyExist = buildingService.exist(building, em);
+            if (alreadyExist){
+                throw new RuntimeException("Can't update building, this building name already exists.");
+            }
+
             transaction = em.getTransaction();
             log.info("Begin transaction to update the building");
             transaction.begin();
@@ -157,6 +165,44 @@ public class BuildingBean implements Serializable {
     public void openNew() {
         this.building = new BuildingEntity();
         this.building.setAddresseByAdresseId(new AddresseEntity());
+    }
+
+    public boolean isBuildingNotUsed(BuildingEntity building){
+        EntityManager em = EMF.getEM();
+        try {
+            return (!buildingService.isBuildingUsed(building,em));
+        } finally {
+            em.clear();
+            em.close();
+        }
+    }
+
+    public void deleteBuilding(BuildingEntity building){
+        EntityManager em = EMF.getEM();
+        EntityTransaction tx = em.getTransaction();
+        try {
+            tx.begin();
+
+            BuildingEntity buildingToDelete = buildingService.findOneByIdOrNull(building.getId(), em);
+            if (isBuildingNotUsed(buildingToDelete)){
+                buildingService.delete(buildingToDelete,em);
+                tx.commit();
+                NotificationManager.addInfoMessage("Hall '" + buildingToDelete.getName() +"' deleted.");
+            }else {
+                log.error("Building is used and can't be deleted.");
+                NotificationManager.addErrorMessage("Error, building is already used and can't be deleted.");
+            }
+        }catch (Exception e){
+            if (tx.isActive()) {
+                tx.rollback();
+            }
+            log.error("Error while attempting to delete ", e);
+            NotificationManager.addErrorMessage("Error while deleting.");
+        }
+        finally {
+            em.clear();
+            em.close();
+        }
     }
 
     public BuildingEntity getBuilding() {

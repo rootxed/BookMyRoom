@@ -55,11 +55,16 @@
                                                                  target="#{buildingBean.building}"/>
                                 </p:commandButton>
 
+                                <p:commandButton icon="pi pi-trash" update=":globalGrowl :listForm:dt-buildings"
+                                                 action="#{buildingBean.deleteBuilding(building)}"
+                                                 styleClass="delete-button rounded-button ui-button-warning"
+                                                 rendered="#{buildingBean.isBuildingNotUsed(building)}"
+                                                 process="@this">
+                                </p:commandButton>
+
                             </p:column>
                         </p:dataTable>
                     </h:form>
-
-                    <p:growl id="growl" showDetail="true" />
 
                     <!-- Add Building form in dialog -->
                     <p:dialog header="Manage Building" showEffect="fade" modal="true"
@@ -94,7 +99,7 @@
                             </div>
 
                             <p:commandButton value="create" action="#{buildingBean.saveBuilding}"
-                                             update=":listForm:dt-buildings :growl"
+                                             update=":listForm:dt-buildings"
                                              process="@form"
                                              resetValues="true"
                                              styleClass="ui-button-success"

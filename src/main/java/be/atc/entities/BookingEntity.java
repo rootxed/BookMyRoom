@@ -1,19 +1,38 @@
 package be.atc.entities;
 
 import javax.persistence.*;
-import java.math.BigDecimal;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Objects;
+
+@NamedQueries( value = {
+        @NamedQuery(name = "Booking.findBookingsByDateAndHall",
+                query = "SELECT b " +
+                        "FROM BookingEntity b " +
+                        "WHERE b.hallByHallId = :hall " +
+                        "AND b.isCanceled = FALSE " +
+                        "AND FUNCTION('YEAR', b.dateTimeIn) = FUNCTION('YEAR', :date) " +
+                        "AND FUNCTION('MONTH', b.dateTimeIn) = FUNCTION('MONTH', :date) " +
+                        "AND FUNCTION('DAY', b.dateTimeIn) = FUNCTION('DAY', :date)"),
+        @NamedQuery(name = "Booking.findById",
+                query = "SELECT b " +
+                        "FROM BookingEntity b " +
+                        "WHERE b.id = :id" ),
+        @NamedQuery(name = "Booking.findBookingsByUser",
+                query = "SELECT b " +
+                        "FROM BookingEntity b " +
+                        "WHERE b.userByUserId = :user" )
+
+})
 
 @Entity
 @Table(name = "booking", schema = "bookmyroom", catalog = "")
 public class BookingEntity {
     private int id;
-    private Timestamp dateTimeIn;
-    private Timestamp dateTimeOut;
-    private BigDecimal totalPrice;
-    private byte isCanceled;
+    private LocalDateTime dateTimeIn;
+    private LocalDateTime dateTimeOut;
+    private double totalPrice;
+    private boolean isCanceled;
     private HallEntity hallByHallId;
     private UserEntity userByUserId;
     private Collection<PaymentHistoryEntity> paymenthistoriesById;
@@ -31,41 +50,41 @@ public class BookingEntity {
 
     @Basic
     @Column(name = "DateTimeIn", nullable = false)
-    public Timestamp getDateTimeIn() {
+    public LocalDateTime getDateTimeIn() {
         return dateTimeIn;
     }
 
-    public void setDateTimeIn(Timestamp dateTimeIn) {
+    public void setDateTimeIn(LocalDateTime dateTimeIn) {
         this.dateTimeIn = dateTimeIn;
     }
 
     @Basic
     @Column(name = "DateTimeOut", nullable = false)
-    public Timestamp getDateTimeOut() {
+    public LocalDateTime getDateTimeOut() {
         return dateTimeOut;
     }
 
-    public void setDateTimeOut(Timestamp dateTimeOut) {
+    public void setDateTimeOut(LocalDateTime dateTimeOut) {
         this.dateTimeOut = dateTimeOut;
     }
 
     @Basic
     @Column(name = "TotalPrice", nullable = false, precision = 2)
-    public BigDecimal getTotalPrice() {
+    public double getTotalPrice() {
         return totalPrice;
     }
 
-    public void setTotalPrice(BigDecimal totalPrice) {
+    public void setTotalPrice(double totalPrice) {
         this.totalPrice = totalPrice;
     }
 
     @Basic
     @Column(name = "IsCanceled", nullable = false)
-    public byte getIsCanceled() {
+    public boolean getIsCanceled() {
         return isCanceled;
     }
 
-    public void setIsCanceled(byte isCanceled) {
+    public void setIsCanceled(boolean isCanceled) {
         this.isCanceled = isCanceled;
     }
 

@@ -9,7 +9,20 @@ import java.util.Objects;
 @NamedQueries({
         @NamedQuery(name = "Hall.existsWithNameAndBuilding",
                 query = "SELECT h FROM HallEntity h WHERE h.name = :name AND h.buildingByBuildingId = :building"),
-        @NamedQuery(name = "Hall.findAll", query = "SELECT h FROM HallEntity h ORDER BY h.id DESC")
+        @NamedQuery(name = "Hall.findAll",
+                query = "SELECT h FROM HallEntity h ORDER BY h.id DESC"),
+        @NamedQuery( name = "HallEntity.countByBuilding",
+                query = "SELECT COUNT (h) FROM HallEntity h where h.buildingByBuildingId = :building"),
+        @NamedQuery( name = "Hall.findCitiesByHallsCaterogy",
+                query = "SELECT DISTINCT h.buildingByBuildingId.addresseByAdresseId.cityByCityId FROM HallEntity h JOIN h.hallcategoriesById hc " +
+                        "WHERE hc.categoryByCategoryId = :category"),
+        @NamedQuery(
+                name = "Hall.findByCityAndCategory",
+                query = "SELECT h FROM HallEntity h " +
+                        "JOIN h.hallcategoriesById hc " +
+                        "WHERE hc.categoryByCategoryId = :category " +
+                        "AND h.buildingByBuildingId.addresseByAdresseId.cityByCityId = :city"),
+        @NamedQuery(name = "HallEntity.findById", query = "SELECT h FROM HallEntity h WHERE h.id = :id")
 })
 
 @Entity
@@ -17,7 +30,7 @@ import java.util.Objects;
 public class HallEntity implements Serializable {
     private int id;
     private String name;
-    private BigDecimal hourlyRate;
+    private double hourlyRate;
     private Collection<BookingEntity> bookingsById;
     private BuildingEntity buildingByBuildingId;
     private Collection<HallCategoryEntity> hallcategoriesById;
@@ -46,11 +59,11 @@ public class HallEntity implements Serializable {
 
     @Basic
     @Column(name = "HourlyRate", nullable = false, precision = 2)
-    public BigDecimal getHourlyRate() {
+    public double getHourlyRate() {
         return hourlyRate;
     }
 
-    public void setHourlyRate(BigDecimal hourlyRate) {
+    public void setHourlyRate(double hourlyRate) {
         this.hourlyRate = hourlyRate;
     }
 

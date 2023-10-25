@@ -7,7 +7,8 @@ import java.util.Objects;
 
 @NamedQueries( value = {
         @NamedQuery(name = "Category.findOneByName", query = "SELECT c FROM CategoryEntity c WHERE LOWER(c.name) = LOWER(:name)"),
-        @NamedQuery(name = "Category.findAll", query = "SELECT c FROM CategoryEntity c")
+        @NamedQuery(name = "Category.findAll", query = "SELECT c FROM CategoryEntity c"),
+        @NamedQuery(name ="Category.findOneById", query = "SELECT c FROM CategoryEntity c WHERE c.id = :id")
 })
 
 @Entity

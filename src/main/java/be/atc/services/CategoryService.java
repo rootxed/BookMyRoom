@@ -40,7 +40,14 @@ public class CategoryService extends ServiceImpl<CategoryEntity> {
     }
 
     public CategoryEntity findOneByIdOrNull(int id, EntityManager em) {
-        return null;
+        try{
+            return em.createNamedQuery("Category.findOneById", CategoryEntity.class)
+                    .setParameter("id", id)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            log.info("Query found no category to return");
+            return null;
+        }
     }
 
     public List<CategoryEntity> findAllOrNull(EntityManager em) {

@@ -52,7 +52,14 @@ public class HallService extends ServiceImpl<HallEntity> {
     }
 
     public HallEntity findOneByIdOrNull(int id, EntityManager em) {
-        return null;
+        log.info("Finding hall By Id " + id);
+        try {
+            return em.createNamedQuery("HallEntity.findById", HallEntity.class)
+                    .setParameter("id", id)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
     }
 
     public List<HallEntity> findAllOrNull(EntityManager em) {
@@ -101,5 +108,28 @@ public class HallService extends ServiceImpl<HallEntity> {
         }
         hall.setHallschedulesById(schedules);
         insert(hall, em);
+    }
+
+    public List<CityEntity> findCitiesWithHallsForCategoryOrNull(CategoryEntity category, EntityManager em) {
+        try {
+            return em.createNamedQuery("Hall.findCitiesByHallsCaterogy", CityEntity.class)
+                    .setParameter("category", category)
+                    .getResultList();
+        } catch (NoResultException e) {
+            log.info("No cities found for the given hall category: " + category.getName(), e);
+            return null;
+        }
+    }
+
+    public List<HallEntity> findHallsByCityAndCategoryOrNull(CityEntity city, CategoryEntity category, EntityManager em){
+        try {
+            return em.createNamedQuery("Hall.findByCityAndCategory", HallEntity.class)
+                    .setParameter("city", city)
+                    .setParameter("category", category)
+                    .getResultList();
+        } catch (NoResultException e) {
+            log.info("No hall found for the given city an categories");
+            return null;
+        }
     }
 }

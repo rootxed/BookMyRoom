@@ -1,5 +1,6 @@
 package be.atc.services;
 
+import be.atc.entities.UserEntity;
 import org.apache.log4j.Logger;
 
 import javax.persistence.EntityManager;

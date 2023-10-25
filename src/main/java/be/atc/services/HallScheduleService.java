@@ -72,6 +72,46 @@ public class HallScheduleService extends ServiceImpl<HallScheduleEntity> {
         return query.getResultList();
     }
 
+    public HallScheduleEntity findCurrentScheduleForHallOnDate(HallEntity hall, LocalDate date, EntityManager em) {
+        short dayOfWeek = (short)  date.getDayOfWeek().getValue();
+        log.info("Finding Current schedule for day " +dayOfWeek+ " hall " + hall.getId() + " and date " +date);
+
+        try{
+            // Recherchez d'abord les horaires temporaires pour cette date
+            TypedQuery<HallScheduleEntity> tempQuery = em.createNamedQuery("HallSchedule.findTemporaryForHallAndDate", HallScheduleEntity.class);
+            tempQuery.setParameter("hall", hall);
+            tempQuery.setParameter("date", date);
+            tempQuery.setParameter("weekDay", dayOfWeek);
+            HallScheduleEntity temporarySchedule = tempQuery.getSingleResult();
+
+            if (temporarySchedule != null) {
+                log.info("Found a temporary schedule");
+                return temporarySchedule;  // utilisez l'horaire temporaire trouvé
+            }
+        } catch (NoResultException e){
+            log.info("No Temporary Schedule found");
+        }
+
+        try{
+            // Sinon, utilisez l'horaire régulier pour le jour de la semaine
+            TypedQuery<HallScheduleEntity> regularQuery = em.createNamedQuery("HallSchedule.findRegularForHallAndDate", HallScheduleEntity.class);
+            regularQuery.setParameter("hall", hall);
+            regularQuery.setParameter("weekDay", dayOfWeek);
+            regularQuery.setParameter("date", date);
+            HallScheduleEntity regularSchedule = regularQuery.getSingleResult();
+
+            if (regularSchedule != null) {
+                log.info("Found a regular schedule");
+                return regularSchedule;
+            }
+        }catch (NoResultException e){
+            log.info("No Definitive Schedule found");
+        }
+
+        return null;
+
+    }
+
     public List<HallScheduleEntity> findAllDefinitiveHallScheduleForHallOrNull(HallEntity hall, EntityManager em){
         try{
             TypedQuery <HallScheduleEntity> query = em.createNamedQuery("HallSchedule.findDefinitiveScheduleForHall", HallScheduleEntity.class)

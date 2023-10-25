@@ -9,7 +9,9 @@ import java.util.Objects;
         @NamedQuery(name = "User.connexion", query = "SELECT u FROM UserEntity u " +
                 "WHERE u.userName = :userName and u.password = :password"),
         @NamedQuery(name = "User.findUserByUsernameOrNull", query = "SELECT u FROM UserEntity u " +
-                "WHERE u.userName = :userName")
+                "WHERE u.userName = :userName"),
+        @NamedQuery(name = "User.findByIdOrNull", query = "SELECT u FROM UserEntity u " +
+                "WHERE u.id = :id")
 })
 
 @Entity
