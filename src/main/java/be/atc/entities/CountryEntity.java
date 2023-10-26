@@ -12,7 +12,7 @@ public class CountryEntity {
     private Collection<CityEntity> citiesById;
 
     @Id
-    @Column(name = "ID", nullable = false)
+    @Column(name = "id", nullable = false)
     public int getId() {
         return id;
     }
@@ -22,7 +22,7 @@ public class CountryEntity {
     }
 
     @Basic
-    @Column(name = "Name", nullable = false, length = 100)
+    @Column(name = "name", nullable = false, length = 100)
     public String getName() {
         return name;
     }

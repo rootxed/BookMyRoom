@@ -39,7 +39,7 @@ public class BookingEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID", nullable = false)
+    @Column(name = "id", nullable = false)
     public int getId() {
         return id;
     }
@@ -49,7 +49,7 @@ public class BookingEntity {
     }
 
     @Basic
-    @Column(name = "DateTimeIn", nullable = false)
+    @Column(name = "date_time_in", nullable = false)
     public LocalDateTime getDateTimeIn() {
         return dateTimeIn;
     }
@@ -59,7 +59,7 @@ public class BookingEntity {
     }
 
     @Basic
-    @Column(name = "DateTimeOut", nullable = false)
+    @Column(name = "date_time_out", nullable = false)
     public LocalDateTime getDateTimeOut() {
         return dateTimeOut;
     }
@@ -69,7 +69,7 @@ public class BookingEntity {
     }
 
     @Basic
-    @Column(name = "TotalPrice", nullable = false, precision = 2)
+    @Column(name = "total_price", nullable = false, precision = 2)
     public double getTotalPrice() {
         return totalPrice;
     }
@@ -79,7 +79,7 @@ public class BookingEntity {
     }
 
     @Basic
-    @Column(name = "IsCanceled", nullable = false)
+    @Column(name = "is_canceled", nullable = false)
     public boolean getIsCanceled() {
         return isCanceled;
     }
@@ -102,7 +102,7 @@ public class BookingEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "HallID", referencedColumnName = "ID", nullable = false)
+    @JoinColumn(name = "hall_id", referencedColumnName = "id", nullable = false)
     public HallEntity getHallByHallId() {
         return hallByHallId;
     }
@@ -112,7 +112,7 @@ public class BookingEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "UserID", referencedColumnName = "ID", nullable = false)
+    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     public UserEntity getUserByUserId() {
         return userByUserId;
     }

@@ -87,7 +87,7 @@ public class HallScheduleEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID", nullable = false)
+    @Column(name = "id", nullable = false)
     public int getId() {
         return id;
     }
@@ -97,7 +97,7 @@ public class HallScheduleEntity {
     }
 
     @Basic
-    @Column(name = "WeekDay", nullable = false)
+    @Column(name = "week_day", nullable = false)
     public short getWeekDay() {
         return weekDay;
     }
@@ -107,7 +107,7 @@ public class HallScheduleEntity {
     }
 
     @Basic
-    @Column(name = "BeginningDate", nullable = false)
+    @Column(name = "beginning_date", nullable = false)
     public LocalDate getBeginningDate() {
         return beginningDate;
     }
@@ -117,7 +117,7 @@ public class HallScheduleEntity {
     }
 
     @Basic
-    @Column(name = "EndingDate", nullable = true)
+    @Column(name = "ending_date", nullable = true)
     public LocalDate getEndingDate() {
         return endingDate;
     }
@@ -127,7 +127,7 @@ public class HallScheduleEntity {
     }
 
     @Basic
-    @Column(name = "IsTemporary", nullable = false)
+    @Column(name = "is_temporary", nullable = false)
     public boolean isTemporary() {
         return isTemporary;
     }
@@ -150,7 +150,7 @@ public class HallScheduleEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "HallID", referencedColumnName = "ID", nullable = false)
+    @JoinColumn(name = "hall_id", referencedColumnName = "id", nullable = false)
     public HallEntity getHallByHallId() {
         return hallByHallId;
     }
@@ -160,7 +160,7 @@ public class HallScheduleEntity {
     }
 
     @ManyToOne (cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "OpeningHoursID", referencedColumnName = "ID", nullable = false)
+    @JoinColumn(name = "opening_hours_id", referencedColumnName = "id", nullable = false)
     public OpeningHoursEntity getOpeninghoursByOpeningHoursId() {
         return openinghoursByOpeningHoursId;
     }

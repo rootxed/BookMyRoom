@@ -11,7 +11,7 @@ import java.util.Objects;
 })
 
 @Entity
-@Table(name = "hallcategory", schema = "bookmyroom", catalog = "")
+@Table(name = "hall_category", schema = "bookmyroom", catalog = "")
 public class HallCategoryEntity {
     private int id;
     private HallEntity hallByHallId;
@@ -19,7 +19,7 @@ public class HallCategoryEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID", nullable = false)
+    @Column(name = "id", nullable = false)
     public int getId() {
         return id;
     }
@@ -42,7 +42,7 @@ public class HallCategoryEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "HallID", referencedColumnName = "ID", nullable = false)
+    @JoinColumn(name = "hall_id", referencedColumnName = "id", nullable = false)
     public HallEntity getHallByHallId() {
         return hallByHallId;
     }
@@ -52,7 +52,7 @@ public class HallCategoryEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "CategoryID", referencedColumnName = "ID", nullable = false)
+    @JoinColumn(name = "category_id", referencedColumnName = "id", nullable = false)
     public CategoryEntity getCategoryByCategoryId() {
         return categoryByCategoryId;
     }

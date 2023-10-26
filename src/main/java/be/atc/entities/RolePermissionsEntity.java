@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "rolepermissions", schema = "bookmyroom", catalog = "")
+@Table(name = "role_permissions", schema = "bookmyroom", catalog = "")
 public class RolePermissionsEntity {
     private int id;
     private RoleEntity roleByRoleId;
@@ -13,7 +13,7 @@ public class RolePermissionsEntity {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    @Column(name = "ID", nullable = false)
+    @Column(name = "id", nullable = false)
     public int getId() {
         return id;
     }
@@ -36,7 +36,7 @@ public class RolePermissionsEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "RoleID", referencedColumnName = "ID", nullable = false)
+    @JoinColumn(name = "role_id", referencedColumnName = "id", nullable = false)
     public RoleEntity getRoleByRoleId() {
         return roleByRoleId;
     }
@@ -46,7 +46,7 @@ public class RolePermissionsEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "PermissionID", referencedColumnName = "ID", nullable = false)
+    @JoinColumn(name = "permission_id", referencedColumnName = "id", nullable = false)
     public PermissionEntity getPermissionByPermissionId() {
         return permissionByPermissionId;
     }

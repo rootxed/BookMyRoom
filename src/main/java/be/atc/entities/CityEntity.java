@@ -20,7 +20,7 @@ public class CityEntity {
     private CountryEntity countryByCountryId;
 
     @Id
-    @Column(name = "ID", nullable = false)
+    @Column(name = "id", nullable = false)
     public int getId() {
         return id;
     }
@@ -30,7 +30,7 @@ public class CityEntity {
     }
 
     @Basic
-    @Column(name = "Name", nullable = false, length = 100)
+    @Column(name = "name", nullable = false, length = 100)
     public String getName() {
         return name;
     }
@@ -40,7 +40,7 @@ public class CityEntity {
     }
 
     @Basic
-    @Column(name = "PostalCode", nullable = false, length = 10)
+    @Column(name = "postal_code", nullable = false, length = 10)
     public String getPostalCode() {
         return postalCode;
     }
@@ -72,7 +72,7 @@ public class CityEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "CountryID", referencedColumnName = "ID", nullable = false)
+    @JoinColumn(name = "country_id", referencedColumnName = "id", nullable = false)
     public CountryEntity getCountryByCountryId() {
         return countryByCountryId;
     }

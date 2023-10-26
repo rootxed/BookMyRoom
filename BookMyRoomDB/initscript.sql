@@ -17,8 +17,8 @@ CREATE TABLE IF NOT EXISTS city (
     FOREIGN KEY (country_id) REFERENCES country(id)
     );
 
--- Table Adresse
-CREATE TABLE IF NOT EXISTS adresse (
+-- Table Address
+CREATE TABLE IF NOT EXISTS address (
     id INT AUTO_INCREMENT PRIMARY KEY,
     city_id INT NOT NULL,
     address_line VARCHAR(255) NOT NULL,
@@ -29,8 +29,8 @@ CREATE TABLE IF NOT EXISTS adresse (
 CREATE TABLE IF NOT EXISTS building (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
-    adresse_id INT NOT NULL,
-    FOREIGN KEY (adresse_id) REFERENCES adresse(id)
+    address_id INT NOT NULL,
+    FOREIGN KEY (address_id) REFERENCES address(id)
     );
 
 -- Table Hall
@@ -82,7 +82,7 @@ CREATE TABLE IF NOT EXISTS role_permissions (
 CREATE TABLE IF NOT EXISTS user (
     id INT AUTO_INCREMENT PRIMARY KEY,
     role_id INT NOT NULL,
-    adresse_id INT NOT NULL,
+    address_id INT NOT NULL,
     username VARCHAR(100) NOT NULL,
     password VARCHAR(255) NOT NULL,
     firstname VARCHAR(100) NOT NULL,
@@ -91,7 +91,7 @@ CREATE TABLE IF NOT EXISTS user (
     email VARCHAR(100) NOT NULL,
     is_blocked BOOLEAN DEFAULT 0 NOT NULL,
     FOREIGN KEY (role_id) REFERENCES role(id),
-    FOREIGN KEY (adresse_id) REFERENCES adresse(id)
+    FOREIGN KEY (address_id) REFERENCES address(id)
     );
 
 -- Table Booking

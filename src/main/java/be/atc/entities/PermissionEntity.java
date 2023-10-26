@@ -13,7 +13,7 @@ public class PermissionEntity {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    @Column(name = "ID", nullable = false)
+    @Column(name = "id", nullable = false)
     public int getId() {
         return id;
     }
@@ -23,7 +23,7 @@ public class PermissionEntity {
     }
 
     @Basic
-    @Column(name = "Label", nullable = false, length = 100)
+    @Column(name = "label", nullable = false, length = 100)
     public String getLabel() {
         return label;
     }

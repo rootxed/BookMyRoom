@@ -21,7 +21,7 @@ public class BuildingEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID", nullable = false)
+    @Column(name = "id", nullable = false)
     public int getId() {
         return id;
     }
@@ -31,7 +31,7 @@ public class BuildingEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "Name", nullable = false, length = 100)
+    @Column(name = "name", nullable = false, length = 100)
     public String getName() {
         return name;
     }
@@ -54,7 +54,7 @@ public class BuildingEntity implements Serializable {
     }
 
     @ManyToOne
-    @JoinColumn(name = "AdresseID", referencedColumnName = "ID", nullable = false)
+    @JoinColumn(name = "address_id", referencedColumnName = "id", nullable = false)
     public AddresseEntity getAddresseByAdresseId() {
         return addresseByAdresseId;
     }

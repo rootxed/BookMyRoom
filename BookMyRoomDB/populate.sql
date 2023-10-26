@@ -1,15 +1,15 @@
 USE bookmyroom;
 -- Ajout des roles 
-Insert into role (Name) values ('manager');
-Insert into role (Name) values ('receptionist');
-Insert into role (Name) values ('tenant');
+Insert into role (name) values ('manager');
+Insert into role (name) values ('receptionist');
+Insert into role (name) values ('tenant');
 
 -- Ajout adresse
-Insert into addresse (CityID, AddressLine) values (1,'Rue du testing 1');
+Insert into address (city_id, address_line) values (1,'Rue du testing 1');
 
 -- Ajout User
 
 INSERT INTO user
-(`RoleID`,`AdresseID`,`UserName`,`Password`,`FirstName`,`LastName`,`PhoneNumber`,`Email`)
+(`role_id`,`address_id`,`username`,`password`,`firstname`,`lastname`,`phone_number`,`email`)
 VALUES
-(1,1,'lahcen','test','Lahcen','Boukhoubza','0489812322','mymail@mail.com');
+(1,1,'lahcen','$shiro1$SHA-256$500000$SsOV1X29o20w3aWrVHBYMg==$aVCAylWzc1rgCbu/CjZ5zZQgEkSUoVi9vHNdmV1UuKo=','Lahcen','Boukhoubza','0489812322','mymail@mail.com');

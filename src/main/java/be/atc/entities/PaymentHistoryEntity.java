@@ -12,7 +12,7 @@ import java.util.Objects;
 })
 
 @Entity
-@Table(name = "paymenthistory", schema = "bookmyroom", catalog = "")
+@Table(name = "payment_history", schema = "bookmyroom", catalog = "")
 public class PaymentHistoryEntity {
     private int id;
     private PaymentType paymentType;
@@ -22,7 +22,7 @@ public class PaymentHistoryEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID", nullable = false)
+    @Column(name = "id", nullable = false)
     public int getId() {
         return id;
     }
@@ -32,7 +32,7 @@ public class PaymentHistoryEntity {
     }
 
     @Basic
-    @Column(name = "PaymentType", nullable = false)
+    @Column(name = "payment_type", nullable = false)
     @Enumerated(EnumType.STRING)
     public PaymentType getPaymentType() {
         return paymentType;
@@ -43,7 +43,7 @@ public class PaymentHistoryEntity {
     }
 
     @Basic
-    @Column(name = "TimeStamp", nullable = false)
+    @Column(name = "time_stamp", nullable = false)
     public Timestamp getTimeStamp() {
         return timeStamp;
     }
@@ -66,7 +66,7 @@ public class PaymentHistoryEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "ReceiverUserID", referencedColumnName = "ID", nullable = false)
+    @JoinColumn(name = "receiver_user_id", referencedColumnName = "id", nullable = false)
     public UserEntity getUserByReceiverUserId() {
         return userByReceiverUserId;
     }
@@ -76,7 +76,7 @@ public class PaymentHistoryEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "BookingID", referencedColumnName = "ID", nullable = false)
+    @JoinColumn(name = "booking_id", referencedColumnName = "id", nullable = false)
     public BookingEntity getBookingByBookingId() {
         return bookingByBookingId;
     }

@@ -11,7 +11,7 @@ import java.util.Objects;
 
 })
 @Entity
-@Table(name = "addresse", schema = "bookmyroom", catalog = "")
+@Table(name = "address", schema = "bookmyroom", catalog = "")
 public class AddresseEntity {
     private int id;
     private String addressLine;
@@ -21,7 +21,7 @@ public class AddresseEntity {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    @Column(name = "ID", nullable = false)
+    @Column(name = "id", nullable = false)
     public int getId() {
         return id;
     }
@@ -31,7 +31,7 @@ public class AddresseEntity {
     }
 
     @Basic
-    @Column(name = "AddressLine", nullable = false, length = 255)
+    @Column(name = "address_line", nullable = false, length = 255)
     public String getAddressLine() {
         return addressLine;
     }
@@ -54,7 +54,7 @@ public class AddresseEntity {
     }
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "CityID", referencedColumnName = "ID", nullable = false)
+    @JoinColumn(name = "city_id", referencedColumnName = "id", nullable = false)
     public CityEntity getCityByCityId() {
         return cityByCityId;
     }

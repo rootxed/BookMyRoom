@@ -55,7 +55,7 @@ public class UserEntity implements Serializable {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    @Column(name = "ID", nullable = false)
+    @Column(name = "id", nullable = false)
     public int getId() {
         return id;
     }
@@ -65,7 +65,7 @@ public class UserEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "UserName", nullable = false, length = 100)
+    @Column(name = "username", nullable = false, length = 100)
     public String getUserName() {
         return userName;
     }
@@ -75,7 +75,7 @@ public class UserEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "Password", nullable = false, length = 255)
+    @Column(name = "password", nullable = false, length = 255)
     public String getPassword() {
         return password;
     }
@@ -85,7 +85,7 @@ public class UserEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "FirstName", nullable = false, length = 100)
+    @Column(name = "firstname", nullable = false, length = 100)
     public String getFirstName() {
         return firstName;
     }
@@ -95,7 +95,7 @@ public class UserEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "LastName", nullable = false, length = 100)
+    @Column(name = "lastname", nullable = false, length = 100)
     public String getLastName() {
         return lastName;
     }
@@ -105,7 +105,7 @@ public class UserEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "PhoneNumber", nullable = false, length = 20)
+    @Column(name = "phone_number", nullable = false, length = 20)
     public String getPhoneNumber() {
         return phoneNumber;
     }
@@ -115,7 +115,7 @@ public class UserEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "Email", nullable = false, length = 100)
+    @Column(name = "email", nullable = false, length = 100)
     public String getEmail() {
         return email;
     }
@@ -125,7 +125,7 @@ public class UserEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "IsBlocked", nullable = false)
+    @Column(name = "is_blocked", nullable = false)
     public boolean isBlocked() {
         return isBlocked;
     }
@@ -166,7 +166,7 @@ public class UserEntity implements Serializable {
     }
 
     @ManyToOne
-    @JoinColumn(name = "RoleID", referencedColumnName = "ID", nullable = false)
+    @JoinColumn(name = "role_id", referencedColumnName = "id", nullable = false)
     public RoleEntity getRoleByRoleId() {
         return roleByRoleId;
     }
@@ -176,7 +176,7 @@ public class UserEntity implements Serializable {
     }
 
     @ManyToOne
-    @JoinColumn(name = "AdresseID", referencedColumnName = "ID", nullable = false)
+    @JoinColumn(name = "address_id", referencedColumnName = "id", nullable = false)
     public AddresseEntity getAddresseByAdresseId() {
         return addresseByAdresseId;
     }

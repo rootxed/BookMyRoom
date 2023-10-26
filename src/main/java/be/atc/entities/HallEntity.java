@@ -38,7 +38,7 @@ public class HallEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID", nullable = false)
+    @Column(name = "id", nullable = false)
     public int getId() {
         return id;
     }
@@ -48,7 +48,7 @@ public class HallEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "Name", nullable = false, length = 100)
+    @Column(name = "name", nullable = false, length = 100)
     public String getName() {
         return name;
     }
@@ -58,7 +58,7 @@ public class HallEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "HourlyRate", nullable = false, precision = 2)
+    @Column(name = "hourly_rate", nullable = false, precision = 2)
     public double getHourlyRate() {
         return hourlyRate;
     }
@@ -90,7 +90,7 @@ public class HallEntity implements Serializable {
     }
 
     @ManyToOne
-    @JoinColumn(name = "BuildingID", referencedColumnName = "ID", nullable = false)
+    @JoinColumn(name = "building_id", referencedColumnName = "id", nullable = false)
     public BuildingEntity getBuildingByBuildingId() {
         return buildingByBuildingId;
     }
