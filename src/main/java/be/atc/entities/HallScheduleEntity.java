@@ -75,7 +75,7 @@ import java.util.Objects;
 })
 
 @Entity
-@Table(name = "hallschedule", schema = "bookmyroom", catalog = "")
+@Table(name = "hall_schedule", schema = "bookmyroom", catalog = "")
 public class HallScheduleEntity {
     private int id;
     private short weekDay;
