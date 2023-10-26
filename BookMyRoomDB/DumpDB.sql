@@ -18,30 +18,30 @@ USE `bookmyroom`;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `addresse`
+-- Table structure for table `address`
 --
 
-DROP TABLE IF EXISTS `addresse`;
+DROP TABLE IF EXISTS `address`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `addresse` (
-  `ID` int NOT NULL AUTO_INCREMENT,
-  `CityID` int NOT NULL,
-  `AddressLine` varchar(255) NOT NULL,
-  PRIMARY KEY (`ID`),
-  KEY `CityID` (`CityID`),
-  CONSTRAINT `addresse_ibfk_1` FOREIGN KEY (`CityID`) REFERENCES `city` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `address` (
+                           `id` int NOT NULL AUTO_INCREMENT,
+                           `city_id` int NOT NULL,
+                           `address_line` varchar(255) NOT NULL,
+                           PRIMARY KEY (`id`),
+                           KEY `city_id` (`city_id`),
+                           CONSTRAINT `address_ibfk_1` FOREIGN KEY (`city_id`) REFERENCES `city` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `addresse`
+-- Dumping data for table `address`
 --
 
-LOCK TABLES `addresse` WRITE;
-/*!40000 ALTER TABLE `addresse` DISABLE KEYS */;
-INSERT INTO `addresse` VALUES (1,1,'Rue du testing 1'),(2,3,'13 rue du test'),(3,2,'13 rue du test'),(4,1673,'sdf du test'),(5,2,'rue du test 12'),(6,3,'rue azfhia'),(7,836,'test 12'),(8,836,'test 12'),(9,288,'test 12'),(10,2205,'rue du test eee'),(11,1,'eeesteeeee 12'),(12,1758,'12 rue du chanmp'),(13,287,'test22'),(14,1,'rue du test2'),(15,1,'rue du test 12e'),(16,1,'rue du test e');
-/*!40000 ALTER TABLE `addresse` ENABLE KEYS */;
+LOCK TABLES `address` WRITE;
+/*!40000 ALTER TABLE `address` DISABLE KEYS */;
+INSERT INTO `address` VALUES (1,1,'Rue du testing 1'),(3,287,'12 Grand Rue'),(4,287,'22 rue des champs'),(5,1671,'1 Avenue de l\'anneau ');
+/*!40000 ALTER TABLE `address` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -52,18 +52,18 @@ DROP TABLE IF EXISTS `booking`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `booking` (
-  `ID` int NOT NULL AUTO_INCREMENT,
-  `HallID` int NOT NULL,
-  `UserID` int NOT NULL,
-  `DateTimeIn` datetime NOT NULL,
-  `DateTimeOut` datetime NOT NULL,
-  `TotalPrice` decimal(10,2) NOT NULL,
-  `IsCanceled` tinyint(1) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`ID`),
-  KEY `HallID` (`HallID`),
-  KEY `UserID` (`UserID`),
-  CONSTRAINT `booking_ibfk_1` FOREIGN KEY (`HallID`) REFERENCES `hall` (`ID`),
-  CONSTRAINT `booking_ibfk_2` FOREIGN KEY (`UserID`) REFERENCES `user` (`ID`)
+  `id` int NOT NULL AUTO_INCREMENT,
+  `hall_id` int NOT NULL,
+  `user_id` int NOT NULL,
+  `date_time_in` datetime NOT NULL,
+  `date_time_out` datetime NOT NULL,
+  `total_price` decimal(10,2) NOT NULL,
+  `is_canceled` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `hall_id` (`hall_id`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `booking_ibfk_1` FOREIGN KEY (`hall_id`) REFERENCES `hall` (`id`),
+  CONSTRAINT `booking_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -84,13 +84,13 @@ DROP TABLE IF EXISTS `building`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `building` (
-  `ID` int NOT NULL AUTO_INCREMENT,
-  `Name` varchar(100) NOT NULL,
-  `AdresseID` int NOT NULL,
-  PRIMARY KEY (`ID`),
-  KEY `AdresseID` (`AdresseID`),
-  CONSTRAINT `building_ibfk_1` FOREIGN KEY (`AdresseID`) REFERENCES `addresse` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL,
+  `address_id` int NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `address_id` (`address_id`),
+  CONSTRAINT `building_ibfk_1` FOREIGN KEY (`address_id`) REFERENCES `address` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -99,7 +99,7 @@ CREATE TABLE `building` (
 
 LOCK TABLES `building` WRITE;
 /*!40000 ALTER TABLE `building` DISABLE KEYS */;
-INSERT INTO `building` VALUES (1,'Complexe Sportif du Test',1),(2,'test',9),(3,'test2ok',10),(4,'test3',11),(5,'alpha',12),(6,'test22',13);
+INSERT INTO `building` VALUES (1,'Complexe Sportif de Charleroi',3),(2,'Tenis Club Charleroi',4),(3,'Swich Factory Bruxelles',5);
 /*!40000 ALTER TABLE `building` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -111,10 +111,10 @@ DROP TABLE IF EXISTS `category`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `category` (
-  `ID` int NOT NULL AUTO_INCREMENT,
-  `Name` varchar(100) NOT NULL,
-  PRIMARY KEY (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -123,7 +123,7 @@ CREATE TABLE `category` (
 
 LOCK TABLES `category` WRITE;
 /*!40000 ALTER TABLE `category` DISABLE KEYS */;
-INSERT INTO `category` VALUES (1,'test'),(2,'Tenis'),(3,'Football'),(4,'Basket'),(5,'Golf');
+INSERT INTO `category` VALUES (1,'tenis'),(2,'basketball'),(3,'football'),(4,'futsal');
 /*!40000 ALTER TABLE `category` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -135,13 +135,13 @@ DROP TABLE IF EXISTS `city`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `city` (
-  `ID` int NOT NULL AUTO_INCREMENT,
-  `CountryID` int NOT NULL,
-  `Name` varchar(100) NOT NULL,
-  `PostalCode` varchar(10) NOT NULL,
-  PRIMARY KEY (`ID`),
-  KEY `CountryID` (`CountryID`),
-  CONSTRAINT `city_ibfk_1` FOREIGN KEY (`CountryID`) REFERENCES `country` (`ID`)
+  `id` int NOT NULL AUTO_INCREMENT,
+  `country_id` int NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `postal_code` varchar(10) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `country_id` (`country_id`),
+  CONSTRAINT `city_ibfk_1` FOREIGN KEY (`country_id`) REFERENCES `country` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2758 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -163,11 +163,11 @@ DROP TABLE IF EXISTS `country`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `country` (
-  `ID` int NOT NULL AUTO_INCREMENT,
-  `Name` varchar(100) NOT NULL,
-  PRIMARY KEY (`ID`),
-  UNIQUE KEY `Name` (`Name`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `name` (`name`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -176,7 +176,7 @@ CREATE TABLE `country` (
 
 LOCK TABLES `country` WRITE;
 /*!40000 ALTER TABLE `country` DISABLE KEYS */;
-INSERT INTO `country` VALUES (1,'Belgique'),(2,'Belgium');
+INSERT INTO `country` VALUES (1,'Belgium');
 /*!40000 ALTER TABLE `country` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -188,14 +188,14 @@ DROP TABLE IF EXISTS `hall`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `hall` (
-  `ID` int NOT NULL AUTO_INCREMENT,
-  `BuildingID` int NOT NULL,
-  `Name` varchar(100) NOT NULL,
-  `HourlyRate` decimal(10,2) NOT NULL,
-  PRIMARY KEY (`ID`),
-  KEY `BuildingID` (`BuildingID`),
-  CONSTRAINT `hall_ibfk_1` FOREIGN KEY (`BuildingID`) REFERENCES `building` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=59 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `id` int NOT NULL AUTO_INCREMENT,
+  `building_id` int NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `hourly_rate` decimal(10,2) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `building_id` (`building_id`),
+  CONSTRAINT `hall_ibfk_1` FOREIGN KEY (`building_id`) REFERENCES `building` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -204,122 +204,125 @@ CREATE TABLE `hall` (
 
 LOCK TABLES `hall` WRITE;
 /*!40000 ALTER TABLE `hall` DISABLE KEYS */;
-INSERT INTO `hall` VALUES (56,1,'Hall A',12.00),(57,1,'Hall B',25.00),(58,1,'Hall C',20.00);
+INSERT INTO `hall` VALUES (8,1,'Terrain A',60.00),(9,1,'Terrain B',60.00),(10,1,'Salle A',50.00),(11,1,'Salle B',50.00),(12,2,'Court 1',20.00),(13,2,'Court 2',20.00),(14,3,'T1',40.00),(15,3,'T2',40.00),(16,3,'T3',40.00);
 /*!40000 ALTER TABLE `hall` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `hallcategory`
+-- Table structure for table `hall_category`
 --
 
-DROP TABLE IF EXISTS `hallcategory`;
+DROP TABLE IF EXISTS `hall_category`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `hallcategory` (
-  `ID` int NOT NULL AUTO_INCREMENT,
-  `HallID` int NOT NULL,
-  `CategoryID` int NOT NULL,
-  PRIMARY KEY (`ID`),
-  KEY `HallID` (`HallID`),
-  KEY `CategoryID` (`CategoryID`),
-  CONSTRAINT `hallcategory_ibfk_1` FOREIGN KEY (`HallID`) REFERENCES `hall` (`ID`),
-  CONSTRAINT `hallcategory_ibfk_2` FOREIGN KEY (`CategoryID`) REFERENCES `category` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=85 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `hall_category` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `hall_id` int NOT NULL,
+  `category_id` int NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `hall_id` (`hall_id`),
+  KEY `category_id` (`category_id`),
+  CONSTRAINT `hall_category_ibfk_1` FOREIGN KEY (`hall_id`) REFERENCES `hall` (`id`),
+  CONSTRAINT `hall_category_ibfk_2` FOREIGN KEY (`category_id`) REFERENCES `category` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `hallcategory`
+-- Dumping data for table `hall_category`
 --
 
-LOCK TABLES `hallcategory` WRITE;
-/*!40000 ALTER TABLE `hallcategory` DISABLE KEYS */;
-INSERT INTO `hallcategory` VALUES (80,56,1),(81,56,2),(82,57,4),(83,57,3),(84,58,2);
-/*!40000 ALTER TABLE `hallcategory` ENABLE KEYS */;
+LOCK TABLES `hall_category` WRITE;
+/*!40000 ALTER TABLE `hall_category` DISABLE KEYS */;
+INSERT INTO `hall_category` VALUES (8,8,3),(9,9,3),(10,10,4),(11,11,4),(12,12,1),(13,13,1),(14,14,2),(15,15,2),(16,16,2);
+/*!40000 ALTER TABLE `hall_category` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `hallschedule`
+-- Table structure for table `hall_schedule`
 --
 
-DROP TABLE IF EXISTS `hallschedule`;
+DROP TABLE IF EXISTS `hall_schedule`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `hallschedule` (
-  `ID` int NOT NULL AUTO_INCREMENT,
-  `HallID` int NOT NULL,
-  `OpeningHoursID` int NOT NULL,
-  `WeekDay` tinyint NOT NULL,
-  `BeginningDate` date NOT NULL,
-  `EndingDate` date DEFAULT NULL,
-  PRIMARY KEY (`ID`),
-  KEY `HallID` (`HallID`),
-  KEY `OpeningHoursID` (`OpeningHoursID`),
-  CONSTRAINT `hallschedule_ibfk_1` FOREIGN KEY (`HallID`) REFERENCES `hall` (`ID`),
-  CONSTRAINT `hallschedule_ibfk_2` FOREIGN KEY (`OpeningHoursID`) REFERENCES `openinghours` (`ID`)
+CREATE TABLE `hall_schedule` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `hall_id` int NOT NULL,
+  `opening_hours_id` int NOT NULL,
+  `week_day` tinyint NOT NULL,
+  `beginning_date` date NOT NULL,
+  `ending_date` date DEFAULT NULL,
+  `is_temporary` tinyint(1) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `hall_id` (`hall_id`),
+  KEY `opening_hours_id` (`opening_hours_id`),
+  CONSTRAINT `hall_schedule_ibfk_1` FOREIGN KEY (`hall_id`) REFERENCES `hall` (`id`),
+  CONSTRAINT `hall_schedule_ibfk_2` FOREIGN KEY (`opening_hours_id`) REFERENCES `opening_hours` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=127 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `hall_schedule`
+--
+
+LOCK TABLES `hall_schedule` WRITE;
+/*!40000 ALTER TABLE `hall_schedule` DISABLE KEYS */;
+INSERT INTO `hall_schedule` VALUES (59,16,1,1,'2023-10-26',NULL,0),(64,8,2,1,'2023-10-26',NULL,0),(65,8,2,2,'2023-10-26',NULL,0),(66,8,3,3,'2023-10-26',NULL,0),(67,8,2,4,'2023-10-26',NULL,0),(68,8,4,5,'2023-10-26',NULL,0),(69,8,3,6,'2023-10-26',NULL,0),(70,8,5,7,'2023-10-26',NULL,0),(71,9,2,1,'2023-10-26',NULL,0),(72,9,2,2,'2023-10-26',NULL,0),(73,9,6,3,'2023-10-26',NULL,0),(74,9,2,4,'2023-10-26',NULL,0),(75,9,4,5,'2023-10-26',NULL,0),(76,9,3,6,'2023-10-26',NULL,0),(77,9,5,7,'2023-10-26',NULL,0),(78,10,4,1,'2023-10-26',NULL,0),(79,10,4,2,'2023-10-26',NULL,0),(80,10,4,3,'2023-10-26',NULL,0),(81,10,4,4,'2023-10-26',NULL,0),(82,10,4,5,'2023-10-26',NULL,0),(83,10,7,6,'2023-10-26',NULL,0),(84,10,8,7,'2023-10-26',NULL,0),(85,11,4,1,'2023-10-26',NULL,0),(86,11,4,2,'2023-10-26',NULL,0),(87,11,4,3,'2023-10-26',NULL,0),(88,11,4,4,'2023-10-26',NULL,0),(89,11,4,5,'2023-10-26',NULL,0),(90,11,7,6,'2023-10-26',NULL,0),(91,11,8,7,'2023-10-26',NULL,0),(92,12,9,1,'2023-10-26',NULL,0),(93,12,9,2,'2023-10-26',NULL,0),(94,12,9,3,'2023-10-26',NULL,0),(95,12,9,4,'2023-10-26',NULL,0),(96,12,9,5,'2023-10-26',NULL,0),(97,12,10,6,'2023-10-26',NULL,0),(98,12,10,7,'2023-10-26',NULL,0),(99,13,9,1,'2023-10-26',NULL,0),(100,13,9,2,'2023-10-26',NULL,0),(101,13,9,3,'2023-10-26',NULL,0),(102,13,9,4,'2023-10-26',NULL,0),(103,13,9,5,'2023-10-26',NULL,0),(104,13,10,6,'2023-10-26',NULL,0),(105,13,10,7,'2023-10-26',NULL,0),(106,14,3,1,'2023-10-26',NULL,0),(107,14,3,2,'2023-10-26',NULL,0),(108,14,11,3,'2023-10-26',NULL,0),(109,14,3,4,'2023-10-26',NULL,0),(110,14,12,5,'2023-10-26',NULL,0),(111,14,12,6,'2023-10-26',NULL,0),(112,14,12,7,'2023-10-26',NULL,0),(113,15,3,1,'2023-10-26',NULL,0),(114,15,3,2,'2023-10-26',NULL,0),(116,15,3,4,'2023-10-26',NULL,0),(117,15,11,3,'2023-10-26',NULL,0),(118,15,4,5,'2023-10-26',NULL,0),(119,15,4,6,'2023-10-26',NULL,0),(120,15,4,7,'2023-10-26',NULL,0),(121,16,3,2,'2023-10-26',NULL,0),(122,16,11,3,'2023-10-26',NULL,0),(123,16,3,4,'2023-10-26',NULL,0),(124,16,11,5,'2023-10-26',NULL,0),(125,16,11,6,'2023-10-26',NULL,0),(126,16,11,7,'2023-10-26',NULL,0);
+/*!40000 ALTER TABLE `hall_schedule` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `opening_hours`
+--
+
+DROP TABLE IF EXISTS `opening_hours`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `opening_hours` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `opening_time` time NOT NULL,
+  `closing_time` time NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `opening_hours`
+--
+
+LOCK TABLES `opening_hours` WRITE;
+/*!40000 ALTER TABLE `opening_hours` DISABLE KEYS */;
+INSERT INTO `opening_hours` VALUES (1,'00:00:00','00:00:00'),(2,'10:00:00','20:00:00'),(3,'10:00:00','22:00:00'),(4,'10:00:00','23:00:00'),(5,'11:00:00','20:00:00'),(6,'14:00:00','22:00:00'),(7,'12:00:00','23:00:00'),(8,'12:00:00','22:00:00'),(9,'09:00:00','19:00:00'),(10,'09:00:00','20:00:00'),(11,'09:00:00','22:00:00'),(12,'11:00:00','23:00:00');
+/*!40000 ALTER TABLE `opening_hours` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `payment_history`
+--
+
+DROP TABLE IF EXISTS `payment_history`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `payment_history` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `receiver_user_id` int NOT NULL,
+  `booking_id` int NOT NULL,
+  `payment_type` enum('Cash','Bancontact','Bank Transfer') NOT NULL,
+  `time_stamp` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `receiver_user_id` (`receiver_user_id`),
+  KEY `booking_id` (`booking_id`),
+  CONSTRAINT `payment_history_ibfk_1` FOREIGN KEY (`receiver_user_id`) REFERENCES `user` (`id`),
+  CONSTRAINT `payment_history_ibfk_2` FOREIGN KEY (`booking_id`) REFERENCES `booking` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `hallschedule`
+-- Dumping data for table `payment_history`
 --
 
-LOCK TABLES `hallschedule` WRITE;
-/*!40000 ALTER TABLE `hallschedule` DISABLE KEYS */;
-/*!40000 ALTER TABLE `hallschedule` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `openinghours`
---
-
-DROP TABLE IF EXISTS `openinghours`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `openinghours` (
-  `ID` int NOT NULL AUTO_INCREMENT,
-  `OpeningTime` time NOT NULL,
-  `ClosingTime` time NOT NULL,
-  PRIMARY KEY (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `openinghours`
---
-
-LOCK TABLES `openinghours` WRITE;
-/*!40000 ALTER TABLE `openinghours` DISABLE KEYS */;
-/*!40000 ALTER TABLE `openinghours` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `paymenthistory`
---
-
-DROP TABLE IF EXISTS `paymenthistory`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `paymenthistory` (
-  `ID` int NOT NULL AUTO_INCREMENT,
-  `ReceiverUserID` int NOT NULL,
-  `BookingID` int NOT NULL,
-  `PaymentType` enum('Cash','Bancontact','Bank Transfer') NOT NULL,
-  `TimeStamp` datetime NOT NULL,
-  PRIMARY KEY (`ID`),
-  KEY `ReceiverUserID` (`ReceiverUserID`),
-  KEY `BookingID` (`BookingID`),
-  CONSTRAINT `paymenthistory_ibfk_1` FOREIGN KEY (`ReceiverUserID`) REFERENCES `user` (`ID`),
-  CONSTRAINT `paymenthistory_ibfk_2` FOREIGN KEY (`BookingID`) REFERENCES `booking` (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `paymenthistory`
---
-
-LOCK TABLES `paymenthistory` WRITE;
-/*!40000 ALTER TABLE `paymenthistory` DISABLE KEYS */;
-/*!40000 ALTER TABLE `paymenthistory` ENABLE KEYS */;
+LOCK TABLES `payment_history` WRITE;
+/*!40000 ALTER TABLE `payment_history` DISABLE KEYS */;
+/*!40000 ALTER TABLE `payment_history` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -330,9 +333,9 @@ DROP TABLE IF EXISTS `permission`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `permission` (
-  `ID` int NOT NULL AUTO_INCREMENT,
-  `Label` varchar(100) NOT NULL,
-  PRIMARY KEY (`ID`)
+  `id` int NOT NULL AUTO_INCREMENT,
+  `label` varchar(100) NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -353,9 +356,9 @@ DROP TABLE IF EXISTS `role`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `role` (
-  `ID` int NOT NULL AUTO_INCREMENT,
-  `Name` varchar(100) NOT NULL,
-  PRIMARY KEY (`ID`)
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -370,31 +373,31 @@ INSERT INTO `role` VALUES (1,'manager'),(2,'receptionist'),(3,'tenant');
 UNLOCK TABLES;
 
 --
--- Table structure for table `rolepermissions`
+-- Table structure for table `role_permissions`
 --
 
-DROP TABLE IF EXISTS `rolepermissions`;
+DROP TABLE IF EXISTS `role_permissions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `rolepermissions` (
-  `ID` int NOT NULL AUTO_INCREMENT,
-  `RoleID` int NOT NULL,
-  `PermissionID` int NOT NULL,
-  PRIMARY KEY (`ID`),
-  KEY `RoleID` (`RoleID`),
-  KEY `PermissionID` (`PermissionID`),
-  CONSTRAINT `rolepermissions_ibfk_1` FOREIGN KEY (`RoleID`) REFERENCES `role` (`ID`),
-  CONSTRAINT `rolepermissions_ibfk_2` FOREIGN KEY (`PermissionID`) REFERENCES `permission` (`ID`)
+CREATE TABLE `role_permissions` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `role_id` int NOT NULL,
+  `permission_id` int NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `role_id` (`role_id`),
+  KEY `permission_id` (`permission_id`),
+  CONSTRAINT `role_permissions_ibfk_1` FOREIGN KEY (`role_id`) REFERENCES `role` (`id`),
+  CONSTRAINT `role_permissions_ibfk_2` FOREIGN KEY (`permission_id`) REFERENCES `permission` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `rolepermissions`
+-- Dumping data for table `role_permissions`
 --
 
-LOCK TABLES `rolepermissions` WRITE;
-/*!40000 ALTER TABLE `rolepermissions` DISABLE KEYS */;
-/*!40000 ALTER TABLE `rolepermissions` ENABLE KEYS */;
+LOCK TABLES `role_permissions` WRITE;
+/*!40000 ALTER TABLE `role_permissions` DISABLE KEYS */;
+/*!40000 ALTER TABLE `role_permissions` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -405,22 +408,22 @@ DROP TABLE IF EXISTS `user`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `user` (
-  `ID` int NOT NULL AUTO_INCREMENT,
-  `RoleID` int NOT NULL,
-  `AdresseID` int NOT NULL,
-  `UserName` varchar(100) DEFAULT NULL,
-  `Password` varchar(255) NOT NULL,
-  `FirstName` varchar(100) NOT NULL,
-  `LastName` varchar(100) NOT NULL,
-  `PhoneNumber` varchar(20) NOT NULL,
-  `Email` varchar(100) NOT NULL,
-  `IsBlocked` tinyint(1) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`ID`),
-  KEY `RoleID` (`RoleID`),
-  KEY `AdresseID` (`AdresseID`),
-  CONSTRAINT `user_ibfk_1` FOREIGN KEY (`RoleID`) REFERENCES `role` (`ID`),
-  CONSTRAINT `user_ibfk_2` FOREIGN KEY (`AdresseID`) REFERENCES `addresse` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `id` int NOT NULL AUTO_INCREMENT,
+  `role_id` int NOT NULL,
+  `address_id` int NOT NULL,
+  `username` varchar(100) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `firstname` varchar(100) NOT NULL,
+  `lastname` varchar(100) NOT NULL,
+  `phone_number` varchar(20) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `is_blocked` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `role_id` (`role_id`),
+  KEY `address_id` (`address_id`),
+  CONSTRAINT `user_ibfk_1` FOREIGN KEY (`role_id`) REFERENCES `role` (`id`),
+  CONSTRAINT `user_ibfk_2` FOREIGN KEY (`address_id`) REFERENCES `address` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -429,7 +432,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,1,1,'lahcen','test','Lahcen','Boukhoubza','0489812322','mymail@mail.com',0),(5,3,5,'test','$shiro1$SHA-256$500000$SsOV1X29o20w3aWrVHBYMg==$aVCAylWzc1rgCbu/CjZ5zZQgEkSUoVi9vHNdmV1UuKo=','test','test','1354654465','test@test.com',0),(6,3,6,'test2','$shiro1$SHA-256$500000$wAlvm16nTnIcOX1zHnFNeA==$6mIRiXrLX2Xwdw4blup2AkZ/QPi6tUKzSlg1u80cLhE=','azer','azert','0564685456','test2@mail.com',0);
+INSERT INTO `user` VALUES (1,1,1,'lahcen','$shiro1$SHA-256$500000$SsOV1X29o20w3aWrVHBYMg==$aVCAylWzc1rgCbu/CjZ5zZQgEkSUoVi9vHNdmV1UuKo=','Lahcen','Boukhoubza','0489812322','mymail@mail.com',0);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -442,4 +445,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-08-31 23:13:04
+-- Dump completed on 2023-10-26 22:06:48
