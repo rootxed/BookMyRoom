@@ -26,10 +26,17 @@
     url: The JDBC connection url for connecting to your MySQL dB.
     -->
 
+    //Windows
+<!--    <Resource name="jdbc/BookMyRoom" auth="Container" type="javax.sql.DataSource"-->
+<!--              maxActive="-1" maxIdle="-1" maxWait="10000" username="root"-->
+<!--              password="" driverClassName="com.mysql.jdbc.Driver"-->
+<!--              url="jdbc:mysql://localhost:3306/BookMyRoom?autoReconnect=true&amp;useSSL=false"/>-->
+
+    //Linux
     <Resource name="jdbc/BookMyRoom" auth="Container" type="javax.sql.DataSource"
               maxActive="-1" maxIdle="-1" maxWait="10000" username="root"
               password="" driverClassName="com.mysql.jdbc.Driver"
-              url="jdbc:mysql://localhost:3306/BookMyRoom?autoReconnect=true&amp;useSSL=false"/>
+              url="jdbc:mysql://localhost:3306/bookmyroom?autoReconnect=true&amp;useSSL=false"/>
 
     <!-- to use Weld (CDI) on tomcat -->
     <Resource name="BeanManager"
