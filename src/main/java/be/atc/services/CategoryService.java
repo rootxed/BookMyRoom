@@ -2,7 +2,6 @@ package be.atc.services;
 
 import be.atc.entities.BuildingEntity;
 import be.atc.entities.CategoryEntity;
-import be.atc.tools.EMF;
 import org.apache.log4j.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -19,13 +18,13 @@ public class CategoryService extends ServiceImpl<CategoryEntity> {
 
     public boolean exist(CategoryEntity c, EntityManager em) {
         log.info("Checking if category already exist.");
-        return (findCategoryByNameOrNull(c.getName()) != null);
+        return (findCategoryByNameOrNull(c.getName(), em) != null);
     }
 
-    private CategoryEntity findCategoryByNameOrNull(String name) {
+    private CategoryEntity findCategoryByNameOrNull(String name, EntityManager em) {
         log.info("Finding Category with name: " + name);
 
-        EntityManager em = EMF.getEM();
+
         try{
             return em.createNamedQuery("Category.findOneByName", CategoryEntity.class)
                     .setParameter("name", name)

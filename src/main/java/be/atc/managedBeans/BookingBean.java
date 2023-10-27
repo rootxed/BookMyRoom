@@ -54,25 +54,6 @@ public class BookingBean implements Serializable {
 
     private BookingEntity bookingEntity;
 
-    public List<TimeSlot> getTimeSlots() {
-        return timeSlots;
-    }
-
-    public void setTimeSlots(List<TimeSlot> timeSlots) {
-        this.timeSlots = timeSlots;
-    }
-
-    public List<TimeSlot> getSelectedSlots() {
-        return selectedSlots;
-    }
-
-    public void setSelectedSlots(List<TimeSlot> selectedSlots) {
-        this.selectedSlots = selectedSlots;
-    }
-
-    private List<TimeSlot> timeSlots = new ArrayList<>();
-    private List<TimeSlot> selectedSlots;
-
     @Inject
     private HallService hallService;
 
@@ -88,6 +69,8 @@ public class BookingBean implements Serializable {
     @Inject
     private AsyncMailer asyncMailer;
 
+    @Inject
+    private TimeSlotsBean timeSlotBean;
 
 
     public void onCategoryChange() {
@@ -98,101 +81,29 @@ public class BookingBean implements Serializable {
         getHallsByCityAndCategory();
     }
 
-    public void testListener(){
-        log.info("Listener OK");
-    }
 
-    public void onHallSelect(){
-
-    }
      public void onDateSelect(){
          if (selectedHall == null) {
              log.warn("selectedHall is null. Cannot fetch schedule.");
              return;
          }
          getHallScheduleForDate();
-         generateTimeSlots(schedule.getOpeninghoursByOpeningHoursId().getOpeningTime(),schedule.getOpeninghoursByOpeningHoursId().getClosingTime());
+         List<BookingEntity> existingBookings = new ArrayList<BookingEntity>();
+         existingBookings = getExistingBookings();
+         timeSlotBean.generateTimeSlots(schedule.getOpeninghoursByOpeningHoursId().getOpeningTime(),schedule.getOpeninghoursByOpeningHoursId().getClosingTime(),existingBookings);
      }
 
-    public void generateTimeSlots(LocalTime openingTime, LocalTime closingTime) {
-        timeSlots.clear();
-        LocalTime slotStart = openingTime;
-
-        EntityManager em = EMF.getEM();
-
-        List<BookingEntity> existingBookings = new ArrayList<BookingEntity>();
-        try {
-            existingBookings = bookingService.findBookingsByDateAndHallOrNull(selectedDate, selectedHall, em);
-        } catch (Exception e) {
-            log.error("Failed to find booking entity", e);
-        }finally {
-            em.close();
-        }
-        if (openingTime.equals(closingTime)) {
-            //hall is closed
-            log.warn("Opening time and closing time are the same. Cannot generate time slots. Hall is closed.");
-            return;
-
-        }else {
-            while (!slotStart.isAfter(closingTime.minusHours(1))) {
-                LocalTime slotEnd = slotStart.plusHours(1);
-
-                boolean isAvailable = true;
-
-                for (BookingEntity booking : existingBookings) {
-                    if ((slotStart.isAfter(booking.getDateTimeIn().toLocalTime()) || slotStart.equals(booking.getDateTimeIn().toLocalTime())) &&
-                            (slotEnd.isBefore(booking.getDateTimeOut().toLocalTime()) || slotEnd.equals(booking.getDateTimeOut().toLocalTime()))) {
-                        isAvailable = false;
-                        break;
-                    }
-                }
-
-                TimeSlot slot = new TimeSlot(slotStart, slotEnd, isAvailable);
-                timeSlots.add(slot);
-                slotStart = slotEnd;
-            }
-        }
-
-
-    }
-
-    public void onRowSelect(SelectEvent event) {
-        TimeSlot slot = (TimeSlot) event.getObject();
-        if(slot != null && !selectedSlots.contains(slot)) {
-            selectedSlots.add(slot);
-        }
-    }
-
-    public void onRowUnselect(UnselectEvent event) {
-        TimeSlot slot = (TimeSlot) event.getObject();
-        selectedSlots.remove(slot);
-    }
-
-    public void validateConsecutiveSlots() {
-        if (selectedSlots.size() > 1) {
-            Collections.sort(selectedSlots, Comparator.comparing(TimeSlot::getStartTime));
-
-            for (int i = 1; i < selectedSlots.size(); i++) {
-                if (!selectedSlots.get(i).getStartTime().equals(selectedSlots.get(i - 1).getEndTime())) {
-                    selectedSlots.clear();
-                    NotificationManager.addErrorMessage("Error, selection must be consecutive.");
-                    return;
-                }
-            }
-        }
-    }
-
-    public String getSelectedTimeRange() {
-        if (selectedSlots.isEmpty()) {
-            return "No slots selected";
-        }
-
-        Collections.sort(selectedSlots, Comparator.comparing(TimeSlot::getStartTime));
-        LocalTime startTime = selectedSlots.get(0).getStartTime();
-        LocalTime endTime = selectedSlots.get(selectedSlots.size() - 1).getEndTime();
-
-        return startTime.toString() + " - " + endTime.toString();
-    }
+     public List<BookingEntity> getExistingBookings() {
+         EntityManager em = EMF.getEM();
+         try {
+             return bookingService.findBookingsByDateAndHallOrNull(selectedDate, selectedHall, em);
+         } catch (Exception e) {
+             log.error("Failed to find booking entity", e);
+             return Collections.emptyList();
+         }finally {
+             em.close();
+         }
+     }
 
      public void getHallScheduleForDate(){
          EntityManager em = EMF.getEM();
@@ -204,21 +115,6 @@ public class BookingBean implements Serializable {
              em.close();
          }
      }
-
-    public void getHallSchedule(){
-        EntityManager em = EMF.getEM();
-        try{
-            schedules = hallScheduleService.findAllCurrentAndFutureScheduleForHallOrNull(selectedHall, em);
-        }catch (Exception e) {
-            log.error("Error while getting HallSchdule for hall " +selectedHall );
-        }finally {
-            em.close();
-        }
-    }
-
-    public void getBookingsForHallandDate(LocalDate date){
-
-    }
 
     public String createBooking() {
         log.info("creating new booking");
@@ -263,8 +159,8 @@ public class BookingBean implements Serializable {
 
 
             bookingToInsert.setHallByHallId(selectedHall);
-            bookingToInsert.setDateTimeIn(selectedDate.atTime(selectedSlots.get(0).getStartTime()));
-            bookingToInsert.setDateTimeOut(selectedDate.atTime(selectedSlots.get(selectedSlots.size() - 1).getEndTime()));
+            bookingToInsert.setDateTimeIn(selectedDate.atTime(timeSlotBean.getSelectedSlots().get(0).getStartTime()));
+            bookingToInsert.setDateTimeOut(selectedDate.atTime(timeSlotBean.getSelectedSlots().get(timeSlotBean.getSelectedSlots().size() - 1).getEndTime()));
             bookingToInsert.setUserByUserId(loggedInUser);
             bookingToInsert.setTotalPrice(calculateTotalPrice());
 
@@ -302,11 +198,11 @@ public class BookingBean implements Serializable {
     }
 
     public double calculateTotalPrice(){
-        if (selectedSlots.isEmpty() || selectedHall == null) {
+        if (timeSlotBean.getSelectedSlots().isEmpty() || selectedHall == null) {
             return 0;
         }
         //As slot is for 1h, we calculate from the size of the selectedSlots
-        int hours = selectedSlots.size();
+        int hours = timeSlotBean.getSelectedSlots().size();
 
         double totalPrice = selectedHall.getHourlyRate() * hours;
         return totalPrice;
@@ -347,7 +243,6 @@ public class BookingBean implements Serializable {
             em.close();
         }
     }
-
 
     public CategoryEntity getSelectedCategory() {
         return selectedCategory;

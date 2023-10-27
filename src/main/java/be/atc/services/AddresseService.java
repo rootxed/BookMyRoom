@@ -16,11 +16,9 @@ import java.util.List;
 public class AddresseService extends ServiceImpl<AddresseEntity>{
 
     private Logger log = org.apache.log4j.Logger.getLogger(RoleService.class);
-    private EntityManager em = EMF.getEM();
-    private EntityTransaction transaction = em.getTransaction();
 
 
-    public AddresseEntity findAddresseByFullInfo(String addressLine, int cityId) {
+    public AddresseEntity findAddresseByFullInfo( EntityManager em, String addressLine, int cityId) {
         try {
             return em.createNamedQuery("Addresse.findAddresseByFullInfo", AddresseEntity.class)
                     .setParameter("addressLine", addressLine)
@@ -34,7 +32,7 @@ public class AddresseService extends ServiceImpl<AddresseEntity>{
 
 
     public boolean exist(AddresseEntity address, EntityManager em) {
-        return(findAddresseByFullInfo(address.getAddressLine(), address.getCityByCityId().getId())!= null);
+        return(findAddresseByFullInfo(em, address.getAddressLine(), address.getCityByCityId().getId())!= null);
     }
 
     public AddresseEntity findOneByIdOrNull(int id, EntityManager em) {

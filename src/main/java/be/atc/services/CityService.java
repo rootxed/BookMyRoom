@@ -16,10 +16,8 @@ import java.util.List;
 public class CityService {
 
     private Logger log = org.apache.log4j.Logger.getLogger(CityService.class);
-    private EntityManager em = EMF.getEM();
-    private EntityTransaction transaction = em.getTransaction();
 
-    public CityEntity findCityByIdOrNull(int cityId) {
+    public CityEntity findCityByIdOrNull(int cityId, EntityManager em) {
         log.info("Finding city by ID: " + cityId);
 
         try {
@@ -30,7 +28,7 @@ public class CityService {
         }
     }
 
-    public List<CityEntity> findCitiesByPostalCodeOrNull(String postalCode) {
+    public List<CityEntity> findCitiesByPostalCodeOrNull(String postalCode, EntityManager em) {
         try {
             return em.createNamedQuery("City.findCitiesByPostalCode", CityEntity.class)
                     .setParameter("postalCode", postalCode +"%")
@@ -42,7 +40,7 @@ public class CityService {
         }
     }
 
-    public List<CityEntity> findCitiesByNameOrNull(String cityName) {
+    public List<CityEntity> findCitiesByNameOrNull(String cityName, EntityManager em) {
         try {
             return em.createNamedQuery("City.findCitiesByName", CityEntity.class)
                     .setParameter("cityName", cityName + "%")

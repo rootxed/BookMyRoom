@@ -75,13 +75,13 @@
                         <div class="grid">
                             <h:panelGroup id="timeSlotPanel">
                             <p:outputPanel rendered="#{not empty bookingBean.selectedDate and not empty bookingBean.selectedHall}">
-                                <p:selectManyButton id="timeSlots" value="#{bookingBean.selectedSlots}">
-                                    <f:selectItems value="#{bookingBean.timeSlots}" var="slot" itemValue="#{slot}"
+                                <p:selectManyButton id="timeSlots" value="#{timeSlotsBean.selectedSlots}">
+                                    <f:selectItems value="#{timeSlotsBean.timeSlots}" var="slot" itemValue="#{slot}"
                                                    itemLabel="#{slot.isAvailable ? (slot.toString()) : 'BOOKED'}"
                                                    itemDisabled="#{!slot.isAvailable}"/>
-                                    <p:ajax event="change" listener="#{bookingBean.validateConsecutiveSlots}" update=":globalGrowl :bookForm:timeSlots :bookForm:summaryPriceInfo" />
+                                    <p:ajax event="change" listener="#{timeSlotsBean.validateConsecutiveSlots}" update=":globalGrowl :bookForm:timeSlots :bookForm:summaryPriceInfo" />
                                 </p:selectManyButton>
-                                <p:outputLabel id="closedMessage" rendered="#{empty bookingBean.timeSlots}"><b>CLOSED</b></p:outputLabel>
+                                <p:outputLabel id="closedMessage" rendered="#{empty timeSlotsBean.timeSlots}"><b>CLOSED</b></p:outputLabel>
                             </p:outputPanel>
                             </h:panelGroup>
 
@@ -122,19 +122,19 @@
 
                                 </h:panelGroup>
                                 <h:panelGroup id="summaryPriceInfo">
-                                    <p:outputLabel rendered="#{not empty bookingBean.selectedSlots}">
+                                    <p:outputLabel rendered="#{not empty timeSlotsBean.selectedSlots}">
                                         <b>Selected Time Slot : </b>
                                         <br />
-                                        #{bookingBean.getSelectedTimeRange()}
+                                        #{timeSlotsBean.getSelectedTimeRange()}
                                         <br />
                                         <b>Total: </b>
                                         <br />
-                                        #{bookingBean.selectedSlots.size()} x #{bookingBean.selectedHall.hourlyRate}€
+                                        #{timeSlotsBean.selectedSlots.size()} x #{bookingBean.selectedHall.hourlyRate}€
                                         <br />
                                         = #{bookingBean.calculateTotalPrice()} €
                                     </p:outputLabel>
                                     <br/>
-                                    <p:commandButton styleClass="bookButton" value="Réserver" action="#{bookingBean.createBooking}" update=":bookForm" rendered="#{not empty bookingBean.selectedSlots}"/>
+                                    <p:commandButton styleClass="bookButton" value="Réserver" action="#{bookingBean.createBooking}" update=":bookForm" rendered="#{not empty timeSlotsBean.selectedSlots}"/>
                                 </h:panelGroup>
 
 

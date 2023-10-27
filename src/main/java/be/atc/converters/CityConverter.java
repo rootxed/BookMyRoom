@@ -2,6 +2,7 @@ package be.atc.converters;
 
 import be.atc.entities.CityEntity;
 import be.atc.services.CityService;
+import be.atc.tools.EMF;
 ;
 
 import javax.enterprise.context.RequestScoped;
@@ -11,6 +12,7 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.persistence.EntityManager;
 
 @Named
 @RequestScoped
@@ -24,13 +26,15 @@ public class CityConverter implements Converter {
         if (value == null || value.isEmpty()) {
             return null;
         }
-
+        EntityManager em = EMF.getEM();
         try {
             Integer id = Integer.valueOf(value);
-            CityEntity cityEntity = cityService.findCityByIdOrNull(id);
+            CityEntity cityEntity = cityService.findCityByIdOrNull(id, em);
             return cityEntity;
         } catch (NumberFormatException e) {
             throw new ConverterException("The value is not a valid City ID: " + value, e);
+        } finally {
+            em.close();
         }
     }
 
