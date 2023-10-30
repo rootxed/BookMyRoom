@@ -18,13 +18,13 @@
                 </h:form>
             </pa:tab>
 
-            <pa:tab icon="pi pi-fw pi-cog" title="Manage" rendered='#{authBean.hasRole("manager")}'>
+            <pa:tab icon="pi pi-fw pi-cog" title="Manage" rendered='#{authBean.hasRole("manager") or authBean.hasRole("receptionist")}'>
                 <h:form id="manage-menu-form">
                     <pa:menu widgetVar="barcelonaMenuWidget">
-                        <p:menuitem id="m_building" value="Buildings" icon="pi pi-building" outcome="/manage/building"/>
-                        <p:menuitem id="m_categories" value="Categories" icon="pi pi-sitemap" outcome="/manage/category"/>
-                        <p:menuitem id="m_halls" value="Halls" icon="pi pi-box" outcome="/manage/hall"/>
-                        <p:menuitem id="m_users" value="Users" icon="pi pi-users" outcome="/manage/users"/>
+                        <p:menuitem id="m_building" value="Buildings" icon="pi pi-building" outcome="/manage/building" rendered="#{authBean.hasRole('manager')}"/>
+                        <p:menuitem id="m_categories" value="Categories" icon="pi pi-sitemap" outcome="/manage/category" rendered="#{authBean.hasRole('manager')}"/>
+                        <p:menuitem id="m_halls" value="Halls" icon="pi pi-box" outcome="/manage/hall" rendered="#{authBean.hasRole('manager')}"/>
+                        <p:menuitem id="m_users" value="Users" icon="pi pi-users" outcome="/manage/users" rendered="#{authBean.hasRole('manager')}"/>
                         <p:menuitem id="m_bookings" value="Bookings" icon="pi pi-book" outcome="/manage/bookings"/>
                     </pa:menu>
                 </h:form>

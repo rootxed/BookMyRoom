@@ -54,7 +54,7 @@ public class HallService extends ServiceImpl<HallEntity> {
     public HallEntity findOneByIdOrNull(int id, EntityManager em) {
         log.info("Finding hall By Id " + id);
         try {
-            return em.createNamedQuery("HallEntity.findById", HallEntity.class)
+            return em.createNamedQuery("Hall.findById", HallEntity.class)
                     .setParameter("id", id)
                     .getSingleResult();
         } catch (NoResultException e) {
@@ -66,6 +66,20 @@ public class HallService extends ServiceImpl<HallEntity> {
         try {
             log.info("Finding all halls...");
             TypedQuery<HallEntity> query = em.createNamedQuery("Hall.findAll", HallEntity.class);
+            List<HallEntity> hallList = query.getResultList();
+            log.info("Selected all halls.");
+            return hallList;
+        } catch (NoResultException e) {
+            log.info("Query found no halls to return");
+            return null;
+        }
+    }
+
+    public List<HallEntity> findByBuilding(BuildingEntity building, EntityManager em) {
+        try {
+            log.info("Finding halls by building...");
+            TypedQuery<HallEntity> query = em.createNamedQuery("Hall.findByBuilding", HallEntity.class)
+                    .setParameter("building", building);
             List<HallEntity> hallList = query.getResultList();
             log.info("Selected all halls.");
             return hallList;

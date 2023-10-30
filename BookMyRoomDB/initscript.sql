@@ -112,7 +112,7 @@ CREATE TABLE IF NOT EXISTS payment_history (
     id INT AUTO_INCREMENT PRIMARY KEY,
     receiver_user_id INT NOT NULL,
     booking_id INT NOT NULL,
-    payment_type ENUM('Cash', 'Bancontact', 'Bank Transfer') NOT NULL,
+    payment_type ENUM('Cash', 'Bancontact', 'BankTransfer') NOT NULL,
     time_stamp DATETIME NOT NULL,
     FOREIGN KEY (receiver_user_id) REFERENCES user(id),
     FOREIGN KEY (booking_id) REFERENCES booking(id)

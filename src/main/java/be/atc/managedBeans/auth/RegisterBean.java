@@ -57,18 +57,6 @@ public class RegisterBean implements Serializable {
         addresse = new AddresseEntity();
     }
 
-    public void searchCitiesByPostalCode() {
-        // Utilisez le service CityService pour rechercher les villes par code postal
-        foundCities = cityService.findCitiesByPostalCodeOrNull(searchText);
-    }
-
-    // ... Autres méthodes de recherche ...
-
-    public void selecteCity(CityEntity city){
-        selectedCity = city;
-        addresse.setCityByCityId(selectedCity);
-    }
-
     public String doRegister() {
         log.info("Attempt to persist new registered user: "+ user.getUserName());
         log.info("User properties: userName=" + user.getUserName() + ", email=" + user.getEmail() +", firstName=" + user.getFirstName() + ", lastName=" + user.getLastName());

@@ -306,7 +306,7 @@ CREATE TABLE `payment_history` (
   `id` int NOT NULL AUTO_INCREMENT,
   `receiver_user_id` int NOT NULL,
   `booking_id` int NOT NULL,
-  `payment_type` enum('Cash','Bancontact','Bank Transfer') NOT NULL,
+  `payment_type` enum('Cash','Bancontact','BankTransfer') NOT NULL,
   `time_stamp` datetime NOT NULL,
   PRIMARY KEY (`id`),
   KEY `receiver_user_id` (`receiver_user_id`),

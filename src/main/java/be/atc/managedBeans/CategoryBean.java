@@ -1,5 +1,6 @@
 package be.atc.managedBeans;
 
+import be.atc.entities.BookingEntity;
 import be.atc.entities.CategoryEntity;
 import be.atc.services.CategoryService;
 import be.atc.tools.EMF;
@@ -36,10 +37,7 @@ public class CategoryBean implements Serializable {
 
     private CategoryEntity category;
 
-    @PostConstruct
-    public void init() { categories = getCategories();}
-
-    public List<CategoryEntity> getCategories(){
+    public List<CategoryEntity> loadCategories(){
         EntityManager em = EMF.getEM();
         List<CategoryEntity> fetchedCategories = new ArrayList<>();
         try{
@@ -93,7 +91,7 @@ public class CategoryBean implements Serializable {
         } finally {
            em.clear();
            em.close();
-           categories = getCategories();
+           categories = loadCategories();
         }
 
     }
@@ -127,8 +125,15 @@ public class CategoryBean implements Serializable {
         } finally {
             em.clear();
             em.close();
-            categories = getCategories();
+            categories = loadCategories();
         }
+    }
+
+    public List<CategoryEntity> getCategories() {
+        if (categories == null) {
+            categories = loadCategories();
+        }
+        return categories;
     }
 
     public void openNew() {

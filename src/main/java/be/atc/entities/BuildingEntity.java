@@ -8,7 +8,10 @@ import java.util.Objects;
         @NamedQuery(name = "Building.findOneByName", query = "SELECT b FROM BuildingEntity b WHERE LOWER(b.name) = LOWER(:name)"),
         @NamedQuery(name = "Building.findAll", query = "SELECT b FROM BuildingEntity b"),
         @NamedQuery(name = "Building.searchByName",
-                query = "SELECT b FROM BuildingEntity b WHERE b.name LIKE :name ORDER BY b.name ASC")
+                query = "SELECT b FROM BuildingEntity b WHERE b.name LIKE :name ORDER BY b.name ASC"),
+        @NamedQuery(name = "Building.findByCity",
+                query = "SELECT b FROM BuildingEntity b WHERE b.addresseByAdresseId.cityByCityId = :city")
+
 })
 
 @Entity

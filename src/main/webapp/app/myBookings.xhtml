@@ -56,8 +56,8 @@
                                               value="#{bookingHistoryBean.getBookingStatus(booking)}"/>
                             </p:column>
                             <p:column headerText="Payment">
-                                <h:outputText styleClass="status-badge status-#{PaymentHistoryBean.getPaymentHistory(booking) ne null ? 'payed' : 'missing'} upper-text"
-                                              value="#{PaymentHistoryBean.getPaymentHistory(booking) ne null ? 'payed' : 'missing'}"/>
+                                <h:outputText styleClass="status-badge status-#{PaymentHistoryBean.getPaymentHistoryStatus(booking) ne null ? 'payed' : 'missing'} upper-text"
+                                              value="#{PaymentHistoryBean.getPaymentHistoryStatus(booking) ne null ? 'payed' : 'missing'}"/>
                             </p:column>
                         </p:dataTable>
                     </h:form>

@@ -28,7 +28,7 @@
                                 <p:selectOneMenu styleClass="custom-select" value="#{bookingBean.selectedCategory}"  converter="#{categoryConverter}">
                                     <f:selectItem itemLabel="Select Category" itemValue="#{null}" noSelectionOption="true"/>
                                     <f:selectItems value="#{categoryBean.categories}" var="category" itemValue="#{category}" itemLabel="#{category.name}"/>
-                                    <p:ajax event="change" listener="#{bookingBean.onCategoryChange}" update=":bookForm:cityDropdown"/>
+                                    <p:ajax event="change" listener="#{bookingBean.onCategoryChange}" update=":bookForm:cityDropdown :bookForm:hallDropdown :bookForm:summaryHallInfo :bookForm:timeSlotPanel"/>
                                     <!--                            <p:ajax event="itemSelect" listener="#{bookingBean.testListener}" update=":bookForm:cityDropdown"/>-->
                                 </p:selectOneMenu>
                                 </div>
@@ -38,7 +38,7 @@
                                 <p:selectOneMenu styleClass="custom-select" value="#{bookingBean.selectedCity}" converter="#{cityConverter}" id="cityDropdown" disabled="#{bookingBean.selectedCategory == null}">
                                     <f:selectItem itemLabel="Select City" itemValue="#{null}" noSelectionOption="true"/>
                                     <f:selectItems value="#{bookingBean.cities}" var="city" itemValue="#{city}" itemLabel="#{city.name}"/>
-                                    <p:ajax event="change" listener="#{bookingBean.onCitySelect}" update=":bookForm:"/>
+                                    <p:ajax event="change" listener="#{bookingBean.onCitySelect}" update=":bookForm:hallDropdown :bookForm:hallDropdown :bookForm:timeSlotPanel"/>
                                 </p:selectOneMenu>
                                 </div>
 
@@ -51,7 +51,7 @@
                                     <p:selectOneMenu styleClass="custom-select" value="#{bookingBean.selectedHall}" converter="#{hallConverter}" id="hallDropdown" noSelectionOption="true" disabled="#{bookingBean.selectedCity == null}">
                                         <f:selectItem itemLabel="Select Hall" itemValue="#{null}" noSelectionOption="true"/>
                                         <f:selectItems value="#{bookingBean.halls}" var="hall" itemValue="#{hall}" itemLabel="#{hall.name} - #{hall.buildingByBuildingId.name}"/>
-                                        <p:ajax event="change" update=":bookForm:datePicker :bookForm:summaryHallInfo"/>
+                                        <p:ajax event="change" listener="#{bookingBean.onSelection}" update=":bookForm:datePicker :bookForm:summaryHallInfo :bookForm:timeSlotPanel"/>
                                         <!--                            <p:ajax event="change" listener="#{bookingBean.onHallSelect}" update=":bookForm"/>-->
                                     </p:selectOneMenu>
                                     </div>
@@ -60,8 +60,8 @@
                                         <p:outputLabel>4:</p:outputLabel>
                                     <p:datePicker styleClass="custom-select" id="datePicker" value="#{bookingBean.selectedDate}" disabled="#{bookingBean.selectedHall == null}"
                                                   pattern="dd/MM/yyyy"
-                                                  showIcon="true">
-                                        <p:ajax event="dateSelect" listener="#{bookingBean.onDateSelect}" update=":bookForm:timeSlotPanel" />
+                                                  showIcon="true" mindate="#{bookingBean.todayDate}">
+                                        <p:ajax event="dateSelect" listener="#{bookingBean.onSelection}" update=":bookForm:timeSlotPanel" />
                                     </p:datePicker>
                                     </div>
                             </div>

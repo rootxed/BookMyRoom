@@ -8,7 +8,9 @@ import java.util.Objects;
         @NamedQuery(name = "City.findCitiesByPostalCode",
                 query = "SELECT c FROM CityEntity c WHERE c.postalCode  LIKE :postalCode ORDER BY c.postalCode ASC"),
         @NamedQuery(name = "City.findCitiesByName",
-                query = "SELECT c FROM CityEntity c WHERE c.name LIKE :cityName ORDER BY c.name ASC")
+                query = "SELECT c FROM CityEntity c WHERE c.name LIKE :cityName ORDER BY c.name ASC"),
+        @NamedQuery(name = "City.findCitiesWithHallsByName",
+                query = "SELECT DISTINCT c FROM CityEntity c JOIN c.addressesById a JOIN a.buildingsById b WHERE c.name LIKE :cityName ORDER BY c.name ASC")
 })
 @Entity
 @Table(name = "city", schema = "bookmyroom", catalog = "")

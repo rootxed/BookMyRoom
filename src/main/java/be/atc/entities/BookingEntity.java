@@ -21,7 +21,21 @@ import java.util.Objects;
         @NamedQuery(name = "Booking.findBookingsByUser",
                 query = "SELECT b " +
                         "FROM BookingEntity b " +
-                        "WHERE b.userByUserId = :user" )
+                        "WHERE b.userByUserId = :user" ),
+        @NamedQuery(name = "Booking.findByBuildingAndDate",
+                query = "SELECT b " +
+                        "FROM BookingEntity b " +
+                        "WHERE b.hallByHallId.buildingByBuildingId = :building " +
+                        "AND FUNCTION('YEAR', b.dateTimeIn) = FUNCTION('YEAR', :date) " +
+                        "AND FUNCTION('MONTH', b.dateTimeIn) = FUNCTION('MONTH', :date) " +
+                        "AND FUNCTION('DAY', b.dateTimeIn) = FUNCTION('DAY', :date)"),
+        @NamedQuery(name = "Booking.findByHallAndDate",
+                query = "SELECT b " +
+                        "FROM BookingEntity b " +
+                        "WHERE b.hallByHallId = :hall " +
+                        "AND FUNCTION('YEAR', b.dateTimeIn) = FUNCTION('YEAR', :date) " +
+                        "AND FUNCTION('MONTH', b.dateTimeIn) = FUNCTION('MONTH', :date) " +
+                        "AND FUNCTION('DAY', b.dateTimeIn) = FUNCTION('DAY', :date)")
 
 })
 

@@ -8,6 +8,10 @@
         <listener-class>org.jboss.weld.environment.servlet.Listener</listener-class>
     </listener>
 
+    <welcome-file-list>
+        <welcome-file>/app/index.xhtml</welcome-file>
+    </welcome-file-list>
+
     <servlet>
         <servlet-name>Faces Servlet</servlet-name>
         <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
@@ -18,10 +22,10 @@
         <url-pattern>*.xhtml</url-pattern>
     </servlet-mapping>
     <session-config>
-        <session-timeout>
-            500
-        </session-timeout>
+        <!-- Disables URL-based sessions (no more 'jsessionid' in the URL using Tomcat) -->
+        <tracking-mode>COOKIE</tracking-mode>
     </session-config>
+
 <!--    <welcome-file-list>-->
 <!--        <welcome-file>views/login.xhtml</welcome-file>-->
 <!--    </welcome-file-list>-->
@@ -63,13 +67,14 @@
         <dispatcher>ERROR</dispatcher>
     </filter-mapping>
 
-    <welcome-file-list>
-        <welcome-file>/app/index.xhtml</welcome-file>
-    </welcome-file-list>
-
 
     <error-page>
         <error-code>403</error-code>
+        <location>/access.xhtml</location>
+    </error-page>
+
+    <error-page>
+        <error-code>401</error-code>
         <location>/access.xhtml</location>
     </error-page>
 

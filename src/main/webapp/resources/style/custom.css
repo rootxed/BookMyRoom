@@ -145,6 +145,26 @@
     text-align: center;
 }
 
+.three-columns-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.register-form{
+    margin: 0 auto;
+}
+
+.bookings-autocomplete {
+    flex: 1; /* Prendra 1/3 de la largeur */
+    margin-right: 10px; /* Espace de 10px à droite */
+}
+
+.bookings-select-menu {
+    flex: 1; /* Prendra 1/3 de la largeur */
+    margin-right: 10px; /* Espace de 10px à droite */
+}
+
 /*.container {*/
 /*    display: flex;*/
 /*    justify-content: space-between;*/

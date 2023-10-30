@@ -22,7 +22,9 @@ import java.util.Objects;
                         "JOIN h.hallcategoriesById hc " +
                         "WHERE hc.categoryByCategoryId = :category " +
                         "AND h.buildingByBuildingId.addresseByAdresseId.cityByCityId = :city"),
-        @NamedQuery(name = "HallEntity.findById", query = "SELECT h FROM HallEntity h WHERE h.id = :id")
+        @NamedQuery(name = "Hall.findById", query = "SELECT h FROM HallEntity h WHERE h.id = :id"),
+        @NamedQuery(name = "Hall.findByBuilding", query = "SELECT h FROM HallEntity h WHERE h.buildingByBuildingId = :building")
+
 })
 
 @Entity

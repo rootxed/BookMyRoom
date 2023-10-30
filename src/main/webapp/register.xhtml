@@ -11,7 +11,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
         <meta name="apple-mobile-web-app-capable" content="yes"/>
     </f:facet>
-    <title>PrimeFaces Barcelona - Register</title>
+    <title>BookMyRoom - Register</title>
     <h:outputScript name="js/ripple.js" library="barcelona-layout" rendered="#{guestPreferences.ripple}"/>
     <h:outputScript name="js/layout.js" library="barcelona-layout"/>
 </h:head>
@@ -24,6 +24,7 @@
                 <h1>BookMyRoom</h1>
                 <h2>Inscription</h2>
             </div>
+            <div class="register-form">
             <h:form>
                 <div class="formgrid grid">
                     <div class="field col-6">
@@ -92,6 +93,7 @@
                             <p:autoComplete id="postalCode" converter="#{cityConverter}" value="#{citiesBean.selectedCity}"
                                             completeMethod="#{citiesBean.searchCitiesByPostalCode}"
                                             var="city"
+                                            placeholder="Postal code"
                                             itemLabel="#{city.postalCode}"
                                             itemValue="#{city}"
                                             forceSelection="true">
@@ -101,8 +103,7 @@
                     </div>
                     <div class="field col">
                         <span class="ui-float-label">
-                            <p:outputLabel for="cityName" value="Ville"/>
-                            <p:inputText id="cityName" value="#{citiesBean.selectedCity.name}" readonly="true">
+                            <p:inputText id="cityName" placeholder="City" value="#{citiesBean.selectedCity.name}" readonly="true">
                                 <p:ajax update="cityName"/>
                             </p:inputText>
                         </span>
@@ -116,6 +117,7 @@
                     <p:autoUpdate/>
                 </p:messages>
             </h:form>
+            </div>
         </div>
     </div>
 
@@ -124,6 +126,7 @@
     <h:outputStylesheet name="css/ripple.css" library="barcelona-layout" rendered="#{guestPreferences.ripple}"/>
     <h:outputStylesheet name="css/layout-indigo.css" library="barcelona-layout"/>
     <h:outputStylesheet name="css/ripple.css" library="barcelona-layout"/>
+    <h:outputStylesheet name="style/custom.css" />
 </h:body>
 
 </html>

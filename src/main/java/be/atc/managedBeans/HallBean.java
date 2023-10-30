@@ -36,7 +36,7 @@ public class HallBean implements Serializable {
 
     private List<HallEntity> halls;
 
-    private HallEntity hall;
+    private HallEntity hall = new HallEntity();
 
     public List<CategoryEntity> getCategories() {
         return categories;
@@ -50,13 +50,7 @@ public class HallBean implements Serializable {
 
     private List<HallCategoryEntity> hallCategories;
 
-    @PostConstruct
-    public void init() {
-        halls = getHalls();
-        hall = new HallEntity();
-    }
-
-    public List<HallEntity> getHalls() {
+    public List<HallEntity> loadHalls() {
         EntityManager em = EMF.getEM();
         List<HallEntity> fetchedHalls = new ArrayList<>();
         try {
@@ -81,6 +75,24 @@ public class HallBean implements Serializable {
             selectedCategories.add(hallCategory.getCategoryByCategoryId());
         }
         return selectedCategories;
+    }
+
+    public List<HallEntity> getHallsByBuilding(BuildingEntity building){
+        List<HallEntity> halls = new ArrayList<HallEntity>();
+        EntityManager em = EMF.getEM();
+        try {
+            if(building != null) {
+                log.info("Getting halls in building " + building.getName());
+                halls = hallService.findByBuilding(building, em);
+            } else {
+                log.info("Building is Null");
+            }
+        }catch (Exception e){
+            log.error("Error while searching for halls by building", e);
+        }finally {
+            em.close();
+        }
+        return halls;
     }
 
     public void save() {
@@ -124,7 +136,7 @@ public class HallBean implements Serializable {
         } finally {
             em.clear();
             em.close();
-            halls = getHalls();
+            halls = loadHalls();
         }
     }
 
@@ -153,7 +165,7 @@ public class HallBean implements Serializable {
             return "failure";
         } finally {
             em.close();
-            halls = getHalls();
+            halls = loadHalls();
         }
     }
 
@@ -254,6 +266,13 @@ public class HallBean implements Serializable {
 
     public void setHall(HallEntity hall) {
         this.hall = hall;
+    }
+
+    public List<HallEntity> getHalls() {
+        if (halls == null) {
+            halls = loadHalls();
+        }
+        return halls;
     }
 
 }

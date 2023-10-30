@@ -40,17 +40,32 @@ public class CitiesBean implements Serializable {
         return cities;
     }
 
-    public void searchCitiesByName() {
+    public List<CityEntity> searchCitiesByName(String query) {
         // Utilisez le service CityService pour rechercher les villes par nom
         List<CityEntity> cities = new ArrayList<CityEntity>();
         EntityManager em = EMF.getEM();
         try {
-            cities = cityService.findCitiesByNameOrNull(searchText, em);
+            cities = cityService.findCitiesByNameOrNull(query, em);
         }catch (Exception e) {
             log.error("Error while searching cities", e);
         }finally {
             em.close();
         }
+        return cities;
+    }
+
+    public List<CityEntity> searchCitiesWithHallsByName(String query) {
+        // Utilisez le service CityService pour rechercher les villes par nom
+        List<CityEntity> cities = new ArrayList<CityEntity>();
+        EntityManager em = EMF.getEM();
+        try {
+            cities = cityService.findCitiesWithHallsByNameOrNull(query, em);
+        }catch (Exception e) {
+            log.error("Error while searching cities with halls", e);
+        }finally {
+            em.close();
+        }
+        return cities;
     }
 
     public void selectCity(SelectEvent event) {

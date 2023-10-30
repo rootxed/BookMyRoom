@@ -2,12 +2,15 @@ package be.atc.managedBeans;
 
 import be.atc.entities.AddresseEntity;
 import be.atc.entities.BuildingEntity;
+import be.atc.entities.CityEntity;
+import be.atc.entities.HallEntity;
 import be.atc.services.AddresseService;
 import be.atc.services.BuildingService;
 import be.atc.tools.EMF;
 import be.atc.tools.NotificationManager;
 import org.apache.log4j.Logger;
 import org.eclipse.persistence.exceptions.EclipseLinkException;
+import org.primefaces.event.SelectEvent;
 
 import javax.annotation.PostConstruct;
 import javax.faces.view.ViewScoped;
@@ -34,19 +37,19 @@ public class BuildingBean implements Serializable {
     private List<BuildingEntity> buildings;
     private List<BuildingEntity> filteredBuildings;
 
-    private BuildingEntity building;
+    private BuildingEntity building = new BuildingEntity();
 
     @Inject
     private CitiesBean citiesBean;
 
-
-    @PostConstruct
-    public void init() {
-        building = new BuildingEntity();
-        buildings = getBuildings();
+    public List<BuildingEntity> getBuildings() {
+        if (buildings == null) {
+            buildings = loadBuildings();
+        }
+        return buildings;
     }
 
-    public List<BuildingEntity> getBuildings(){
+    public List<BuildingEntity> loadBuildings(){
         EntityManager em = EMF.getEM();
         List<BuildingEntity> fetchedBuildings;
         try {
@@ -162,6 +165,24 @@ public class BuildingBean implements Serializable {
         }
     }
 
+    public List<BuildingEntity> getBuildingsByCity(CityEntity city){
+        List<BuildingEntity> buildings = new ArrayList<BuildingEntity>();
+        EntityManager em = EMF.getEM();
+        try {
+            if(city != null) {
+                log.info("Getting buildings in " + city);
+                buildings = buildingService.findBuildingsByCity(city, em);
+            } else {
+                log.info("selected city is Null");
+            }
+        }catch (Exception e){
+            log.error("Error while searching for building by city", e);
+        }finally {
+            em.close();
+        }
+        return buildings;
+    }
+
     public void openNew() {
         this.building = new BuildingEntity();
         this.building.setAddresseByAdresseId(new AddresseEntity());
@@ -205,6 +226,7 @@ public class BuildingBean implements Serializable {
         }
     }
 
+
     public BuildingEntity getBuilding() {
         return building;
     }
@@ -212,5 +234,7 @@ public class BuildingBean implements Serializable {
     public void setBuilding(BuildingEntity building) {
         this.building = building;
     }
+
+
 
 }

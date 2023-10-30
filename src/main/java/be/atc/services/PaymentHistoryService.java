@@ -25,10 +25,14 @@ public class PaymentHistoryService extends ServiceImpl<PaymentHistoryEntity> {
         }
     }
 
-    public boolean exist(PaymentHistoryEntity paymentHistoryEntity, EntityManager em) {
-        return false;
+    public boolean exist(PaymentHistoryEntity paymentHistory, EntityManager em) {
+        PaymentHistoryEntity p = findOneByBookingOrNull(paymentHistory.getBookingByBookingId(), em);
+        if (p != null) {
+            return true;
+        }else{
+            return false;
+        }
     }
-
     public PaymentHistoryEntity findOneByIdOrNull(int id, EntityManager em) {
         return null;
     }

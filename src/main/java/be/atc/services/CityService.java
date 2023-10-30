@@ -52,4 +52,18 @@ public class CityService {
         }
     }
 
+    public List<CityEntity> findCitiesWithHallsByNameOrNull(String cityName, EntityManager em) {
+        try {
+            return em.createNamedQuery("City.findCitiesWithHallsByName", CityEntity.class)
+                    .setParameter("cityName", cityName + "%")
+                    .setMaxResults(10)
+                    .getResultList();
+        } catch (NoResultException e) {
+            log.info("No cities found for the given city name: " + cityName, e);
+            return null;
+        }
+    }
+
+
+
 }

@@ -79,4 +79,11 @@ public class BuildingService extends  ServiceImpl<BuildingEntity>{
 
         return count > 0;
     }
+
+    public List<BuildingEntity> findBuildingsByCity(CityEntity city, EntityManager em){
+        log.info("Finding buildings by city");
+        return em.createNamedQuery("Building.findByCity", BuildingEntity.class)
+                .setParameter("city", city)
+                .getResultList();
+    }
 }

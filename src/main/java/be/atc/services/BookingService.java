@@ -1,6 +1,7 @@
 package be.atc.services;
 
 import be.atc.entities.BookingEntity;
+import be.atc.entities.BuildingEntity;
 import be.atc.entities.HallEntity;
 import be.atc.entities.UserEntity;
 import org.apache.log4j.Logger;
@@ -9,6 +10,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -52,6 +54,42 @@ public class BookingService extends  ServiceImpl<BookingEntity> {
         }catch (NoResultException e) {
             return null;
         }
+    }
+
+    public void cancelBooking(BookingEntity booking, EntityManager em) {
+            findOneByIdOrNull(booking.getId(), em);
+            if(booking != null){
+                booking.setIsCanceled(true);
+                update(booking, em);
+            }
+    }
+
+    public List<BookingEntity> findByBuildingAndDate(BuildingEntity building, LocalDate date, EntityManager em){
+        log.info("Getting bookings for building " + building.getName() + " for " + date);
+        List<BookingEntity> bookings = new ArrayList<BookingEntity>();
+        try{
+            bookings = em.createNamedQuery("Booking.findByBuildingAndDate", BookingEntity.class)
+                    .setParameter("building", building)
+                    .setParameter("date", date)
+                    .getResultList();
+        } catch (Exception e) {
+            log.error("Error While getting Bookings by building and date", e);
+        }
+        return bookings;
+    }
+
+    public List<BookingEntity> findByHallAndDate(HallEntity hall, LocalDate date, EntityManager em){
+        log.info("Getting bookings for hall " + hall.getName() + " for " + date);
+        List<BookingEntity> bookings = new ArrayList<BookingEntity>();
+        try{
+            bookings = em.createNamedQuery("Booking.findByHallAndDate", BookingEntity.class)
+                    .setParameter("hall", hall)
+                    .setParameter("date", date)
+                    .getResultList();
+        } catch (Exception e) {
+            log.error("Error While getting Bookings by hall and date", e);
+        }
+        return bookings;
     }
 
     public Collection<BookingEntity> findAllOrNull(EntityManager em) {

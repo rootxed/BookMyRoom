@@ -52,18 +52,11 @@ public class HallScheduleBean implements Serializable {
 
     private List<HallScheduleEntity> sortedDefinitiveSchedules;
 
-    private HallScheduleEntity hallSchedule;
+    private HallScheduleEntity hallSchedule = new HallScheduleEntity();;
 
     private boolean initialClosedValue;
     private String editedOpeningTime;
     private String editedClosingTime;
-
-
-
-    @PostConstruct
-    public void init() {
-        hallSchedule = new HallScheduleEntity();
-    }
 
     public void initScheduleModel() {
         scheduleModel = new DefaultScheduleModel();

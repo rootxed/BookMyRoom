@@ -52,6 +52,12 @@ public class BookingBean implements Serializable {
 
     private LocalDate selectedDate;
 
+    private LocalDate todayDate = LocalDate.now();
+
+    public LocalDate getTodayDate() {
+        return todayDate;
+    }
+
     private BookingEntity bookingEntity;
 
     @Inject
@@ -74,23 +80,28 @@ public class BookingBean implements Serializable {
 
 
     public void onCategoryChange() {
+        selectedCity = null;
+        selectedHall = null;
         getCitiesByCategory();
     }
 
     public void onCitySelect(){
+        selectedHall = null;
         getHallsByCityAndCategory();
     }
 
 
-     public void onDateSelect(){
-         if (selectedHall == null) {
-             log.warn("selectedHall is null. Cannot fetch schedule.");
-             return;
+     public void onSelection(){
+         if (selectedHall != null && selectedDate != null) {
+
+             getHallScheduleForDate();
+             List<BookingEntity> existingBookings = new ArrayList<BookingEntity>();
+             existingBookings = getExistingBookings();
+             timeSlotBean.generateTimeSlots(schedule.getOpeninghoursByOpeningHoursId().getOpeningTime(),schedule.getOpeninghoursByOpeningHoursId().getClosingTime(),existingBookings);
+         }else{
+             log.info("selectedHall and/or date is null. Cannot fetch schedule.");
          }
-         getHallScheduleForDate();
-         List<BookingEntity> existingBookings = new ArrayList<BookingEntity>();
-         existingBookings = getExistingBookings();
-         timeSlotBean.generateTimeSlots(schedule.getOpeninghoursByOpeningHoursId().getOpeningTime(),schedule.getOpeninghoursByOpeningHoursId().getClosingTime(),existingBookings);
+
      }
 
      public List<BookingEntity> getExistingBookings() {
@@ -240,6 +251,27 @@ public class BookingBean implements Serializable {
             log.error("Error while searching for cities by hall categories");
 
         }finally {
+            em.close();
+        }
+    }
+
+    public void cancelBooking(BookingEntity booking){
+
+        EntityManager em = EMF.getEM();
+        EntityTransaction tx = null;
+        try {
+            log.info("cancelling booking " + booking.getId());
+            tx = em.getTransaction();
+            tx.begin();
+            bookingService.cancelBooking(booking, em);
+            tx.commit();
+        }catch (Exception e){
+            log.error("Error while canceling booking.", e);
+            if (tx != null && tx.isActive()) {
+                tx.rollback();
+            }
+        }
+        finally {
             em.close();
         }
     }

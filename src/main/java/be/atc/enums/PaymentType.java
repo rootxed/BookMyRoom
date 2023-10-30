@@ -1,9 +1,9 @@
 package be.atc.enums;
 
 public enum PaymentType {
-    bancontact("bancontact"),
-    cash("cash"),
-    banktransfer("banktransfer");
+    Bancontact("Bancontact"),
+    Cash("Cash"),
+    BankTransfer("Bank Transfer");
 
     private String text;
 
