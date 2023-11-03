@@ -1,12 +1,71 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html
-        PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<head>
-    <title>Title</title>
-</head>
-<body>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
 
-</body>
-</html>
+    <ui:define name="content">
+        <div class="grid">
+            <div class="col">
+                <div class="card">
+                    <h:form id="listForm">
+                        <h2>#{bundle['title.users']}</h2>
+                        <p:dataTable id="dt-users" widgetVar="dtUsers" var="user"
+                                     value="#{userBean.users}"
+                                     reflow="true" styleClass="table"
+                                     rowKey="#{user.id}" paginator="true" rows="10" rowSelectMode="add"
+                                     paginatorPosition="bottom"
+                                     filteredValue="#{userBean.filteredUsers}"
+                                     globalFilterOnly="true">
+                            <f:facet name="header">
+                                <div class="table-header">
+                                    <span class="filter-container ui-input-icon-left">
+                                        <i class="pi pi-search"></i>
+                                        <p:inputText id="globalFilter" onkeyup="PF('dtUsers').filter()"
+                                                     placeholder="#{bundle['form.search']}"/>
+                                    </span>
+                                </div>
+                            </f:facet>
+
+                            <p:column headerText="#{bundle['title.username']}" sortBy="#{user.userName}"
+                                      filterBy="#{user.userName}">
+                                <h:outputText value="#{user.userName}"/>
+                            </p:column>
+
+                            <p:column headerText="#{bundle['title.email']}" sortBy="#{user.email}"
+                                      filterBy="#{user.email}">
+                                <h:outputText value="#{user.email}"/>
+                            </p:column>
+
+                            <p:column headerText="#{bundle['title.firstname']}" sortBy="#{user.firstName}"
+                                      filterBy="#{user.firstName}">
+                                <h:outputText value="#{user.firstName}"/>
+                            </p:column>
+
+                            <p:column headerText="#{bundle['title.lastname']}" sortBy="#{user.lastName}"
+                                      filterBy="#{user.lastName}">
+                                <h:outputText value="#{user.lastName}"/>
+                            </p:column>
+
+                            <p:column headerText="#{bundle['title.phoneNumber']}" sortBy="#{user.phoneNumber}"
+                                      filterBy="#{user.phoneNumber}">
+                                <h:outputText value="#{user.phoneNumber}"/>
+                            </p:column>
+
+                            <p:column headerText="#{bundle['title.address']}">
+                                <h:outputText value="#{user.addresseByAdresseId.addressLine}, #{user.addresseByAdresseId.cityByCityId.postalCode} #{user.addresseByAdresseId.cityByCityId.name}"/>
+                            </p:column>
+
+                            <p:column headerText="#{bundle['title.role']}" sortBy="#{user.roleByRoleId.name}"
+                                      filterBy="#{user.roleByRoleId.name}">
+                                <h:outputText value="#{user.roleByRoleId.name}"/>
+                            </p:column>
+
+                        </p:dataTable>
+                    </h:form>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

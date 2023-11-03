@@ -10,12 +10,14 @@ import be.atc.services.RoleService;
 import be.atc.services.UserService;
 import be.atc.services.AddresseService;
 import be.atc.tools.EMF;
+import be.atc.tools.NotificationManager;
 import org.apache.log4j.Logger;
 
 import javax.annotation.PostConstruct;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.management.Notification;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import java.io.Serializable;
@@ -25,8 +27,6 @@ import java.util.List;
 @ViewScoped
 public class RegisterBean implements Serializable {
     private Logger log = org.apache.log4j.Logger.getLogger(RegisterBean.class);
-    private final static String SUCCESS_LOCALE_MESSAGE_NAME = "register.successMessage";
-    private final static String FAILURE_LOCALE_MESSAGE_NAME = "register.failureMessage";
 
     private UserEntity user;
     private AddresseEntity addresse;
@@ -90,12 +90,14 @@ public class RegisterBean implements Serializable {
 
             transaction.commit();
 
+            NotificationManager.addInfoMessageFromBundleRedirect("notification.register.success");
             return "success";
         } catch (Exception e) {
             if (transaction != null && transaction.isActive()) {
                 transaction.rollback();
             }
             log.error("Failed to insert new user with address", e);
+            NotificationManager.addErrorMessageFromBundle("notification.register.failure");
             return "failure";
         } finally {
             em.clear();

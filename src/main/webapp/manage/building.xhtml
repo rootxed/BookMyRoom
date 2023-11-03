@@ -10,102 +10,141 @@
             <div class="col">
                 <div class="card">
                     <h:form id="listForm">
+                        <h2>#{bundle['title.buildings']}</h2>
                         <p:dataTable id="dt-buildings" widgetVar="dtBuildings" var="building"
                                      value="#{buildingBean.buildings}"
                                      reflow="true" styleClass="table"
                                      rowKey="#{building.id}" paginator="true" rows="5" rowSelectMode="add"
-                                     paginatorPosition="bottom">
+                                     paginatorPosition="bottom"
+                                     filteredValue="#{buildingBean.filteredBuildings}"
+                                     globalFilterOnly="true">
                             <f:facet name="header">
                                 <div class="table-header">
                                     <span class="filter-container ui-input-icon-left">
                                         <i class="pi pi-search"></i>
                                         <p:inputText id="globalFilter" onkeyup="PF('dtBuildings').filter()"
-                                                     placeholder="Search"/>
+                                                     placeholder="#{bundle['form.search']}"/>
                                     </span>
                                     <p:toolbar>
                                         <p:toolbarGroup align="right">
-                                            <p:commandButton value="Add Building"
+                                            <p:commandButton value="#{bundle['button.addBuilding']}"
                                                              icon="pi pi-plus"
-                                                             update=":manageBuildingForm"
+                                                             update=":dialogs:building-form"
                                                              oncomplete="PF('manageBuildingDialog').show()"
                                                              action="#{buildingBean.openNew()}"
                                                              styleClass="ui-button-success" style="margin-right: .5rem">
+                                                <p:resetInput target=":dialogs:building-form"/>
                                             </p:commandButton>
                                         </p:toolbarGroup>
                                     </p:toolbar>
                                 </div>
                             </f:facet>
 
-                            <p:column headerText="Name" sortBy="#{building.name}">
+                            <p:column headerText="#{bundle['title.name']}" sortBy="#{building.name}"
+                                      filterBy="#{building.name}">
                                 <h:outputText value="#{building.name}"/>
                             </p:column>
 
-                            <p:column headerText="Address" sortBy="#{building.addresseByAdresseId.addressLine}">
-                                <h:outputText value="#{building.addresseByAdresseId.addressLine}, #{building.addresseByAdresseId.cityByCityId.postalCode} #{building.addresseByAdresseId.cityByCityId.name}"/>
+                            <p:column headerText="#{bundle['title.address']}"
+                                      sortBy="#{building.addresseByAdresseId.addressLine}"
+                                      filterBy="#{building.addresseByAdresseId.addressLine} #{building.addresseByAdresseId.cityByCityId.name}">
+                                <h:outputText
+                                        value="#{building.addresseByAdresseId.addressLine}, #{building.addresseByAdresseId.cityByCityId.postalCode} #{building.addresseByAdresseId.cityByCityId.name}"/>
                             </p:column>
 
                             <!-- Add other columns as needed -->
 
-                            <p:column headerText="Action" exportable="false">
-                                <p:commandButton icon="pi pi-pencil" update=":manageBuildingForm"
+                            <p:column headerText="#{bundle['title.action']}" exportable="false">
+                                <p:commandButton icon="pi pi-pencil" update=":dialogs:building-form"
                                                  oncomplete="PF('manageBuildingDialog').show()"
                                                  styleClass="edit-button rounded-button ui-button-info"
                                                  process="@this">
                                     <f:setPropertyActionListener value="#{building}"
                                                                  target="#{buildingBean.building}"/>
+                                    <p:resetInput target=":dialogs:building-form"/>
                                 </p:commandButton>
 
                                 <p:commandButton icon="pi pi-trash" update=":globalGrowl :listForm:dt-buildings"
-                                                 action="#{buildingBean.deleteBuilding(building)}"
+                                                 oncomplete="PF('deleteBuildingDialog').show()"
                                                  styleClass="delete-button rounded-button ui-button-warning"
                                                  rendered="#{buildingBean.isBuildingNotUsed(building)}"
                                                  process="@this">
+                                    <f:setPropertyActionListener value="#{building}"
+                                                                 target="#{buildingBean.building}"/>
                                 </p:commandButton>
 
                             </p:column>
                         </p:dataTable>
                     </h:form>
-
                     <!-- Add Building form in dialog -->
-                    <p:dialog header="Manage Building" showEffect="fade" modal="true"
-                              widgetVar="manageBuildingDialog"
-                              responsive="true">
-                        <h:form id="manageBuildingForm">
-                            <div class="field">
-                                <p:outputLabel for="name">Name : </p:outputLabel>
-                                <p:inputText id="name" value="#{buildingBean.building.name}" required="true"/>
-                            </div>
+                    <h:form id="dialogs">
+                        <p:dialog header="#{bundle['title.manageBuilding']}" showEffect="fade" modal="true"
+                                  widgetVar="manageBuildingDialog" responsive="true">
+                            <p:tooltip/>
+                            <p:outputPanel id="building-form" class="building-form">
+                                <table>
+                                    <tr>
+                                        <td><p:outputLabel for="name" value="#{bundle['form.name']}"/></td>
+                                        <td>
+                                            <p:inputText id="name" class="building-input"
+                                                         value="#{buildingBean.building.name}" required="true">
+                                                <f:validator validatorId="buildingNameValidator"/>
+                                                <f:attribute name="currentName" value="#{buildingBean.building.name}"/>
+                                            </p:inputText>
+                                        </td>
+                                        <p:message for="name" display="tooltip"/>
+                                    </tr>
+                                    <tr>
+                                        <td><p:outputLabel for="addressLine" value="#{bundle['form.address']}"/></td>
+                                        <td><p:inputText id="addressLine" class="building-input"
+                                                         value="#{buildingBean.building.addresseByAdresseId.addressLine}"
+                                                         required="true"/></td>
+                                        <p:message for="addressLine" display="tooltip"/>
+                                    </tr>
+                                    <tr>
+                                        <td><p:outputLabel for="postalCode" value="#{bundle['form.postalCode']}"/></td>
+                                        <td>
+                                            <p:autoComplete id="postalCode" class="building-input"
+                                                            converter="#{cityConverter}"
+                                                            value="#{buildingBean.building.addresseByAdresseId.cityByCityId}"
+                                                            completeMethod="#{citiesBean.searchCitiesByPostalCode}"
+                                                            var="city"
+                                                            itemLabel="#{city.postalCode}" itemValue="#{city}"
+                                                            forceSelection="true" required="true">
+                                                <p:ajax event="itemSelect" update="cityName"/>
+                                            </p:autoComplete>
+                                        </td>
+                                        <p:message for="postalCode" display="tooltip"/>
+                                    </tr>
+                                    <tr>
+                                        <td><p:outputLabel for="cityName" value="#{bundle['form.city']}"/></td>
+                                        <td><p:inputText id="cityName" class="building-input"
+                                                         value="#{buildingBean.building.addresseByAdresseId.cityByCityId.name}"
+                                                         disabled="true" required="true"/></td>
+                                    </tr>
+                                </table>
+                                <div class="container-btn-dialog-add">
+                                    <p:commandButton value="#{bundle['button.save']}"
+                                                     action="#{buildingBean.saveBuilding}"
+                                                     update="building-form" process="building-form @this"
+                                                     styleClass="ui-button-success btn-dialog-add"/>
+                                </div>
+                            </p:outputPanel>
+                        </p:dialog>
 
-                            <div class="field">
-                                <p:outputLabel for="addressLine">Address Line : </p:outputLabel>
-                                <p:inputText id="addressLine" value="#{buildingBean.building.addresseByAdresseId.addressLine}" required="true"/>
-                            </div>
-
-                            <div class="field">
-                                <p:outputLabel for="postalCode">Postal Code : </p:outputLabel>
-                                <p:autoComplete id="postalCode" converter="#{cityConverter}" value="#{buildingBean.building.addresseByAdresseId.cityByCityId}"
-                                                completeMethod="#{citiesBean.searchCitiesByPostalCode}"
-                                                var="city"
-                                                itemLabel="#{city.postalCode}"
-                                                itemValue="#{city}"
-                                                forceSelection="true">
-                                    <p:ajax event="itemSelect" update="cityName"/>
-                                </p:autoComplete>
-                            </div>
-
-                            <div class="field">
-                                <p:outputLabel for="cityName">City : </p:outputLabel>
-                                <p:inputText id="cityName" value="#{buildingBean.building.addresseByAdresseId.cityByCityId.name}" disabled="true" />
-                            </div>
-
-                            <p:commandButton value="create" action="#{buildingBean.saveBuilding}"
+                        <p:confirmDialog widgetVar="deleteBuildingDialog" showEffect="fade" width="300"
+                                         message="#{bundle['text.validateBuildingDelete']} ?"
+                                         header="#{bundle['text.confirmation']}" severity="warn">
+                            <p:commandButton value="#{bundle['button.yes']}" icon="pi pi-check"
+                                             actionListener="#{buildingBean.deleteBuilding}"
+                                             process="@this "
                                              update=":listForm:dt-buildings"
-                                             process="@form"
-                                             resetValues="true"
-                                             styleClass="ui-button-success"
-                                             oncomplete="PF('manageBuildingDialog').hide();"/>
-                        </h:form>
-                    </p:dialog>
+                                             oncomplete="PF('deleteBuildingDialog').hide()"/>
+                            <p:commandButton value="#{bundle['button.no']}" type="button"
+                                             styleClass="ui-button-secondary" icon="pi pi-times"
+                                             onclick="PF('deleteBuildingDialog').hide()"/>
+                        </p:confirmDialog>
+                    </h:form>
                 </div>
             </div>
         </div>

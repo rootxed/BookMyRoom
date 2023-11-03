@@ -18,8 +18,24 @@ public class CategoryService extends ServiceImpl<CategoryEntity> {
 
     public boolean exist(CategoryEntity c, EntityManager em) {
         log.info("Checking if category already exist.");
-        return (findCategoryByNameOrNull(c.getName(), em) != null);
+        CategoryEntity foundCategory = findCategoryByNameOrNull(c.getName(),em);
+        if(foundCategory == null){
+            return false;
+        }else{
+            if  (foundCategory.getId() == c.getId()){
+                return false;
+            }
+            else{
+                return true;
+            }
+        }
     }
+
+    public boolean nameExist(String name, EntityManager em) {
+        log.info("Checking if category name already exist.");
+        return (findCategoryByNameOrNull(name, em) != null);
+    }
+
 
     private CategoryEntity findCategoryByNameOrNull(String name, EntityManager em) {
         log.info("Finding Category with name: " + name);
@@ -32,9 +48,6 @@ public class CategoryService extends ServiceImpl<CategoryEntity> {
         } catch (NoResultException e) {
             log.info("Query found no category to return");
             return null;
-        } finally {
-            em.clear();
-            em.close();
         }
     }
 
@@ -60,5 +73,16 @@ public class CategoryService extends ServiceImpl<CategoryEntity> {
             log.info("Query found no categories to return");
             return null;
         }
+    }
+
+    public boolean isUsed(CategoryEntity category, EntityManager em) {
+        log.info("Searching if category is used");
+
+        TypedQuery<Long> query = em.createNamedQuery("HallCategory.countByCategory", Long.class)
+                .setParameter("category", category);
+
+        long count = query.getSingleResult();
+
+        return count > 0;
     }
 }

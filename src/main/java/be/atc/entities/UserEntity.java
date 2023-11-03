@@ -11,7 +11,12 @@ import java.util.Objects;
         @NamedQuery(name = "User.findUserByUsernameOrNull", query = "SELECT u FROM UserEntity u " +
                 "WHERE u.userName = :userName"),
         @NamedQuery(name = "User.findByIdOrNull", query = "SELECT u FROM UserEntity u " +
-                "WHERE u.id = :id")
+                "WHERE u.id = :id"),
+        @NamedQuery(name = "User.findByUsernameOrNull", query = "SELECT u FROM UserEntity u " +
+                "WHERE u.userName = :username"),
+        @NamedQuery(name = "User.findByEmailOrNull", query = "SELECT u FROM UserEntity u " +
+                "WHERE u.email = :email"),
+        @NamedQuery(name = "User.findAll", query = "SELECT u FROM UserEntity u")
 })
 
 @Entity

@@ -10,10 +10,10 @@
             <div class="col">
                 <div class="card">
                     <h:form id="bookingsForm">
-                        <h2 style="align-content: center">Manage Bookings</h2>
-                        <b>Select the place</b><br/>
+                        <h2 style="align-content: center">#{bundle['title.manageBookings']}</h2>
+                        <b>#{bundle['title.SelectPlace']}</b><br/>
                         <div class="three-columns-container">
-                            <p:autoComplete id="cityAutoComplete" styleClass="bookings-autocomplete" value="#{bookingHistoryBean.selectedCity}" placeholder="Enter City" dropdown="true" scrollHeight="200"
+                            <p:autoComplete id="cityAutoComplete" styleClass="bookings-autocomplete" value="#{bookingHistoryBean.selectedCity}" placeholder="#{bundle['form.enterCity']}" dropdown="true" scrollHeight="200"
                                             completeMethod="#{citiesBean.searchCitiesWithHallsByName}"
                                             var="city"
                                             itemLabel="#{city.name}"
@@ -23,27 +23,27 @@
                             </p:autoComplete>
 
                             <p:selectOneMenu id="buildingDropdown" styleClass="bookings-select-menu" value="#{bookingHistoryBean.selectedBuilding}" converter="#{buildingConverter}">
-                                <f:selectItem itemLabel="Select Building" itemValue="#{null}" noSelectionOption="true" />
+                                <f:selectItem itemLabel="#{bundle['form.selectBuilding']}" itemValue="#{null}" noSelectionOption="true" />
                                 <f:selectItems value="#{buildingBean.getBuildingsByCity(bookingHistoryBean.selectedCity)}" var="building" itemValue="#{building}" itemLabel="#{building.name}" />
                                 <p:ajax event="change" update=":bookingsForm:hallsDropdown :bookingsForm:dt-bookings"/>
                             </p:selectOneMenu>
 
                             <p:selectOneMenu id="hallsDropdown" styleClass="bookings-select-menu" value="#{bookingHistoryBean.selectedHall}" converter="#{hallConverter}">
-                                <f:selectItem itemLabel="Select Hall" itemValue="#{null}" noSelectionOption="true" />
+                                <f:selectItem itemLabel="#{bundle['form.selectHall']}" itemValue="#{null}" noSelectionOption="true" />
                                 <f:selectItems value="#{hallBean.getHallsByBuilding(bookingHistoryBean.selectedBuilding)}" var="hall" itemValue="#{hall}" itemLabel="#{hall.name}" />
                                 <p:ajax event="change" update=":bookingsForm:dt-bookings"/>
                             </p:selectOneMenu>
                         </div>
                         <p:divider />
                         <div>
-                            <b>Select the date</b><br/>
+                            <b>#{bundle['title.selectDate']}</b><br/>
                             <p:datePicker id="datePicker" value="#{bookingHistoryBean.selectedDate}">
                                 <p:ajax event="dateSelect" listener="#{bookingHistoryBean.onDateSelect}" update=":bookingsForm:dt-bookings" />
                             </p:datePicker>
                         </div>
                         <p:divider />
                         <div>
-                        <b>Bookings</b><br/>
+                        <b>#{bundle['title.bookings']}</b><br/>
                         <p:dataTable id="dt-bookings" var="booking" value="#{bookingHistoryBean.bookings}"
                         widgetVar="dtbookings" multiViewState="true" rows="10" paginator="true" paginatorPosition="bottom"
                                      rowKey="#{booking.id}" emptyMessage="No Booking Found">
@@ -54,13 +54,13 @@
                                           value="#{booking.id}"/>
                             </p:column>
 
-                            <p:column headerText="Hall" filterBy="#{booking.hallByHallId.name}" sortBy="#{booking.hallByHallId.name}"
+                            <p:column headerText="#{bundle['title.hall']}" filterBy="#{booking.hallByHallId.name}" sortBy="#{booking.hallByHallId.name}"
                                       filterMatchMode="startsWith" rendered="#{empty bookingHistoryBean.selectedHall}">
                                 <h:outputText style="vertical-align: middle; margin-left: .5rem"
                                               value="#{booking.hallByHallId.name}"/>
                             </p:column>
 
-                            <p:column headerText="User" filterBy="#{booking.userByUserId.userName}" sortBy="#{booking.userByUserId.userName}"
+                            <p:column headerText="#{bundle['title.user']}" filterBy="#{booking.userByUserId.userName}" sortBy="#{booking.userByUserId.userName}"
                                       filterMatchMode="startsWith">
                                 <h:outputText id="content" style="vertical-align: middle; margin-left: .5rem"
                                               value="#{booking.userByUserId.userName}"/>
@@ -72,7 +72,7 @@
                                 </p:tooltip>
                             </p:column>
 
-                            <p:column headerText="IN" sortBy="#{booking.dateTimeIn}"
+                            <p:column headerText="#{bundle['title.in']}" sortBy="#{booking.dateTimeIn}"
                                       filterMatchMode="startsWith">
                                 <h:outputText style="vertical-align: middle; margin-left: .5rem"
                                               value="#{booking.dateTimeIn}" converter="#{localDateTimeConverter}">
@@ -80,7 +80,7 @@
                                 </h:outputText>
                             </p:column>
 
-                            <p:column headerText="OUT" sortBy="#{booking.dateTimeOut}"
+                            <p:column headerText="#{bundle['title.out']}" sortBy="#{booking.dateTimeOut}"
                                       filterMatchMode="startsWith">
                                 <h:outputText style="vertical-align: middle; margin-left: .5rem"
                                               value="#{booking.dateTimeOut}" converter="#{localDateTimeConverter}">
@@ -88,26 +88,26 @@
                                 </h:outputText>
                             </p:column>
 
-                            <p:column headerText="Price">
+                            <p:column headerText="#{bundle['title.price']}">
                                 <h:outputText style="vertical-align: middle; margin-left: .5rem"
                                               value="#{booking.totalPrice} €">
                                 </h:outputText>
                             </p:column>
-                            <p:column headerText="Payment">
+                            <p:column headerText="#{bundle['title.payment']}">
                                 <h:outputText id="payment-content" styleClass="status-badge status-#{payementHistoryBean.getPaymentHistoryStatus(booking) ne null ? 'payed' : 'missing'} upper-text"
-                                              value="#{payment ne null ? 'payed' : 'missing'}"/>
+                                              value="#{payementHistoryBean.getPaymentHistoryStatus(booking) ne null ? bundle['text.payed'] : bundle['text.missing']}"/>
                                 <p:tooltip for="payment-content" rendered="#{payementHistoryBean.selectedPaymentHistory != null}">
-                                    <p>Type : #{payementHistoryBean.selectedPaymentHistory.paymentType.display()}</p>
-                                    <p>Received By : #{payementHistoryBean.selectedPaymentHistory.userByReceiverUserId.firstName} #{payementHistoryBean.selectedPaymentHistory.userByReceiverUserId.lastName}</p>
-                                    <p>TimeStamp : #{payementHistoryBean.selectedPaymentHistory.timeStamp}</p>
+                                    <p>#{bundle['text.type']} : #{payementHistoryBean.selectedPaymentHistory.paymentType.display()}</p>
+                                    <p>#{bundle['text.receivedBy']} : #{payementHistoryBean.selectedPaymentHistory.userByReceiverUserId.firstName} #{payementHistoryBean.selectedPaymentHistory.userByReceiverUserId.lastName}</p>
+                                    <p>#{bundle['text.timeStamp']} : #{payementHistoryBean.selectedPaymentHistory.timeStamp}</p>
                                     <p></p>
                                 </p:tooltip>
                             </p:column>
-                            <p:column headerText="Status">
+                            <p:column headerText="#{bundle['title.status']}">
                                 <h:outputText styleClass="status-badge status-#{bookingHistoryBean.getBookingStatus(booking).toLowerCase()}"
                                               value="#{bookingHistoryBean.getBookingStatus(booking)}"/>
                             </p:column>
-                            <p:column headerText="Action">
+                            <p:column headerText="#{bundle['title.action']}">
                                 <p:commandButton class="ui-button-info rounded-button"
                                                  title="Payment"  icon="pi pi-euro"
                                                  oncomplete="PF('addPaymentDialog').show()"
@@ -116,7 +116,7 @@
                                     <f:setPropertyActionListener value="#{booking}"
                                                                  target="#{payementHistoryBean.selectedBooking}"/>
                                 </p:commandButton>
-                                <p:commandButton class="ui-button-danger rounded-button" icon="pi pi-trash"
+                                <p:commandButton class="ui-button-danger rounded-button" icon="pi pi-times-circle"
                                                  title="Cancel"
                                                  process="@this"
                                                  oncomplete="PF('cancelBookingDialog').show()"
@@ -131,37 +131,34 @@
                         </div>
                     </h:form>
                     <h:form id="dialogs">
-                    <p:dialog header="Add payment" showEffect="fade" modal="true"
+                    <p:dialog header="#{bundle['title.addPayment']}" showEffect="fade" modal="true"
                               widgetVar="addPaymentDialog"
                               responsive="true">
                             <p:importEnum type="be.atc.enums.PaymentType"/>
-                            <p:outputLabel>Booking: ##{payementHistoryBean.selectedBooking.id}</p:outputLabel>
+                            <p:outputLabel>#{bundle['title.booking']}: ##{payementHistoryBean.selectedBooking.id}</p:outputLabel>
                         <div>
-                            <p:outputLabel for="paymentTypeDropdown" value="Payment Type :"/><br/>
+                            <p:outputLabel for="paymentTypeDropdown" value="#{bundle['text.paymentType']} :"/><br/>
                             <p:selectOneMenu id="paymentTypeDropdown" value="#{payementHistoryBean.paymentHistory.paymentType}">
                                 <f:selectItems value="#{PaymentType.ALL_VALUES}" var="paymentType"
                                                itemLabel="#{paymentType.display()}" itemValue="#{paymentType}" />
                             </p:selectOneMenu>
                         </div>
                             <div>
-                                <p:commandButton value="add" icon="pi pi-check" actionListener="#{payementHistoryBean.createPaymentHistory}"
+                                <p:commandButton value="#{bundle['button.add']}" icon="pi pi-check" actionListener="#{payementHistoryBean.createPaymentHistory}"
                                                  update=":bookingsForm:dt-bookings" oncomplete="PF('addPaymentDialog').hide()"
                                 />
-                                <p:commandButton value="cancel" icon="pi pi-times"
-                                                 onclick="PF('addPaymentDialog').hide()"
-                                                 class="ui-button-secondary" type="button"/>
                             </div>
                     </p:dialog>
                     </h:form>
                     <h:form id="confirm-dialogs">
                         <p:confirmDialog widgetVar="cancelBookingDialog" showEffect="fade" width="300"
-                                         message="Cancel booking #{bookingHistoryBean.selectedBooking.id} ? "
-                                         header="Confirmation}" severity="warn">
-                            <p:commandButton value="yes" icon="pi pi-check"
+                                         message="#{bundle['title.cancelBooking']} #{bookingHistoryBean.selectedBooking.id} ? "
+                                         header="#{bundle['text.confirmation']}" severity="warn">
+                            <p:commandButton value="#{bundle['button.yes']}" icon="pi pi-check"
                                              actionListener="#{bookingBean.cancelBooking(bookingHistoryBean.selectedBooking)}"
                                              oncomplete="PF('cancelBookingDialog').hide()" ajax="false"
                             />
-                            <p:commandButton value="no" type="button"
+                            <p:commandButton value="#{bundle['button.no']}" type="button"
                                              styleClass="ui-button-secondary" icon="pi pi-times"
                                              onclick="PF('cancelBookingDialog').hide()"/>
                         </p:confirmDialog>

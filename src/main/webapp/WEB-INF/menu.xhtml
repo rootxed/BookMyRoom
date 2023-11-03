@@ -8,24 +8,24 @@
     
     <div class="layout-sidebar">
         <pa:tabMenu>
-            <pa:tab icon="pi pi-fw pi-home" title="Features">
+            <pa:tab icon="pi pi-fw pi-home" title="#{bundle['menu.main']}">
                 <h:form id="menu-form">
                     <pa:menu widgetVar="barcelonaMenuWidget">
-                        <p:menuitem id="m_dashboard" value="Home Page" icon="pi pi-home" outcome="/app/index"/>
-                        <p:menuitem id="m_book" value="Book" icon="pi pi-calendar-plus" outcome="/app/book"/>
-                        <p:menuitem id="m_mybookings" value="My Bookings" icon="pi pi-calendar" outcome="/app/myBookings"/>
+                        <p:menuitem id="m_dashboard" value="#{bundle['menu.homePage']}" icon="pi pi-home" outcome="/app/index"/>
+                        <p:menuitem id="m_book" value="#{bundle['menu.book']}" icon="pi pi-calendar-plus" outcome="/app/book"/>
+                        <p:menuitem id="m_mybookings" value="#{bundle['menu.myBookings']}" icon="pi pi-calendar" outcome="/app/myBookings"/>
                     </pa:menu>
                 </h:form>
             </pa:tab>
 
-            <pa:tab icon="pi pi-fw pi-cog" title="Manage" rendered='#{authBean.hasRole("manager") or authBean.hasRole("receptionist")}'>
+            <pa:tab icon="pi pi-fw pi-cog" title="#{bundle['menu.manage']}" rendered='#{authBean.hasRole("manager") or authBean.hasRole("receptionist")}'>
                 <h:form id="manage-menu-form">
                     <pa:menu widgetVar="barcelonaMenuWidget">
-                        <p:menuitem id="m_building" value="Buildings" icon="pi pi-building" outcome="/manage/building" rendered="#{authBean.hasRole('manager')}"/>
-                        <p:menuitem id="m_categories" value="Categories" icon="pi pi-sitemap" outcome="/manage/category" rendered="#{authBean.hasRole('manager')}"/>
-                        <p:menuitem id="m_halls" value="Halls" icon="pi pi-box" outcome="/manage/hall" rendered="#{authBean.hasRole('manager')}"/>
-                        <p:menuitem id="m_users" value="Users" icon="pi pi-users" outcome="/manage/users" rendered="#{authBean.hasRole('manager')}"/>
-                        <p:menuitem id="m_bookings" value="Bookings" icon="pi pi-book" outcome="/manage/bookings"/>
+                        <p:menuitem id="m_building" value="#{bundle['menu.buildings']}" icon="pi pi-building" outcome="/manage/building" rendered="#{authBean.hasRole('manager')}"/>
+                        <p:menuitem id="m_categories" value="#{bundle['menu.categories']}" icon="pi pi-sitemap" outcome="/manage/category" rendered="#{authBean.hasRole('manager')}"/>
+                        <p:menuitem id="m_halls" value="#{bundle['menu.halls']}" icon="pi pi-box" outcome="/manage/hall" rendered="#{authBean.hasRole('manager')}"/>
+                        <p:menuitem id="m_users" value="#{bundle['menu.users']}" icon="pi pi-users" outcome="/manage/users" rendered="#{authBean.hasRole('manager')}"/>
+                        <p:menuitem id="m_bookings" value="#{bundle['menu.bookings']}" icon="pi pi-book" outcome="/manage/bookings"/>
                     </pa:menu>
                 </h:form>
             </pa:tab>

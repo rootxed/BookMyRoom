@@ -21,7 +21,23 @@ public class BuildingService extends  ServiceImpl<BuildingEntity>{
 
     public boolean exist(BuildingEntity b, EntityManager em) {
         log.info("Checking if building already exist.");
-        return (findBuildingByNameOrNull(b.getName(), em) != null);
+        BuildingEntity foundBuilding = findBuildingByNameOrNull(b.getName(), em);
+        if (foundBuilding == null){
+            return false;
+        }else{
+            //IF entity is the same as the updated entity
+            if (foundBuilding.getId() == b.getId()){
+                return false;
+            }
+            else{
+                return true;
+            }
+        }
+    }
+
+    public boolean nameAlreadyExist(String name, EntityManager em) {
+        log.info("Checking if building Name already exist.");
+        return (findBuildingByNameOrNull(name, em) != null);
     }
 
     public BuildingEntity findOneByIdOrNull(int id, EntityManager em) {

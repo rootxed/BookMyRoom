@@ -5,7 +5,9 @@ import be.atc.services.HallCategoryService;
 import be.atc.services.HallScheduleService;
 import be.atc.services.HallService;
 import be.atc.tools.EMF;
+import be.atc.tools.NotificationManager;
 import org.apache.log4j.Logger;
+import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
 
 import javax.annotation.PostConstruct;
@@ -35,6 +37,8 @@ public class HallBean implements Serializable {
     private HallScheduleService hallScheduleService;
 
     private List<HallEntity> halls;
+
+    private List<HallEntity> filteredHalls;
 
     private HallEntity hall = new HallEntity();
 
@@ -125,6 +129,8 @@ public class HallBean implements Serializable {
 
             tx.commit();
             log.info("Transaction committed, new hall persisted");
+            NotificationManager.addInfoMessageFromBundle("notification.hall.successCreated");
+            PrimeFaces.current().executeScript("PF('manageHallDialog').hide()");
             return "success";
 
         } catch (Exception e) {
@@ -132,11 +138,13 @@ public class HallBean implements Serializable {
                 tx.rollback();
             }
             log.error("Failed to create hall", e);
+            NotificationManager.addErrorMessageFromBundle("notification.hall.failedCreated");
             return "failure";
         } finally {
             em.clear();
             em.close();
             halls = loadHalls();
+            PrimeFaces.current().ajax().update("listForm:dt-halls", "globalGrowl");
         }
     }
 
@@ -155,6 +163,8 @@ public class HallBean implements Serializable {
 
             tx.commit();
             log.info("Transaction committed, hall updated");
+            NotificationManager.addInfoMessageFromBundle("notification.hall.successUpdate");
+            PrimeFaces.current().executeScript("PF('manageHallDialog').hide()");
             return "success";
 
         } catch (Exception e) {
@@ -162,10 +172,12 @@ public class HallBean implements Serializable {
                 tx.rollback();
             }
             log.error("Failed to update hall", e);
+            NotificationManager.addErrorMessageFromBundle("notification.hall.failedUpdate");
             return "failure";
         } finally {
             em.close();
             halls = loadHalls();
+            PrimeFaces.current().ajax().update("listForm:dt-halls", "globalGrowl");
         }
     }
 
@@ -275,4 +287,11 @@ public class HallBean implements Serializable {
         return halls;
     }
 
+    public List<HallEntity> getFilteredHalls() {
+        return filteredHalls;
+    }
+
+    public void setFilteredHalls(List<HallEntity> filteredHalls) {
+        this.filteredHalls = filteredHalls;
+    }
 }

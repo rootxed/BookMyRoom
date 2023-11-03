@@ -1,6 +1,4 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-                xmlns:h="http://java.sun.com/jsf/html"
-                xmlns:f="http://java.sun.com/jsf/core"
                 xmlns:ui="http://java.sun.com/jsf/facelets"
                 xmlns:p="http://primefaces.org/ui"
                 template="/WEB-INF/template.xhtml">
@@ -12,15 +10,15 @@
                     <div class="img-container">
                         <img class="index-img" src="../resources/barcelona-layout/images/hall.png"></img>
                         <div class="text-overlay">
-                            <p>Welcome to BookMyRoom</p>
+                            <p>#{bundle['text.welcome']}</p>
                             <p>
-                                <p:button value="Book Your Sport Room Now" styleClass="rounded-button" outcome="/app/book"/>
+                                <p:button value="#{bundle['button.booknow']}" styleClass="rounded-button"
+                                          outcome="/app/book"/>
                             </p>
                         </div>
                     </div>
                     <div>
                     </div>
-                    <div><p>Book your hall Now</p></div>
                 </div>
             </div>
         </div>

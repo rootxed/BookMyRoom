@@ -147,7 +147,7 @@ public class MenuRenderer extends BaseMenuRenderer {
         //submenus and menuitems
         if(childrenElementsCount > 0) {
             writer.startElement("ul", null);
-            writer.writeAttribute("role", "menu", null);
+            writer.writeAttribute("role", "menu.main", null);
 			encodeElements(context, menu, submenu.getElements());
 			writer.endElement("ul");
         }

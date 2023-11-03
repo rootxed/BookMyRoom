@@ -10,40 +10,55 @@
             <div class="col">
                 <div class="card">
                     <h:form id="listForm">
+                        <h2>#{bundle['title.categories']}</h2>
                         <p:dataTable id="dt-categories" widgetVar="dtCategories" var="category"
                                      value="#{categoryBean.categories}"
                                      reflow="true" styleClass="table"
                                      rowKey="#{category.id}" paginator="true" rows="5"
-                                     paginatorPosition="bottom">
+                                     paginatorPosition="bottom"
+                                     filteredValue="#{categoryBean.filteredCategories}"
+                                     globalFilterOnly="true">
                             <f:facet name="header">
                                 <div class="table-header">
                                     <span class="filter-container ui-input-icon-left">
                                         <i class="pi pi-search"></i>
                                         <p:inputText id="globalFilter" onkeyup="PF('dtCategories').filter()"
-                                                     placeholder="Search"/>
+                                                     placeholder="#{bundle['form.search']}"/>
                                     </span>
                                     <p:toolbar>
                                         <p:toolbarGroup align="right">
-                                            <p:commandButton value="Add Category"
+                                            <p:commandButton value="#{bundle['button.addCategory']}"
                                                              icon="pi pi-plus"
-                                                             update=":manageCategoryForm"
+                                                             update=":dialogs:category-form"
                                                              oncomplete="PF('manageCategoryDialog').show()"
                                                              action="#{categoryBean.openNew()}"
                                                              styleClass="ui-button-success" style="margin-right: .5rem">
+                                                <p:resetInput target=":dialogs:category-form"/>
                                             </p:commandButton>
                                         </p:toolbarGroup>
                                     </p:toolbar>
                                 </div>
                             </f:facet>
 
-                            <p:column headerText="Name" sortBy="#{category.name}">
+                            <p:column headerText="#{bundle['title.name']}" sortBy="#{category.name}"
+                                      filterBy="#{category.name}">
                                 <h:outputText value="#{category.name}"/>
                             </p:column>
 
-                            <p:column headerText="Action" exportable="false">
-                                <p:commandButton icon="pi pi-pencil" update=":manageCategoryForm"
+                            <p:column headerText="#{bundle['title.action']}" exportable="false">
+                                <p:commandButton icon="pi pi-pencil" update=":dialogs:category-form"
                                                  oncomplete="PF('manageCategoryDialog').show()"
                                                  styleClass="edit-button rounded-button ui-button-info"
+                                                 process="@this">
+                                    <f:setPropertyActionListener value="#{category}"
+                                                                 target="#{categoryBean.category}"/>
+                                    <p:resetInput target=":dialogs:category-form"/>
+                                </p:commandButton>
+
+                                <p:commandButton icon="pi pi-trash" update=":globalGrowl :listForm:dt-categories"
+                                                 oncomplete="PF('deleteCategoryDialog').show()"
+                                                 styleClass="delete-button rounded-button ui-button-warning"
+                                                 rendered="#{categoryBean.isCategoryNotUsed(category)}"
                                                  process="@this">
                                     <f:setPropertyActionListener value="#{category}"
                                                                  target="#{categoryBean.category}"/>
@@ -52,25 +67,51 @@
                         </p:dataTable>
                     </h:form>
 
-                    <p:growl id="growl" showDetail="true" />
+                    <h:form id="dialogs">
+                        <p:dialog header="#{bundle['title.manageCategory']}" showEffect="fade" modal="true"
+                                  widgetVar="manageCategoryDialog"
+                                  responsive="true">
+                            <p:tooltip/>
+                            <p:outputPanel id="category-form" class="building-form">
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <p:outputLabel for="name" value="#{bundle['form.name']}"/>
+                                        </td>
+                                        <td>
+                                            <p:inputText id="name" value="#{categoryBean.category.name}"
+                                                         required="true">
+                                                <f:validator validatorId="categoryNameValidator"/>
+                                                <f:attribute name="currentName" value="#{categoryBean.category.name}"/>
+                                            </p:inputText>
+                                        </td>
+                                        <p:message for="name" display="tooltip"/>
+                                    </tr>
+                                </table>
+                                <div class="container-btn-dialog-add">
+                                    <p:commandButton value="#{bundle['button.save']}"
+                                                     action="#{categoryBean.saveCategory}"
+                                                     update="category-form"
+                                                     process="category-form @this"
+                                                     styleClass="ui-button-success btn-dialog-add"/>
+                                </div>
 
-                    <p:dialog header="Manage Category" showEffect="fade" modal="true"
-                              widgetVar="manageCategoryDialog"
-                              responsive="true">
-                        <h:form id="manageCategoryForm">
-                            <div class="field">
-                                <p:outputLabel for="categoryName">Name : </p:outputLabel>
-                                <p:inputText id="categoryName" value="#{categoryBean.category.name}" required="true"/>
-                            </div>
+                            </p:outputPanel>
+                        </p:dialog>
 
-                            <p:commandButton value="Save Category" action="#{categoryBean.saveCategory}"
-                                             update=":listForm:dt-categories :growl"
-                                             process="@form"
-                                             resetValues="true"
-                                             styleClass="ui-button-success"
-                                             oncomplete="PF('manageCategoryDialog').hide();"/>
-                        </h:form>
-                    </p:dialog>
+                        <p:confirmDialog widgetVar="deleteCategoryDialog" showEffect="fade" width="300"
+                                         message="#{bundle['text.validateCategoryDelete']} ?"
+                                         header="#{bundle['text.confirmation']}" severity="warn">
+                            <p:commandButton value="#{bundle['button.yes']}" icon="pi pi-check"
+                                             actionListener="#{categoryBean.deleteCategory}"
+                                             process="@this "
+                                             update=":listForm:dt-categories"
+                                             oncomplete="PF('deleteCategoryDialog').hide()"/>
+                            <p:commandButton value="#{bundle['button.no']}" type="button"
+                                             styleClass="ui-button-secondary" icon="pi pi-times"
+                                             onclick="PF('deleteCategoryDialog').hide()"/>
+                        </p:confirmDialog>
+                    </h:form>
                 </div>
             </div>
         </div>

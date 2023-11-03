@@ -2,61 +2,65 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:p="http://primefaces.org/ui">
 
-    <h:head>
-        <f:facet name="first">
-            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
-            <meta name="apple-mobile-web-app-capable" content="yes" />
-        </f:facet>
-        <title>PrimeFaces Barcelona</title>
-        <h:outputScript name="js/ripple.js" library="barcelona-layout" rendered="#{guestPreferences.ripple}"/>
-        <h:outputScript name="js/layout.js" library="barcelona-layout" />
-    </h:head>
+<h:head>
+    <f:facet name="first">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+        <meta name="apple-mobile-web-app-capable" content="yes"/>
+    </f:facet>
+    <title>BookMyRoom - #{bundle['title.login']}</title>
+    <h:outputScript name="js/ripple.js" library="barcelona-layout" rendered="#{guestPreferences.ripple}"/>
+    <h:outputScript name="js/layout.js" library="barcelona-layout"/>
+</h:head>
 
-    <h:body styleClass="login-body">
-        <h:form>
-            <div class="login-panel ui-fluid">
-                <div class="grid grid-nogutter">
-                    <div class="col-12 login-header">
-                        <h1>BookMyRoom</h1>
-                        <h2>Connectez vous pour louer votre salle.</h2>
-                    </div>
-                    <p:growl id="growl" showDetail="true" rendered="#{not facesContext.validationFailed}"/>
-                    <div class="col-12">
+<h:body styleClass="login-body">
+    <h:form id="login-form">
+        <p:tooltip/>
+        <div class="login-panel ui-fluid">
+            <div class="grid grid-nogutter">
+                <div class="col-12 login-header">
+                    <h1>BookMyRoom</h1>
+                    <h2>#{bundle['text.login']}</h2>
+                </div>
+                <div class="col-12">
                         <span class="ui-float-label">
-                            <p:inputText id="userName" required="true" value="#{loginBean.username}" />
-                            <p:outputLabel for="@previous" value="Identifiant" />
+                            <p:inputText id="userName" required="true" value="#{loginBean.username}"/>
+                            <p:outputLabel for="@previous" value="#{bundle['form.username']}"/>
                             <p:message id="UserNameMessage" for="userName" display="tooltip"/>
                         </span>
-                    </div>
-                    <div class="col-12">
+                </div>
+                <div class="col-12">
                         <span class="ui-float-label">
-                            <p:password id="password" required="true" value="#{loginBean.password}" feedback="false" />
-                            <p:outputLabel for="@previous" value="Mot de passe" />
-                            <p:message for="password" display="tooltip" />
+                            <p:password id="password" required="true" value="#{loginBean.password}" feedback="false"/>
+                            <p:outputLabel for="@previous" value="#{bundle['form.password']}"/>
+                            <p:message for="password" display="tooltip"/>
                         </span>
-                    </div>
-                    <div class="col-12 button-container">
-                        <p:commandButton value="Sign In" icon="pi pi-user" action="#{loginBean.doLogin}" update="growl userName password"/>
-                    </div>
-                    <div class="col-12 button-container">
-                    <p:button value="Register" icon="pi pi-user-plus" outcome="/register" />
-                    </div>
+                </div>
+                <div class="col-12 button-container">
+                    <p:commandButton value="#{bundle['button.login']}" icon="pi pi-user" action="#{loginBean.doLogin}"
+                                     update="login-form"/>
+                </div>
+                <div class="col-12 button-container">
+                    <p:button value="#{bundle['button.register']}" icon="pi pi-user-plus" outcome="/register"/>
                 </div>
             </div>
-        </h:form>
+        </div>
+    </h:form>
+
+    <p:growl id="growl" globalOnly="true" showDetail="false" sticky="false" life="3000">
+        <p:autoUpdate/>
+    </p:growl>
 
 
-        <h:outputStylesheet name="css/primeicons.css" library="barcelona-layout"/>
-        <h:outputStylesheet name="css/primeflex.min.css" library="barcelona-layout"/>
-        <h:outputStylesheet name="css/ripple.css" library="barcelona-layout" rendered="#{guestPreferences.ripple}"/>
-        <h:outputStylesheet name="css/layout-indigo.css" library="barcelona-layout" />
-        <h:outputStylesheet name="css/ripple.css" library="barcelona-layout" />
-        <h:outputStylesheet name="style/custom.css" />
-    </h:body>
+    <h:outputStylesheet name="css/primeicons.css" library="barcelona-layout"/>
+    <h:outputStylesheet name="css/primeflex.min.css" library="barcelona-layout"/>
+    <h:outputStylesheet name="css/ripple.css" library="barcelona-layout" rendered="#{guestPreferences.ripple}"/>
+    <h:outputStylesheet name="css/layout-indigo.css" library="barcelona-layout"/>
+    <h:outputStylesheet name="css/ripple.css" library="barcelona-layout"/>
+    <h:outputStylesheet name="style/custom.css"/>
+</h:body>
 
 </html>

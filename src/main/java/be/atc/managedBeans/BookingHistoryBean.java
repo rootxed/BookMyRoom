@@ -12,6 +12,7 @@ import org.apache.shiro.subject.Subject;
 import org.primefaces.event.SelectEvent;
 
 import javax.annotation.PostConstruct;
+import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -21,6 +22,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 
 @Named
 @ViewScoped
@@ -35,6 +37,9 @@ public class BookingHistoryBean implements Serializable {
 
     @Inject
     private UserSessionUtil userSessionUtil;
+
+    public BookingHistoryBean() {
+    }
 
     public CityEntity getSelectedCity() {
         return selectedCity;
@@ -78,6 +83,16 @@ public class BookingHistoryBean implements Serializable {
     private BookingEntity selectedBooking;
 
     private List<BookingEntity> userBookings;
+
+    public List<BookingEntity> getFilteredBookings() {
+        return filteredBookings;
+    }
+
+    public void setFilteredBookings(List<BookingEntity> filteredBookings) {
+        this.filteredBookings = filteredBookings;
+    }
+
+    private List<BookingEntity> filteredBookings;
 
     private LocalDate selectedDate = LocalDate.now();
 
@@ -157,14 +172,28 @@ public class BookingHistoryBean implements Serializable {
 
     public String getBookingStatus(BookingEntity booking) {
         LocalDateTime now = LocalDateTime.now();
+        FacesContext context = FacesContext.getCurrentInstance();
+        ResourceBundle bundle = context.getApplication().getResourceBundle(context, "bundle");
+        String status;
         if(booking.getIsCanceled()){
-            return "CANCELED";
+            status = bundle.getString("text.canceled");
         }
         else if (booking.getDateTimeOut().isAfter(now)) {
-            return "UPCOMING";
+            status = bundle.getString("text.upcoming");
         }
         else {
-            return "PASSED";
+            status = bundle.getString("text.passed");
+        }
+        return (status);
+    }
+
+    public String getBookingStatusStyleClass(BookingEntity booking) {
+        if (booking.getIsCanceled()) {
+            return "canceled";
+        } else if (booking.getDateTimeOut().isAfter(LocalDateTime.now())) {
+            return "upcoming";
+        } else {
+            return "passed";
         }
     }
 

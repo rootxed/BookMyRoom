@@ -8,20 +8,20 @@
     <ui:define name="content">
         <div class="grid">
             <div class="col">
-                <div class="card">
+                <div class="card" style="text-align: center">
 
-                    <h2>Confirmation ##{confirmationBean.booking.id}</h2>
-                    <p>Thank you <b>#{confirmationBean.booking.userByUserId.firstName}</b> for your booking.</p>
+                    <h2>#{bundle['text.confirmation']} ##{confirmationBean.booking.id}</h2>
+                    <p>#{bundle['text.thankyou']} <b>#{confirmationBean.booking.userByUserId.firstName}</b> #{bundle['text.forYourBooking']}.</p>
 
-                    <h3>Details:</h3>
+                    <h3>#{bundle['text.details']}:</h3>
 
-                    <p><b>Date:</b><br/>
+                    <p><b>#{bundle['text.date']} :</b><br/>
                     <h:outputText value="#{confirmationBean.booking.dateTimeIn}" converter="#{localDateTimeConverter}">
                         <f:attribute name="type" value="date" />
                     </h:outputText>
                     </p>
 
-                    <p><b>Schedule:</b><br/>
+                    <p><b>#{bundle['text.schedule']} :</b><br/>
                     <h:outputText value="#{confirmationBean.booking.dateTimeIn}" converter="#{localDateTimeConverter}">
                         <f:attribute name="type" value="time" />
                     </h:outputText>
@@ -31,27 +31,35 @@
                     </h:outputText>
                     </p>
 
-                    <p><b>Location :</b><br/>
+                    <p><b>#{bundle['text.location']} :</b><br/>
                     #{confirmationBean.booking.hallByHallId.name}<br/>
                     #{confirmationBean.booking.hallByHallId.buildingByBuildingId.name}<br/>
                     #{confirmationBean.booking.hallByHallId.buildingByBuildingId.addresseByAdresseId.addressLine}<br/>
                     #{confirmationBean.booking.hallByHallId.buildingByBuildingId.addresseByAdresseId.cityByCityId.postalCode} #{confirmationBean.booking.hallByHallId.buildingByBuildingId.addresseByAdresseId.cityByCityId.name}<br/>
                     </p>
 
-                    <h3>Payement due:</h3>
+                    <h3>#{bundle['text.paymentDue']} :</h3>
                     <p><b>#{confirmationBean.booking.totalPrice}€</b></p>
-                    <p>You can pay at reception via credit card or cash.<br/>
-                        It is also possible to pay via bank transfer with the following information:
+                    <p>#{bundle['text.paimentdetails']}.<br/>
+                        #{bundle['text.banktransferdetails']} :
                     </p>
                     <p>
-                        <b>Name: BOOKMYROOM</b><br/>
+                        <b>#{bundle['text.name']}: BOOKMYROOM</b><br/>
                         <b>IBAN: BE0012 3456 7891 2345</b><br/>
                         <b>BIC: 1234567</b><br/>
-                        <b>COMMUNICATION:
+                        <b>#{bundle['text.communication']}:
                             <h:outputText value="#{confirmationBean.booking.dateTimeOut}" converter="#{localDateTimeConverter}">
                                 <f:attribute name="type" value="numeric" />
                             </h:outputText>-#{confirmationBean.booking.id}</b>
                     </p>
+                    <div class="col-12 button-container">
+                        <p:button value="#{bundle['button.myBookings']}" styleClass="rounded-button"
+                                  outcome="/app/myBookings"/>
+                    </div>
+                    <div class="col-12 button-container">
+                        <p:button value="#{bundle['button.homepage']}" styleClass="rounded-button"
+                                  outcome="/app/index"/>
+                    </div>
                 </div>
             </div>
         </div>

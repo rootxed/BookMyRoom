@@ -180,8 +180,6 @@ public class BookingBean implements Serializable {
 
             tx.commit();
 
-            NotificationManager.addInfoMessage("Booking created successfully");
-            // Maybe redirect to a confirmation page or show a success message
 
             // Store the booking id in the session
             FacesContext facesContext = FacesContext.getCurrentInstance();
@@ -199,7 +197,7 @@ public class BookingBean implements Serializable {
             if (tx != null && tx.isActive()) {
                 tx.rollback();
             }
-            // Handle the exception, maybe log it or show an error message
+            NotificationManager.addErrorMessageFromBundle("notification.booking.failure");
         } finally {
             if (em != null) {
                 em.close();

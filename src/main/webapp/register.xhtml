@@ -11,7 +11,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
         <meta name="apple-mobile-web-app-capable" content="yes"/>
     </f:facet>
-    <title>BookMyRoom - Register</title>
+    <title>BookMyRoom - #{bundle['title.register']}</title>
     <h:outputScript name="js/ripple.js" library="barcelona-layout" rendered="#{guestPreferences.ripple}"/>
     <h:outputScript name="js/layout.js" library="barcelona-layout"/>
 </h:head>
@@ -19,104 +19,120 @@
 <h:body styleClass="register-body">
 
     <div class="register-panel ui-fluid">
+        <p:tooltip/>
         <div class="grid grid-nogutter">
             <div class="col-12 register-header">
                 <h1>BookMyRoom</h1>
-                <h2>Inscription</h2>
+                <h2>#{bundle['title.register']}</h2>
             </div>
             <div class="register-form">
-            <h:form>
-                <div class="formgrid grid">
-                    <div class="field col-6">
+                <h:form id="register-form">
+                    <div class="formgrid grid">
+                        <div class="field col-6">
                         <span class="ui-float-label">
-                            <p:inputText id="userName" required="true" value="#{registerBean.user.userName}"/>
-                            <p:outputLabel for="userName" value="Nom d'utilisateur"/>
+                            <p:inputText id="userName" required="true" validator="usernameValidator"
+                                         value="#{registerBean.user.userName}"/>
+                            <p:outputLabel for="userName" value="#{bundle['form.username']}"/>
+                            <p:message for="userName" display="tooltip"/>
                         </span>
-                    </div>
-                    <div class="field col-6">
+                        </div>
+                        <div class="field col-6">
                         <span class="ui-float-label">
-                            <p:inputText id="email" required="true" value="#{registerBean.user.email}"/>
-                            <p:outputLabel for="email" value="Adresse e-mail"/>
+                            <p:inputText id="email" required="true" validator="emailValidator"
+                                         value="#{registerBean.user.email}"/>
+                            <p:outputLabel for="email" value="#{bundle['form.mailaddress']}"/>
                         </span>
+                            <p:message for="email" display="tooltip"/>
+                        </div>
                     </div>
-                </div>
 
-                <div class="formgrid grid">
-                    <div class="field col">
+                    <div class="formgrid grid">
+                        <div class="field col">
                         <span class="ui-float-label">
                             <p:password id="password1" required="true" value="#{registerBean.user.password}"
                                         feedback="true" match="password2"/>
-                            <p:outputLabel for="password1" value="Mot de passe"/>
+                            <p:outputLabel for="password1" value="#{bundle['form.password']}"/>
+                            <p:message for="password1" display="tooltip"/>
                         </span>
-                    </div>
-                    <div class="field col">
+                        </div>
+                        <div class="field col">
                         <span class="ui-float-label">
                             <p:password id="password2" required="true" value="#{registerBean.user.password}"/>
-                            <p:outputLabel for="password2" value="Confirmer le mot de passe"/>
+                            <p:outputLabel for="password2" value="#{bundle['form.passwordconfirmation']}"/>
+                            <p:message for="password2" display="tooltip"/>
                         </span>
+                        </div>
                     </div>
-                </div>
 
-                <div class="formgrid grid">
-                    <div class="field col">
+                    <div class="formgrid grid">
+                        <div class="field col">
                         <span class="ui-float-label">
                             <p:inputText id="firstName" required="true" value="#{registerBean.user.firstName}"/>
-                            <p:outputLabel for="firstName" value="Prénom"/>
+                            <p:outputLabel for="firstName" value="#{bundle['form.firstName']}"/>
+                            <p:message for="firstName" display="tooltip"/>
                         </span>
-                    </div>
-                    <div class="field col">
+                        </div>
+                        <div class="field col">
                         <span class="ui-float-label">
                             <p:inputText id="lastName" required="true" value="#{registerBean.user.lastName}"/>
-                            <p:outputLabel for="lastName" value="Nom de famille"/>
+                            <p:outputLabel for="lastName" value="#{bundle['form.lastName']}"/>
+                            <p:message for="lastName" display="tooltip"/>
                         </span>
+                        </div>
                     </div>
-                </div>
 
-                <div class="formgrid grid">
-                    <div class="field col">
+                    <div class="formgrid grid">
+                        <div class="field col">
                         <span class="ui-float-label">
                             <p:inputText id="phoneNumber" value="#{registerBean.user.phoneNumber}"/>
-                            <p:outputLabel for="phoneNumber" value="Numéro de téléphone"/>
+                            <p:outputLabel for="phoneNumber" validator="phoneValidator"
+                                           value="#{bundle['form.phoneNumber']}"/>
+                            <p:message for="phoneNumber" display="tooltip"/>
                         </span>
-                    </div>
-                    <div class="field col">
+                        </div>
+                        <div class="field col">
                         <span class="ui-float-label">
                             <p:inputText id="addressLine" required="true" value="#{registerBean.addresse.addressLine}"/>
-                            <p:outputLabel for="addressLine" value="Adresse"/>
+                            <p:outputLabel for="addressLine" value="#{bundle['form.address']}"/>
+                            <p:message for="addressLine" display="tooltip"/>
                         </span>
+                        </div>
                     </div>
-                </div>
 
-                <div class="formgrid grid">
-                    <div class="field col">
+                    <div class="formgrid grid">
+                        <div class="field col">
                         <span class="ui-float-label">
-                            <p:autoComplete id="postalCode" converter="#{cityConverter}" value="#{citiesBean.selectedCity}"
+                            <p:autoComplete id="postalCode" converter="#{cityConverter}"
+                                            value="#{citiesBean.selectedCity}"
                                             completeMethod="#{citiesBean.searchCitiesByPostalCode}"
                                             var="city"
-                                            placeholder="Postal code"
+                                            placeholder="#{bundle['form.postalCode']}"
                                             itemLabel="#{city.postalCode}"
                                             itemValue="#{city}"
                                             forceSelection="true">
                                 <p:ajax event="itemSelect" listener="#{citiesBean.selectCity}" update="cityName"/>
                             </p:autoComplete>
+                            <p:message for="postalCode" display="tooltip"/>
                         </span>
-                    </div>
-                    <div class="field col">
+                        </div>
+                        <div class="field col">
                         <span class="ui-float-label">
-                            <p:inputText id="cityName" placeholder="City" value="#{citiesBean.selectedCity.name}" readonly="true">
+                            <p:inputText id="cityName" placeholder="#{bundle['form.city']}"
+                                         value="#{citiesBean.selectedCity.name}" readonly="true">
                                 <p:ajax update="cityName"/>
                             </p:inputText>
                         </span>
+                        </div>
                     </div>
-                </div>
 
-                <div class="col-12 button-container">
-                    <p:commandButton value="S'inscrire" icon="pi pi-check" type="submit" action="#{registerBean.doRegister}"/>
-                </div>
-                <p:messages id="messages" showDetail="true">
+                    <div class="col-12 button-container">
+                        <p:commandButton value="#{bundle['button.register']}" icon="pi pi-check" type="submit"
+                                         action="#{registerBean.doRegister}" update=":register-form"/>
+                    </div>
+                </h:form>
+                <p:growl id="growl" globalOnly="true" showDetail="false" sticky="false" life="3000" autoUpdate="true">
                     <p:autoUpdate/>
-                </p:messages>
-            </h:form>
+                </p:growl>
             </div>
         </div>
     </div>
@@ -126,7 +142,7 @@
     <h:outputStylesheet name="css/ripple.css" library="barcelona-layout" rendered="#{guestPreferences.ripple}"/>
     <h:outputStylesheet name="css/layout-indigo.css" library="barcelona-layout"/>
     <h:outputStylesheet name="css/ripple.css" library="barcelona-layout"/>
-    <h:outputStylesheet name="style/custom.css" />
+    <h:outputStylesheet name="style/custom.css"/>
 </h:body>
 
 </html>

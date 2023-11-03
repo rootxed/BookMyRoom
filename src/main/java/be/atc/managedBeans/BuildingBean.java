@@ -10,6 +10,7 @@ import be.atc.tools.EMF;
 import be.atc.tools.NotificationManager;
 import org.apache.log4j.Logger;
 import org.eclipse.persistence.exceptions.EclipseLinkException;
+import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
 
 import javax.annotation.PostConstruct;
@@ -100,6 +101,7 @@ public class BuildingBean implements Serializable {
         try {
             boolean alreadyExist = buildingService.exist(building, em);
             if (alreadyExist){
+                NotificationManager.addErrorMessageFromBundle("notification.building.alreadyExist");
                 throw new RuntimeException("Can't create building, this building already exists.");
             }
 
@@ -116,17 +118,21 @@ public class BuildingBean implements Serializable {
 
             transaction.commit();
             log.info("Transaction committed, new building persisted.");
+            NotificationManager.addInfoMessageFromBundle("notification.building.successCreated");
+            PrimeFaces.current().executeScript("PF('manageBuildingDialog').hide()");
             return "success";
         } catch (Exception e) {
             if (transaction != null && transaction.isActive()) {
                 transaction.rollback();
             }
             log.error("Failed to create building", e);
+            NotificationManager.addErrorMessageFromBundle("notification.building.failedCreated");
             return "failure";
         } finally {
             em.clear();
             em.close();
-            buildings = getBuildings();
+            buildings = loadBuildings();
+            PrimeFaces.current().ajax().update("listForm:dt-buildings", "globalGrowl");
         }
     }
 
@@ -151,17 +157,21 @@ public class BuildingBean implements Serializable {
 
             transaction.commit();
             log.info("Transaction committed, building updated.");
+            NotificationManager.addInfoMessageFromBundle("notification.building.successUpdate");
+            PrimeFaces.current().executeScript("PF('manageBuildingDialog').hide()");
             return "success";
         } catch (Exception e) {
             if (transaction != null && transaction.isActive()) {
                 transaction.rollback();
             }
             log.error("Failed to update building", e);
+            NotificationManager.addErrorMessageFromBundle("notification.building.failedUpdate");
             return "failure";
         } finally {
             em.clear();
             em.close();
-            buildings = getBuildings();
+            buildings = loadBuildings();
+            PrimeFaces.current().ajax().update("listForm:dt-buildings", "globalGrowl");
         }
     }
 
@@ -198,7 +208,7 @@ public class BuildingBean implements Serializable {
         }
     }
 
-    public void deleteBuilding(BuildingEntity building){
+    public void deleteBuilding(){
         EntityManager em = EMF.getEM();
         EntityTransaction tx = em.getTransaction();
         try {
@@ -208,21 +218,23 @@ public class BuildingBean implements Serializable {
             if (isBuildingNotUsed(buildingToDelete)){
                 buildingService.delete(buildingToDelete,em);
                 tx.commit();
-                NotificationManager.addInfoMessage("Hall '" + buildingToDelete.getName() +"' deleted.");
+                NotificationManager.addInfoMessageFromBundleRedirect("notification.building.successDelete");
             }else {
                 log.error("Building is used and can't be deleted.");
-                NotificationManager.addErrorMessage("Error, building is already used and can't be deleted.");
+                NotificationManager.addErrorMessage("notification.building.failedDeleteUsed");
             }
         }catch (Exception e){
             if (tx.isActive()) {
                 tx.rollback();
             }
             log.error("Error while attempting to delete ", e);
-            NotificationManager.addErrorMessage("Error while deleting.");
+            NotificationManager.addErrorMessage("notification.building.failedDelete");
         }
         finally {
             em.clear();
             em.close();
+            buildings = loadBuildings();
+            PrimeFaces.current().ajax().update("listForm:dt-buildings", "globalGrowl");
         }
     }
 

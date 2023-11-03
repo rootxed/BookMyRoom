@@ -7,7 +7,9 @@ import java.util.Objects;
         @NamedQuery(name = "HallCategory.findByHallAndCategory",
                 query = "SELECT hc FROM HallCategoryEntity hc WHERE hc.hallByHallId = :hall AND hc.categoryByCategoryId = :category"),
         @NamedQuery(name = "HallCategory.findByHall",
-                query = "SELECT hc FROM HallCategoryEntity hc WHERE hc.hallByHallId = :hall")
+                query = "SELECT hc FROM HallCategoryEntity hc WHERE hc.hallByHallId = :hall"),
+        @NamedQuery(name = "HallCategory.countByCategory",
+                query = "SELECT COUNT (hc) FROM HallCategoryEntity hc WHERE hc.categoryByCategoryId = :category")
 })
 
 @Entity
