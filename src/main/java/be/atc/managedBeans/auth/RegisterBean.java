@@ -1,14 +1,14 @@
 package be.atc.managedBeans.auth;
 
+import be.atc.entities.AddresseEntity;
 import be.atc.entities.CityEntity;
 import be.atc.entities.RoleEntity;
 import be.atc.entities.UserEntity;
-import be.atc.entities.AddresseEntity;
 import be.atc.managedBeans.CitiesBean;
+import be.atc.services.AddresseService;
 import be.atc.services.CityService;
 import be.atc.services.RoleService;
 import be.atc.services.UserService;
-import be.atc.services.AddresseService;
 import be.atc.tools.EMF;
 import be.atc.tools.NotificationManager;
 import org.apache.log4j.Logger;
@@ -17,7 +17,6 @@ import javax.annotation.PostConstruct;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.management.Notification;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import java.io.Serializable;
@@ -35,20 +34,12 @@ public class RegisterBean implements Serializable {
     private UserService userService;
 
     @Inject
-    private AddresseService addresseService;
-
-    @Inject
     private RoleService roleService;
 
-    @Inject
-    private CityService cityService;
 
     @Inject
     private CitiesBean citiesBean;
 
-    private String searchText;
-    private List<CityEntity> foundCities;
-    private CityEntity selectedCity;
 
 
     @PostConstruct
@@ -57,14 +48,21 @@ public class RegisterBean implements Serializable {
         addresse = new AddresseEntity();
     }
 
+    /**
+     * The function `doRegister()` attempts to persist a new registered user along with their address in a database, and
+     * returns a success or failure message.
+     *
+     * @return The method is returning a String value. If the registration process is successful, it returns "success". If
+     * there is an exception or failure during the registration process, it returns "failure".
+     */
     public String doRegister() {
-        log.info("Attempt to persist new registered user: "+ user.getUserName());
-        log.info("User properties: userName=" + user.getUserName() + ", email=" + user.getEmail() +", firstName=" + user.getFirstName() + ", lastName=" + user.getLastName());
+        log.info("Attempt to persist new registered user: " + user.getUserName());
+        log.info("User properties: userName=" + user.getUserName() + ", email=" + user.getEmail() + ", firstName=" + user.getFirstName() + ", lastName=" + user.getLastName());
         EntityManager em = EMF.getEM();
         EntityTransaction transaction = null;
 
         try {
-            if (userService.userExist(user,em)) {
+            if (userService.userExist(user, em)) {
                 throw new RuntimeException("Can't persist user already exists");
             }
 
@@ -73,7 +71,7 @@ public class RegisterBean implements Serializable {
 
             AddresseEntity addresseToInsert = this.addresse;
             addresseToInsert.setCityByCityId(citiesBean.getSelectedCity());
-            log.info("addresseLinne: "+addresseToInsert.getAddressLine() + "Selected City :"+addresseToInsert.getCityByCityId().getName());
+            log.info("addresseLinne: " + addresseToInsert.getAddressLine() + "Selected City :" + addresseToInsert.getCityByCityId().getName());
             em.persist(addresseToInsert);
 
             log.info("Adding address: ID=" + addresseToInsert.getId() + ", AddressLine=" + addresseToInsert.getAddressLine());
@@ -111,22 +109,6 @@ public class RegisterBean implements Serializable {
 
     public AddresseEntity getAddresse() {
         return addresse;
-    }
-
-    public List<CityEntity> getFoundCities() {
-        return foundCities;
-    }
-
-    public CityEntity getSelectedCity() {
-        return selectedCity;
-    }
-
-    public String getSearchText() {
-        return searchText;
-    }
-
-    public void setSearchText(String searchText) {
-        this.searchText = searchText;
     }
 
 }

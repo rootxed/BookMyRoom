@@ -3,7 +3,6 @@ package be.atc.managedBeans.auth;
 import be.atc.entities.UserEntity;
 import be.atc.services.UserService;
 import be.atc.tools.EMF;
-
 import be.atc.tools.NotificationManager;
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
@@ -13,8 +12,6 @@ import org.apache.shiro.authc.UsernamePasswordToken;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
-import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
@@ -25,7 +22,7 @@ import java.io.Serializable;
 @SessionScoped
 public class LoginBean implements Serializable {
 
-private Logger log = org.apache.log4j.Logger.getLogger(LoginBean.class);
+    private Logger log = org.apache.log4j.Logger.getLogger(LoginBean.class);
 
     private String username;
     private String password;
@@ -36,10 +33,17 @@ private Logger log = org.apache.log4j.Logger.getLogger(LoginBean.class);
 
     @PostConstruct
     public void init() {
-        this.username ="";
+        this.username = "";
         this.password = "";
     }
 
+    /**
+     * The function attempts to log in a client using a username and password, and returns "success" if the login is
+     * successful, or "failure" if it fails.
+     *
+     * @return The method is returning a String value. The possible return values are "success" if the login is successful,
+     * and "failure" if the login fails.
+     */
     public String doLogin() throws IOException {
 
         try {
@@ -49,7 +53,7 @@ private Logger log = org.apache.log4j.Logger.getLogger(LoginBean.class);
 
             EntityManager em = EMF.getEM();
             UserEntity foundUserEntity = userService.findUserByUsernameOrNull(em, getUsername());
-            if(foundUserEntity == null) {
+            if (foundUserEntity == null) {
                 log.info("UserEntity " + foundUserEntity.toString() + " not found in data store");
                 em.clear();
                 em.close();

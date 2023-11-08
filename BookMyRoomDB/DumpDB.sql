@@ -432,7 +432,8 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,1,1,'lahcen','$shiro1$SHA-256$500000$SsOV1X29o20w3aWrVHBYMg==$aVCAylWzc1rgCbu/CjZ5zZQgEkSUoVi9vHNdmV1UuKo=','Lahcen','Boukhoubza','0489812322','mymail@mail.com',0);
+INSERT INTO `user` VALUES (1,1,1,'lahcen','$shiro1$SHA-256$500000$SsOV1X29o20w3aWrVHBYMg==$aVCAylWzc1rgCbu/CjZ5zZQgEkSUoVi9vHNdmV1UuKo=','Lahcen','Boukhoubza','0489812322','mymail@nomail.com',0);' ||
+    'INSERT INTO `user` VALUES (2,2,1,'receptionist','$shiro1$SHA-256$500000$SsOV1X29o20w3aWrVHBYMg==$aVCAylWzc1rgCbu/CjZ5zZQgEkSUoVi9vHNdmV1UuKo=','Julien','Jules','071555525','receptionist@nomail.com',0);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;

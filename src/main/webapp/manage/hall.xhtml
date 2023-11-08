@@ -180,7 +180,7 @@
                                         <p:ajax event="rowEdit" listener="#{hallScheduleBean.onRowEdit}"
                                                 update=":schedule-form:dt-definitiveSchedule :schedule-form:dt-tempSchedule"/>
                                         <p:ajax event="rowEditCancel" listener="#{hallScheduleBean.onRowCancel}"
-                                                update=":schedule-form"/>
+                                                update=":schedule-form:dt-definitiveSchedule :schedule-form:dt-tempSchedule"/>
 
                                         <f:facet name="header">
                                             #{bundle['title.definitiveSchedule']}

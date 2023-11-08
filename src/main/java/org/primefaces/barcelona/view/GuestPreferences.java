@@ -28,9 +28,9 @@ import javax.enterprise.context.SessionScoped;
 @SessionScoped
 public class GuestPreferences implements Serializable {
 
-    private String theme = "blue-grey";
+    private String theme = "blue";
 
-    private String layout = "blue-grey";
+    private String layout = "blue";
             
     private boolean overlayMenu;
     

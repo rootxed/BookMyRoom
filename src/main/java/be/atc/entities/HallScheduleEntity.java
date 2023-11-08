@@ -64,7 +64,7 @@ import java.util.Objects;
         ),
         @NamedQuery(
                 name = "HallSchedule.findRegularForHallAndDate",
-                query = "SELECT hs FROM HallScheduleEntity hs WHERE hs.hallByHallId = :hall AND hs.weekDay = :weekDay AND hs.beginningDate <= :date AND (hs.endingDate IS NULL OR hs.endingDate >= :date)  "
+                query = "SELECT hs FROM HallScheduleEntity hs WHERE hs.hallByHallId = :hall AND hs.weekDay = :weekDay AND hs.beginningDate <= :date AND hs.temporary = false AND (hs.endingDate IS NULL OR hs.endingDate >= :date) "
         )
 
 

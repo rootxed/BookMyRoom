@@ -1,22 +1,13 @@
 package be.atc.managedBeans;
 
-import be.atc.entities.*;
-import be.atc.services.BookingService;
-import be.atc.services.HallScheduleService;
-import be.atc.services.HallService;
-import be.atc.tools.EMF;
+import be.atc.entities.BookingEntity;
 import be.atc.tools.NotificationManager;
 import be.atc.tools.TimeSlot;
 import org.apache.log4j.Logger;
-import org.primefaces.event.SelectEvent;
-import org.primefaces.event.UnselectEvent;
 
 import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
 import javax.inject.Named;
-import javax.persistence.EntityManager;
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,6 +33,16 @@ public class TimeSlotsBean implements Serializable {
     private List<TimeSlot> selectedSlots = new ArrayList<>();
 
 
+    /**
+     * The function generates time slots based on the opening and closing times, and checks for availability based on
+     * existing bookings.
+     *
+     * @param openingTime      The opening time of the hall. It is of type LocalTime, which represents a time without a date.
+     * @param closingTime      The closingTime parameter represents the time when the hall or venue closes. It is of type
+     *                         LocalTime, which is a class in Java that represents a time without a date or time zone.
+     * @param existingBookings A list of BookingEntity objects representing the existing bookings for a hall or venue. Each
+     *                         BookingEntity object contains information about the start and end time of the booking.
+     */
     public void generateTimeSlots(LocalTime openingTime, LocalTime closingTime, List<BookingEntity> existingBookings) {
         timeSlots.clear();
         LocalTime slotStart = openingTime;
@@ -50,7 +51,7 @@ public class TimeSlotsBean implements Serializable {
             log.warn("Opening time and closing time are the same. Cannot generate time slots. Hall is closed.");
             return;
 
-        }else {
+        } else {
             while (!slotStart.isAfter(closingTime.minusHours(1))) {
                 LocalTime slotEnd = slotStart.plusHours(1);
 
@@ -73,6 +74,11 @@ public class TimeSlotsBean implements Serializable {
 
     }
 
+    /**
+     * The getTimeSlots() function returns a list of TimeSlot objects.
+     *
+     * @return A List of TimeSlot objects is being returned.
+     */
     public List<TimeSlot> getTimeSlots() {
         return timeSlots;
     }
@@ -95,6 +101,11 @@ public class TimeSlotsBean implements Serializable {
         }
     }
 
+    /**
+     * The function returns the selected time range based on the start and end times of the selected slots.
+     *
+     * @return The method is returning a string representation of the selected time range.
+     */
     public String getSelectedTimeRange() {
         if (selectedSlots.isEmpty()) {
             return "No slots selected";

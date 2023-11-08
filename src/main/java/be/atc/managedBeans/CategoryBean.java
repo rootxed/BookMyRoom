@@ -1,6 +1,5 @@
 package be.atc.managedBeans;
 
-import be.atc.entities.BuildingEntity;
 import be.atc.entities.CategoryEntity;
 import be.atc.services.CategoryService;
 import be.atc.tools.EMF;
@@ -48,6 +47,11 @@ public class CategoryBean implements Serializable {
 
     private CategoryEntity category;
 
+    /**
+     * The function loads and returns a list of CategoryEntity objects from the database.
+     *
+     * @return The method is returning a List of CategoryEntity objects.
+     */
     public List<CategoryEntity> loadCategories() {
         EntityManager em = EMF.getEM();
         List<CategoryEntity> fetchedCategories = new ArrayList<>();
@@ -63,6 +67,10 @@ public class CategoryBean implements Serializable {
         return fetchedCategories;
     }
 
+    /**
+     * The function "saveCategory" checks if the category ID is 0 and either creates a new category or updates an existing
+     * one accordingly.
+     */
     public void saveCategory() {
         if (category.getId() == 0) {
             createCategory();
@@ -71,6 +79,14 @@ public class CategoryBean implements Serializable {
         }
     }
 
+    /**
+     * The function creates a new category, logs the process, checks if the category already exists, begins a transaction,
+     * inserts the category into the database, commits the transaction, displays success message, hides a dialog, and
+     * updates the categories list.
+     *
+     * @return The method is returning a String value. If the category is successfully created, it returns "success". If
+     * there is an exception or failure in creating the category, it returns "failure".
+     */
     public String createCategory() {
         log.info("Attempting to create a new category...");
         EntityManager em = EMF.getEM();
@@ -110,6 +126,13 @@ public class CategoryBean implements Serializable {
 
     }
 
+    /**
+     * The function attempts to update a category in a Java application, handling exceptions and displaying notifications
+     * accordingly.
+     *
+     * @return The method is returning a String value. If the category is successfully updated, it returns "success". If
+     * there is an exception or error during the update process, it returns "failure".
+     */
     public String updateCategory() {
         log.info("Attempting to update the category...");
         EntityManager em = EMF.getEM();
@@ -147,28 +170,31 @@ public class CategoryBean implements Serializable {
         }
     }
 
-    public void deleteCategory(){
+    /**
+     * The deleteCategory function deletes a category if it is not being used, otherwise it logs an error and displays an
+     * error message.
+     */
+    public void deleteCategory() {
         EntityManager em = EMF.getEM();
         EntityTransaction tx = em.getTransaction();
         try {
             tx.begin();
             CategoryEntity categoryToDelete = categoryService.findOneByIdOrNull(category.getId(), em);
-            if (isCategoryNotUsed(categoryToDelete)){
+            if (isCategoryNotUsed(categoryToDelete)) {
                 categoryService.delete(categoryToDelete, em);
                 tx.commit();
                 NotificationManager.addInfoMessageFromBundleRedirect("notification.category.successDelete");
-            }else {
+            } else {
                 log.error("Category is used and can't be deleted.");
                 NotificationManager.addErrorMessage("notification.category.failedDeleteUsed");
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             if (tx.isActive()) {
                 tx.rollback();
             }
             log.error("Error while attempting to delete ", e);
             NotificationManager.addErrorMessage("notification.category.failedDelete");
-        }
-        finally {
+        } finally {
             em.clear();
             em.close();
             categories = loadCategories();
@@ -176,6 +202,11 @@ public class CategoryBean implements Serializable {
         }
     }
 
+    /**
+     * The function returns a list of CategoryEntity objects, loading them if they haven't been loaded yet.
+     *
+     * @return The method is returning a List of CategoryEntity objects.
+     */
     public List<CategoryEntity> getCategories() {
         if (categories == null) {
             categories = loadCategories();
@@ -183,16 +214,25 @@ public class CategoryBean implements Serializable {
         return categories;
     }
 
+    /**
+     * The function checks if a given category is not used in the database.
+     *
+     * @param category The "category" parameter is an instance of the CategoryEntity class.
+     * @return The method is returning a boolean value.
+     */
     public boolean isCategoryNotUsed(CategoryEntity category) {
         EntityManager em = EMF.getEM();
         try {
-            return (!categoryService.isUsed(category,em));
+            return (!categoryService.isUsed(category, em));
         } finally {
             em.clear();
             em.close();
         }
     }
 
+    /**
+     * The function "openNew" creates a new instance of the CategoryEntity class and assigns it to the "category" variable.
+     */
     public void openNew() {
         this.category = new CategoryEntity();
     }

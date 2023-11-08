@@ -54,8 +54,11 @@ public class PayementHistoryBean implements Serializable {
     @Inject
     private UserService userService;
 
-    //TODO CREATE A PAYEMENTHistory
-
+    /**
+     * The function creates a payment history record for a booking, associating it with the logged-in user.
+     *
+     * @return The method is returning a String value. The possible return values are "error", "success", or "failure".
+     */
     public String createPaymentHistory(){
         log.info("Attempting to create a payment history...");
         Timestamp timestamp = Timestamp.valueOf(LocalDateTime.now());
@@ -120,6 +123,13 @@ public class PayementHistoryBean implements Serializable {
         }
     }
 
+    /**
+     * The function retrieves the payment history status for a given booking entity.
+     *
+     * @param booking The "booking" parameter is an instance of the "BookingEntity" class, which represents a booking made
+     * by a user.
+     * @return The method is returning a PaymentHistoryEntity object.
+     */
     public PaymentHistoryEntity getPaymentHistoryStatus(BookingEntity booking){
         selectedPaymentHistory = null;
         EntityManager em = EMF.getEM();

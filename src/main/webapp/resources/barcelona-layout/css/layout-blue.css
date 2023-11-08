@@ -549,11 +549,9 @@
 .login-body {
   background-color: #f5f5f5;
   padding-top: 200px;
-  height: 100vh;
+  height: auto;
   background: url("#{resource['barcelona-layout:images/login/login-image.png']}") no-repeat;
-  background-position: center center;
-  background-size: cover;
-  background-attachment: fixed;
+  background-position: 0 -100px;
 }
 .login-body .login-panel {
   background-color: #ffffff;
@@ -605,6 +603,67 @@
     width: 300px;
   }
   .login-body .login-panel .col-12 {
+    padding: 20px 35px;
+  }
+}
+
+.register-body {
+  background-color: #f5f5f5;
+  padding-top: 200px;
+  height: auto;
+  background: url("#{resource['barcelona-layout:images/login/login-image.png']}") no-repeat;
+  background-position: 0 -100px;
+}
+.register-body .register-panel {
+  background-color: #ffffff;
+  width: 400px;
+  margin: 0 auto;
+  padding-bottom: 20px;
+  -webkit-box-shadow: 0 12px 15px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
+  -moz-box-shadow: 0 12px 15px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
+  box-shadow: 0 12px 15px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
+}
+.register-body .register-panel .register-header {
+  margin-bottom: 30px;
+  background-color: #1976d2;
+  color: #BBDEFB;
+  position: relative;
+}
+.register-body .register-panel .register-header h1 {
+  font-size: 18px;
+  font-weight: 700;
+}
+.register-body .register-panel .register-header h2 {
+  font-size: 14px;
+  font-weight: normal;
+  margin-top: 0;
+}
+.register-body .register-panel .register-header img {
+  width: 64px;
+  position: absolute;
+  top: 24px;
+  right: 30px;
+}
+.register-body .register-panel .register-header.col-12 {
+  padding: 20px 30px;
+}
+.register-body .register-panel .col-12 {
+  padding: 20px 70px;
+}
+
+@media (min-width: 1441px) {
+  .register-body {
+    background-size: contain;
+  }
+}
+@media (max-width: 640px) {
+  .register-body {
+    padding-top: 150px;
+  }
+  .register-body .register-panel {
+    width: 300px;
+  }
+  .register-body .register-panel .col-12 {
     padding: 20px 35px;
   }
 }

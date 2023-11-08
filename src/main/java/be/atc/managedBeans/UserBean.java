@@ -25,6 +25,11 @@ public class UserBean implements Serializable {
     private List<UserEntity> filteredUsers;
 
 
+    /**
+     * The function loads a list of UserEntity objects from the database using an EntityManager.
+     *
+     * @return The method is returning a List of UserEntity objects.
+     */
     private List<UserEntity> loadUsers() {
         EntityManager em = EMF.getEM();
         try {
@@ -39,6 +44,11 @@ public class UserBean implements Serializable {
         }
     }
 
+    /**
+     * The function returns a list of user entities, loading them from a data source if necessary.
+     *
+     * @return The method is returning a List of UserEntity objects.
+     */
     public List<UserEntity> getUsers() {
         if(users==null){
             users=loadUsers();

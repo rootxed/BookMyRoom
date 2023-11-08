@@ -2,13 +2,9 @@ package be.atc.managedBeans;
 
 import be.atc.entities.*;
 import be.atc.services.BookingService;
-import be.atc.services.BuildingService;
-import be.atc.services.HallService;
 import be.atc.tools.EMF;
 import be.atc.tools.UserSessionUtil;
 import org.apache.log4j.Logger;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.subject.Subject;
 import org.primefaces.event.SelectEvent;
 
 import javax.annotation.PostConstruct;
@@ -96,6 +92,10 @@ public class BookingHistoryBean implements Serializable {
 
     private LocalDate selectedDate = LocalDate.now();
 
+    /**
+     * The `init()` function is annotated with `@PostConstruct` and initializes the `selectedDate` variable with the
+     * current date.
+     */
     @PostConstruct
     public void init() {
         selectedDate = LocalDate.now();
@@ -114,6 +114,11 @@ public class BookingHistoryBean implements Serializable {
         return bookings;
     }
 
+    /**
+     * The function sets the list of bookings for a specific entity.
+     *
+     * @param bookings The "bookings" parameter is a List of BookingEntity objects.
+     */
     public void setBookings(List<BookingEntity> bookings) {
         this.bookings = bookings;
     }
@@ -131,6 +136,11 @@ public class BookingHistoryBean implements Serializable {
         selectedDate = event.getObject();
     }
 
+    /**
+     * The function "loadUserBookings" retrieves a list of booking entities associated with the current user.
+     *
+     * @return The method is returning a List of BookingEntity objects.
+     */
     public List<BookingEntity> loadUserBookings() {
 
         log.info("Loading user bookings");
@@ -140,11 +150,9 @@ public class BookingHistoryBean implements Serializable {
         EntityManager em = EMF.getEM();
         try {
             userBookings = bookingService.findBookingsByUser(currentUser, em);
-        }
-        catch (Exception e) {
-            log.error("error getting userBookings ",e);
-        }
-        finally {
+        } catch (Exception e) {
+            log.error("error getting userBookings ", e);
+        } finally {
             if (em != null) {
                 em.close();
             }
@@ -153,40 +161,59 @@ public class BookingHistoryBean implements Serializable {
 
     }
 
+    /**
+     * The function loads bookings based on selected hall and date or selected building and date.
+     *
+     * @return The method is returning a List of BookingEntity objects.
+     */
     public List<BookingEntity> loadBookings() {
         List<BookingEntity> bookings = new ArrayList<BookingEntity>();
         EntityManager em = EMF.getEM();
-        try{
-            if (selectedHall != null && selectedDate != null){
+        try {
+            if (selectedHall != null && selectedDate != null) {
                 bookings = bookingService.findByHallAndDate(selectedHall, selectedDate, em);
-            }else if (selectedBuilding != null && selectedDate != null){
+            } else if (selectedBuilding != null && selectedDate != null) {
                 bookings = bookingService.findByBuildingAndDate(selectedBuilding, selectedDate, em);
             }
-        }catch (Exception e){
-            log.error("Error while loading bookings ",e);
-        }finally {
+        } catch (Exception e) {
+            log.error("Error while loading bookings ", e);
+        } finally {
             em.close();
         }
         return bookings;
     }
 
+    /**
+     * The function returns the booking status based on the current time and the booking entity's properties.
+     *
+     * @param booking The "booking" parameter is an instance of the BookingEntity class, which represents a booking made by
+     *                a user. It contains information such as the booking's cancellation status, date and time of check-out, and other
+     *                relevant details.
+     * @return The method is returning a String value, which represents the status of a booking.
+     */
     public String getBookingStatus(BookingEntity booking) {
         LocalDateTime now = LocalDateTime.now();
         FacesContext context = FacesContext.getCurrentInstance();
         ResourceBundle bundle = context.getApplication().getResourceBundle(context, "bundle");
         String status;
-        if(booking.getIsCanceled()){
+        if (booking.getIsCanceled()) {
             status = bundle.getString("text.canceled");
-        }
-        else if (booking.getDateTimeOut().isAfter(now)) {
+        } else if (booking.getDateTimeOut().isAfter(now)) {
             status = bundle.getString("text.upcoming");
-        }
-        else {
+        } else {
             status = bundle.getString("text.passed");
         }
         return (status);
     }
 
+    /**
+     * The function returns a style class based on the status of a booking entity.
+     *
+     * @param booking The parameter "booking" is an instance of the BookingEntity class, which represents a booking made by
+     *                a user.
+     * @return The method is returning a String value. The specific String value that is being returned depends on the
+     * conditions in the if-else statements. It could be "canceled", "upcoming", or "passed".
+     */
     public String getBookingStatusStyleClass(BookingEntity booking) {
         if (booking.getIsCanceled()) {
             return "canceled";
@@ -200,11 +227,11 @@ public class BookingHistoryBean implements Serializable {
     public List<BookingEntity> getBookingsByHallAndDate(HallEntity hall, LocalDate date) {
         List<BookingEntity> bookings = new ArrayList<BookingEntity>();
         EntityManager em = EMF.getEM();
-        try{
+        try {
             bookings = bookingService.findByHallAndDate(hall, date, em);
-        } catch (Exception e){
+        } catch (Exception e) {
             log.error("Error getting bookings", e);
-        }finally {
+        } finally {
             em.close();
         }
         return bookings;
@@ -213,11 +240,11 @@ public class BookingHistoryBean implements Serializable {
     public List<BookingEntity> getBookingsByBuildingAndDate(BuildingEntity building, LocalDate date) {
         List<BookingEntity> bookings = new ArrayList<BookingEntity>();
         EntityManager em = EMF.getEM();
-        try{
+        try {
             bookings = bookingService.findByBuildingAndDate(building, date, em);
-        } catch (Exception e){
+        } catch (Exception e) {
             log.error("Error getting bookings", e);
-        }finally {
+        } finally {
             em.close();
         }
         return bookings;

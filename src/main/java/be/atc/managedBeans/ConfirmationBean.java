@@ -9,8 +9,8 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 
 import javax.annotation.PostConstruct;
-import javax.faces.view.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
@@ -33,26 +33,34 @@ public class ConfirmationBean implements Serializable {
         loadBooking();
     }
 
-    private String loadBooking(){
+    /**
+     * The function "loadBooking" retrieves a booking ID from the session, retrieves the corresponding booking from the
+     * database, checks if the booking was made by the logged-in user, and returns a success message or redirects to the
+     * booking page if the ID is null.
+     *
+     * @return The method is returning a String value. If the bookingId is not null, it returns "Success". If the bookingId
+     * is null, it returns "book?faces-redirect=true".
+     */
+    private String loadBooking() {
         // Getting the booking id from the session to avoid booking ID manipulation
         HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
         Integer bookingId = (Integer) session.getAttribute("bookingId");
         log.info("Got the booking id from the session: " + bookingId);
 
-        if(bookingId != null) {
+        if (bookingId != null) {
             //Get the booking from the database
             EntityManager em = EMF.getEM();
-            try{
+            try {
 
-                booking = bookingService.findOneByIdOrNull(bookingId,em);
+                booking = bookingService.findOneByIdOrNull(bookingId, em);
             } catch (Exception e) {
                 log.error("Error while getting booking " + e);
                 NotificationManager.addErrorMessage("ERROR WHILE GETTING BOOKING");
-            }finally {
+            } finally {
                 em.close();
             }
 
-            if(booking != null) {
+            if (booking != null) {
                 //Checking if the booking was made by the logged in user
                 // Getting the logged user
                 Subject currentUser = null;
@@ -65,18 +73,18 @@ public class ConfirmationBean implements Serializable {
                     log.error("An error occurred while getting the current user.", e);
                 }
 
-                if(!currentUser.getPrincipal().equals(booking.getUserByUserId().getUserName())) {
+                if (!currentUser.getPrincipal().equals(booking.getUserByUserId().getUserName())) {
                     //User is not allowed to see the booking
                     booking = null;
                     NotificationManager.addErrorMessage("ERROR YOU DON'T HAVE ACCESS TO THIS BOOKING");
                 }
-            } else{
+            } else {
                 NotificationManager.addErrorMessage("ERROR BOOKING NOT FOUND");
             }
 
             session.removeAttribute("bookingId");
             return "Success";
-        }else{
+        } else {
             return "book?faces-redirect=true";
         }
         //SI L'ID est null, il n'y a pas de booking rediriger vers page de booking ?
