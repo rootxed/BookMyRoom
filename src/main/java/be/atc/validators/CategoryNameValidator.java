@@ -24,7 +24,7 @@ public class CategoryNameValidator implements Validator {
 //    @Inject
 //    CategoryService categoryService;
 
-    private static final String NAME_PATTERN = "^[A-Za-z0-9._-]*$";
+    private static final String NAME_PATTERN = "^[A-Za-z0-9 ._-]*$";
     private static final int MAX_NAME_LENGTH = 100;
 
     @Override

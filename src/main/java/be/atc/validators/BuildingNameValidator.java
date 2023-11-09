@@ -26,7 +26,7 @@ public class BuildingNameValidator implements Validator {
 //    @Inject
 //    BuildingService buildingService;
 
-    private static final String NAME_PATTERN = "^[A-Za-z0-9._@#!-]*$";
+    private static final String NAME_PATTERN = "^[A-Za-z0-9 ._@#!-]*$";
     private static final int MAX_NAME_LENGTH = 100;
 
     @Override
@@ -37,6 +37,8 @@ public class BuildingNameValidator implements Validator {
 
         String currentName = (String) component.getAttributes().get("currentName");
         String buildingName = value.toString();
+
+        log.debug("Validating building name: " + buildingName);
 
         if (currentName != null && currentName.equals(buildingName)) {
             // Name didn't changed. No need to check.
