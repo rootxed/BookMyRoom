@@ -197,11 +197,11 @@ public class BookingHistoryBean implements Serializable {
         ResourceBundle bundle = context.getApplication().getResourceBundle(context, "bundle");
         String status;
         if (booking.getIsCanceled()) {
-            status = bundle.getString("text.canceled");
+            status = "CANCELED";
         } else if (booking.getDateTimeOut().isAfter(now)) {
-            status = bundle.getString("text.upcoming");
+            status = "UPCOMING";
         } else {
-            status = bundle.getString("text.passed");
+            status = "PASSED";
         }
         return (status);
     }

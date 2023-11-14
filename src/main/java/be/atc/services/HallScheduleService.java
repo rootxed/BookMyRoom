@@ -1,18 +1,14 @@
 package be.atc.services;
 
-import be.atc.entities.HallCategoryEntity;
 import be.atc.entities.HallEntity;
 import be.atc.entities.HallScheduleEntity;
-import be.atc.entities.OpeningHoursEntity;
 import org.apache.log4j.Logger;
-import org.eclipse.persistence.exceptions.EclipseLinkException;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import java.time.LocalDate;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -23,15 +19,22 @@ public class HallScheduleService extends ServiceImpl<HallScheduleEntity> {
 
     public boolean exist(HallScheduleEntity hallSchedule, EntityManager em) {
         log.info("Checking if hallSchedule already exist.");
-        return (findHallScheduleByHallScheduleOrNull(hallSchedule,em) != null);
+        return (findHallScheduleByHallScheduleOrNull(hallSchedule, em) != null);
     }
 
     public HallScheduleEntity findOneByIdOrNull(int id, EntityManager em) {
-        return null;
+        try {
+            return em.createNamedQuery("HallSchedule.findById", HallScheduleEntity.class)
+                    .setParameter("id", id)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            log.info("Query found no HallSchedule to return.");
+            return null;
+        }
     }
 
     public List<HallScheduleEntity> findAllOrNull(EntityManager em) {
-        try{
+        try {
             log.info("Finding all HallSchedule...");
             TypedQuery<HallScheduleEntity> query = em.createNamedQuery("HallSchedule.findAll", HallScheduleEntity.class);
             List<HallScheduleEntity> hallScheduleList = query.getResultList();
@@ -43,11 +46,11 @@ public class HallScheduleService extends ServiceImpl<HallScheduleEntity> {
         }
     }
 
-    public HallScheduleEntity findHallScheduleByHallScheduleOrNull (HallScheduleEntity hallSchedule, EntityManager em) {
+    public HallScheduleEntity findHallScheduleByHallScheduleOrNull(HallScheduleEntity hallSchedule, EntityManager em) {
         log.info("Finding HallSchedule by hall schedule");
 
-        try{
-            return  em.createNamedQuery("HallSchedule.findByHallSchedule", HallScheduleEntity.class)
+        try {
+            return em.createNamedQuery("HallSchedule.findByHallSchedule", HallScheduleEntity.class)
                     .setParameter("weekDay", hallSchedule.getWeekDay())
                     .setParameter("beginningDate", hallSchedule.getBeginningDate())
                     .setParameter("endingDate", hallSchedule.getEndingDate())
@@ -55,28 +58,28 @@ public class HallScheduleService extends ServiceImpl<HallScheduleEntity> {
                     .setParameter("openingHours", hallSchedule.getOpeninghoursByOpeningHoursId())
                     .setParameter("isTemporary", hallSchedule.isTemporary())
                     .getSingleResult();
-        }catch (NoResultException e) {
+        } catch (NoResultException e) {
             log.info("Query found no HallSchedule to return.");
             return null;
         }
     }
 
-    public List<HallScheduleEntity> findAllHallScheduleForHallOrNull (){
+    public List<HallScheduleEntity> findAllHallScheduleForHallOrNull() {
         return null;
     }
 
-    public List<HallScheduleEntity> findAllCurrentAndFutureScheduleForHallOrNull(HallEntity hall, EntityManager em){
-        TypedQuery <HallScheduleEntity> query = em.createNamedQuery("HallSchedule.findCurrentAndFutureSchedulesForHall", HallScheduleEntity.class)
+    public List<HallScheduleEntity> findAllCurrentAndFutureScheduleForHallOrNull(HallEntity hall, EntityManager em) {
+        TypedQuery<HallScheduleEntity> query = em.createNamedQuery("HallSchedule.findCurrentAndFutureSchedulesForHall", HallScheduleEntity.class)
                 .setParameter("hall", hall)
                 .setParameter("currentDate", new Date());
         return query.getResultList();
     }
 
     public HallScheduleEntity findCurrentScheduleForHallOnDate(HallEntity hall, LocalDate date, EntityManager em) {
-        short dayOfWeek = (short)  date.getDayOfWeek().getValue();
-        log.info("Finding Current schedule for day " +dayOfWeek+ " hall " + hall.getId() + " and date " +date);
+        short dayOfWeek = (short) date.getDayOfWeek().getValue();
+        log.info("Finding Current schedule for day " + dayOfWeek + " hall " + hall.getId() + " and date " + date);
 
-        try{
+        try {
             // Recherchez d'abord les horaires temporaires pour cette date
             TypedQuery<HallScheduleEntity> tempQuery = em.createNamedQuery("HallSchedule.findTemporaryForHallAndDate", HallScheduleEntity.class);
             tempQuery.setParameter("hall", hall);
@@ -88,11 +91,11 @@ public class HallScheduleService extends ServiceImpl<HallScheduleEntity> {
                 log.info("Found a temporary schedule");
                 return temporarySchedule;  // utilisez l'horaire temporaire trouvé
             }
-        } catch (NoResultException e){
+        } catch (NoResultException e) {
             log.info("No Temporary Schedule found");
         }
 
-        try{
+        try {
             // Sinon, utilisez l'horaire régulier pour le jour de la semaine
             TypedQuery<HallScheduleEntity> regularQuery = em.createNamedQuery("HallSchedule.findRegularForHallAndDate", HallScheduleEntity.class);
             regularQuery.setParameter("hall", hall);
@@ -104,7 +107,7 @@ public class HallScheduleService extends ServiceImpl<HallScheduleEntity> {
                 log.info("Found a regular schedule");
                 return regularSchedule;
             }
-        }catch (NoResultException e){
+        } catch (NoResultException e) {
             log.info("No Definitive Schedule found");
         }
 
@@ -112,33 +115,34 @@ public class HallScheduleService extends ServiceImpl<HallScheduleEntity> {
 
     }
 
-    public List<HallScheduleEntity> findAllDefinitiveHallScheduleForHallOrNull(HallEntity hall, EntityManager em){
-        try{
-            TypedQuery <HallScheduleEntity> query = em.createNamedQuery("HallSchedule.findDefinitiveScheduleForHall", HallScheduleEntity.class)
+    public List<HallScheduleEntity> findAllDefinitiveHallScheduleForHallOrNull(HallEntity hall, EntityManager em) {
+        try {
+            TypedQuery<HallScheduleEntity> query = em.createNamedQuery("HallSchedule.findDefinitiveScheduleForHall", HallScheduleEntity.class)
                     .setParameter("hall", hall)
                     .setParameter("isTemporary", false);
             return query.getResultList();
-        } catch (NoResultException e)  {
+        } catch (NoResultException e) {
             log.info("Query found no Definitive HallSchedule to return.");
             return null;
         }
     }
 
-    public List<HallScheduleEntity> findAllNotPassedTemporaryHallScheduleForHallOrNull(HallEntity hall, EntityManager em){
+    public List<HallScheduleEntity> findAllNotPassedTemporaryHallScheduleForHallOrNull(HallEntity hall, EntityManager em) {
         LocalDate currentDate = LocalDate.now();
-        try{
-            TypedQuery <HallScheduleEntity> query = em.createNamedQuery("HallSchedule.findNotPassedTempScheduleForHall", HallScheduleEntity.class)
+        try {
+            TypedQuery<HallScheduleEntity> query = em.createNamedQuery("HallSchedule.findNotPassedTempScheduleForHall", HallScheduleEntity.class)
                     .setParameter("hall", hall)
-                    .setParameter("currentDate", currentDate);;
+                    .setParameter("currentDate", currentDate);
+            ;
             return query.getResultList();
-        } catch (NoResultException e)  {
+        } catch (NoResultException e) {
             log.info("Query found no Definitive HallSchedule to return.");
             return null;
         }
 
     }
 
-    public void endOldHallSchedule (HallScheduleEntity hallSchedule, EntityManager em){
+    public void endOldHallSchedule(HallScheduleEntity hallSchedule, EntityManager em) {
 
         LocalDate today = LocalDate.now();
 
@@ -166,8 +170,8 @@ public class HallScheduleService extends ServiceImpl<HallScheduleEntity> {
                 update(schedule, em);
             } else {
                 // update avec la date de début new en date de fin
-                if((schedule.getEndingDate().isAfter(hallSchedule.getBeginningDate()) || schedule.getEndingDate().isEqual(hallSchedule.getBeginningDate()))
-                        && (schedule.getBeginningDate().isBefore(hallSchedule.getBeginningDate()) || schedule.getBeginningDate().isEqual(hallSchedule.getBeginningDate()))){
+                if ((schedule.getEndingDate().isAfter(hallSchedule.getBeginningDate()) || schedule.getEndingDate().isEqual(hallSchedule.getBeginningDate()))
+                        && (schedule.getBeginningDate().isBefore(hallSchedule.getBeginningDate()) || schedule.getBeginningDate().isEqual(hallSchedule.getBeginningDate()))) {
                     schedule.setEndingDate(hallSchedule.getBeginningDate().minusDays(1));
                     update(schedule, em);
                 }

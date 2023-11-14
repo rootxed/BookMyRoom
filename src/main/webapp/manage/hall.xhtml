@@ -321,10 +321,36 @@
                                                     type="time"/>
                                         </p:column>
 
+                                        <p:column>
+                                            <p:commandButton icon="pi pi-trash" update=":globalGrowl"
+                                                             oncomplete="PF('deleteTempScheduleDialog').show()"
+                                                             styleClass="delecte-button rounded-button ui-button-warning"
+                                                             rendered="#{tempSchedule.temporary}"
+                                                             process="@this">
+                                                <f:setPropertyActionListener value="#{tempSchedule}"
+                                                                             target="#{hallScheduleBean.selectedTempSchedule}"/>
+                                            </p:commandButton>
+                                        </p:column>
+
                                     </p:dataTable>
                                 </p:card>
                             </h:form>
                         </p:dialog>
+
+                    <h:form>
+                    <p:confirmDialog widgetVar="deleteTempScheduleDialog" showEffect="fade" width="300"
+                                     message="#{bundle['text.validateScheduleDelete']} ?"
+                                     header="#{bundle['text.confirmation']}" severity="warn">
+                        <p:commandButton value="#{bundle['button.yes']}" icon="pi pi-check"
+                                         actionListener="#{hallScheduleBean.deleteTemporarySchedules}"
+                                         process="@this "
+                                         update="schedule-form:dt-tempSchedule"
+                                         oncomplete="PF('deleteTempScheduleDialog').hide()"/>
+                        <p:commandButton value="#{bundle['button.no']}" type="button"
+                                         styleClass="ui-button-secondary" icon="pi pi-times"
+                                         onclick="PF('deleteTempScheduleDialog').hide()"/>
+                    </p:confirmDialog>
+                    </h:form>
 
                         <p:dialog header="#{bundle['title.addTemporarySchedule']}" showEffect="fade" modal="true"
                                   widgetVar="addTemporaryScheduleDialog" responsive="true" dynamic="true">
@@ -387,7 +413,7 @@
                                 <div class="center-button">
                                     <!-- Bouton pour soumettre le formulaire -->
                                     <p:commandButton value="#{bundle['button.add']}"
-                                                     action="#{hallScheduleBean.saveTemporaryHallSchedule()}"
+                                                     action="#{hallScheduleBean.saveTemporaryHallSchedule}"
                                                      process="@form"
                                                      resetValues="true"
                                                      styleClass="ui-button-success"

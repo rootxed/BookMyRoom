@@ -85,12 +85,8 @@ public class PayementHistoryBean implements Serializable {
         EntityManager em = EMF.getEM();
         EntityTransaction tx = null;
 
+        log.info("Attempting to create a payment history for booking "+selectedBooking.getId());
         try{
-            boolean alreadyExist = paymentHistoryService.exist(paymentHistory, em);
-            if(alreadyExist){
-                throw new RuntimeException("Can't create a payment history, a payment history already exist for this booking");
-            }
-
             // Getting the user from DB
             UserEntity loggedInUser = userService.findUserByUsernameOrNull(em, currentUser.getPrincipal().toString());
 
@@ -99,13 +95,19 @@ public class PayementHistoryBean implements Serializable {
                 return "error";
             }
 
+            paymentHistory.setTimeStamp(timestamp);
+            paymentHistory.setUserByReceiverUserId(loggedInUser);
+            paymentHistory.setBookingByBookingId(selectedBooking);
+
+            boolean alreadyExist = paymentHistoryService.exist(paymentHistory, em);
+            if(alreadyExist){
+                throw new RuntimeException("Can't create a payment history, a payment history already exist for this booking");
+            }
+
             tx = em.getTransaction();
             log.info("Begin transaction to persist a new payment history");
             tx.begin();
 
-            paymentHistory.setTimeStamp(timestamp);
-            paymentHistory.setUserByReceiverUserId(loggedInUser);
-            paymentHistory.setBookingByBookingId(selectedBooking);
             paymentHistoryService.insert(paymentHistory,em);
 
             tx.commit();

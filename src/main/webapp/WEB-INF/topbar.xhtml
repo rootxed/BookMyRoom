@@ -55,14 +55,16 @@
                 <ul class="fadeInDown">
                     <li role="menuitem">
                         <h:form>
-                            <h:commandLink styleClass="topbar-link" action="#{languageChanger.changeToFR}">
-                                <span>Français</span>
+<!--                            <h:commandLink styleClass="topbar-link" action="#{languageChanger.changeToFR}">-->
+                            <h:commandLink styleClass="topbar-link" action="#{languageChanger.setLanguage('fr')}">
+                            <span>Français</span>
                             </h:commandLink>
                         </h:form>
                     </li>
                     <li role="menuitem">
                         <h:form>
-                            <h:commandLink styleClass="topbar-link" action="#{languageChanger.changeToEN}">
+<!--                            <h:commandLink styleClass="topbar-link" action="#{languageChanger.changeToEN}">-->
+                            <h:commandLink styleClass="topbar-link" action="#{languageChanger.setLanguage('en')}">
                                 <span>English</span>
                             </h:commandLink>
                         </h:form>

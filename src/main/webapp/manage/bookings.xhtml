@@ -105,7 +105,7 @@
                             </p:column>
                             <p:column headerText="#{bundle['title.status']}">
                                 <h:outputText styleClass="status-badge status-#{bookingHistoryBean.getBookingStatus(booking).toLowerCase()}"
-                                              value="#{bookingHistoryBean.getBookingStatus(booking)}"/>
+                                              value="#{bundle['text.'.concat(bookingHistoryBean.getBookingStatus(booking).toLowerCase())]}"/>
                             </p:column>
                             <p:column headerText="#{bundle['title.action']}">
                                 <p:commandButton class="ui-button-info rounded-button"

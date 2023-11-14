@@ -1,5 +1,6 @@
 package be.atc.managedBeans;
 
+import be.atc.entities.CategoryEntity;
 import be.atc.entities.HallEntity;
 import be.atc.entities.HallScheduleEntity;
 import be.atc.entities.OpeningHoursEntity;
@@ -8,6 +9,7 @@ import be.atc.services.OpeningHoursService;
 import be.atc.tools.EMF;
 import be.atc.tools.NotificationManager;
 import org.apache.log4j.Logger;
+import org.primefaces.PrimeFaces;
 import org.primefaces.event.RowEditEvent;
 import org.primefaces.model.DefaultScheduleEvent;
 import org.primefaces.model.DefaultScheduleModel;
@@ -41,6 +43,16 @@ public class HallScheduleBean implements Serializable {
     private List<HallScheduleEntity> schedules;
 
     private List<HallScheduleEntity> tempSchedules;
+
+    public HallScheduleEntity getSelectedTempSchedule() {
+        return selectedTempSchedule;
+    }
+
+    public void setSelectedTempSchedule(HallScheduleEntity selectedTempSchedule) {
+        this.selectedTempSchedule = selectedTempSchedule;
+    }
+
+    private HallScheduleEntity selectedTempSchedule;
 
     private ScheduleModel scheduleModel;
 
@@ -247,8 +259,6 @@ public class HallScheduleBean implements Serializable {
             if (existingOpeningHours != null) {
                 //Si l'opening time existe, il faut l'utiliser
                 hallSchedule.setOpeninghoursByOpeningHoursId(existingOpeningHours);
-                //setting temporary
-                hallSchedule.setTemporary(true);
                 //Checking if this HallSchedule alreadyExist
                 boolean scheduleAlreadyExist = hallScheduleService.exist(hallSchedule, em);
                 if (scheduleAlreadyExist) {
@@ -259,6 +269,8 @@ public class HallScheduleBean implements Serializable {
 
             }
 
+            //setting temporary
+            hallSchedule.setTemporary(true);
             hallScheduleService.insert(hallSchedule, em);
             tx.commit();
 
@@ -274,6 +286,39 @@ public class HallScheduleBean implements Serializable {
 
     }
 
+    public void deleteTemporarySchedules(){
+
+            log.info("Trying to delete temporary schedules " +selectedTempSchedule.getHallByHallId().getName());
+            if (selectedTempSchedule != null) {
+                EntityManager em = EMF.getEM();
+                EntityTransaction tx = em.getTransaction();
+            try {
+                tx.begin();
+                HallScheduleEntity scheduleToDelete = hallScheduleService.findOneByIdOrNull(selectedTempSchedule.getId(), em);
+                if (scheduleToDelete.isTemporary()) {
+                    hallScheduleService.delete(scheduleToDelete, em);
+                    tx.commit();
+                    NotificationManager.addInfoMessageFromBundleRedirect("notification.schedule.successDelete");
+                } else {
+                    log.error("Definitive schedule can't be deleted.");
+                    NotificationManager.addErrorMessage("notification.schedule.failedDelete");
+                }
+            } catch (Exception e) {
+                if (tx.isActive()) {
+                    tx.rollback();
+                }
+                log.error("Error while attempting to delete ", e);
+                NotificationManager.addErrorMessage("notification.schedule.failedDelete");
+            } finally {
+                em.clear();
+                em.close();
+                tempSchedules = getTemporarySchedulesForHall(selectedHall);
+            }
+        }else {
+                log.error("Error while attempting to delete selected schedule is null");
+                NotificationManager.addErrorMessage("notification.schedule.failedDelete");
+            }
+    }
 
     /**
      * The function checks if the opening and closing times of a hall schedule are set to midnight.

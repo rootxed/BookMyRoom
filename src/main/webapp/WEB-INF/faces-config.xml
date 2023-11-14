@@ -48,10 +48,10 @@
     </navigation-rule>
 
     <application>
-        <locale-config>
-            <default-locale>fr</default-locale>
-            <supported-locale>en</supported-locale>
-        </locale-config>
+<!--        <locale-config>-->
+<!--            <default-locale>fr</default-locale>-->
+<!--            <supported-locale>en</supported-locale>-->
+<!--        </locale-config>-->
         <resource-bundle>
             <base-name>be.atc.messages.messages</base-name>
             <var>bundle</var>
